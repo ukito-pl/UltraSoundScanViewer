@@ -4,7 +4,7 @@ from PyQt4 import QtGui # Import the PyQt4 module we'll need
 from PyQt4.QtCore import  SIGNAL
 import sys # We need sys so that we can pass argv to QApplication
 import numpy as np
-from LoadFileThread import LoadFileThread
+from LoadScansThread import LoadScansThread
 from PyQt4 import QtCore
 
 
@@ -38,9 +38,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def showScans(self):
         text = unicode(self.dialog.dataDir)
         print text
-        self.loadFileThread = LoadFileThread(text);
-        self.connect(self.loadFileThread, SIGNAL('showImage(PyQt_PyObject)'), self.showImage)
-        self.loadFileThread.start()
+        self.loadScansThread = LoadScansThread(text)
+        self.connect(self.loadScansThread, SIGNAL('showImage(PyQt_PyObject)'), self.showImage)
+        self.loadScansThread.start()
 
         self.graphicsView.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
 
@@ -63,10 +63,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         for i in  range(img.shape[1].__floordiv__(100)):
             if i.__mod__(2)==1:
                 scaleLineImg[0,i*100:i*100+100] = 50* np.ones((1,100,3))
-                print "1"
+
             else:
                 scaleLineImg[0, i * 100:i * 100 + 100] = 180* np.ones((1, 100, 3))
-                print "0"
+
         print scaleLineImg, scaleLineImg.shape
         scaleLineImage = QtGui.QImage(scaleLineImg, scaleLineImg.shape[1], scaleLineImg.shape[0], scaleLineImg.shape[1] * 3, QtGui.QImage.Format_RGB888)
         pix2 = QtGui.QPixmap(scaleLineImage)

@@ -2,7 +2,7 @@ from PyQt4 import QtGui # Import the PyQt4 module we'll need
 from PyQt4.QtCore import  SIGNAL
 import sys # We need sys so that we can pass argv to QApplication
 import numpy as np
-from LoadFileThread import LoadFileThread
+from LoadScansThread import LoadScansThread
 
 import OptionsWindow # This file holds our MainWindow and all design related things
               # it also keeps events etc that we defined in Qt Designer
