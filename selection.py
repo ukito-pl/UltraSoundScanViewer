@@ -1,5 +1,6 @@
 from PyQt4 import QtGui # Import the PyQt4 module we'll need
-from PyQt4.QtCore import  SIGNAL
+from PyQt4 import QtCore
+
 import numpy as np
 
 import SelectionWindow # This file holds our MainWindow and all design related things
@@ -11,6 +12,7 @@ class SelectionDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.setupUi(self)
         self.graphicsView.scale(2,2)
         self.pixItem1 = QtGui.QGraphicsPixmapItem()
+        self.buttonBox.button(QtGui.QDialogButtonBox.Ok).setText("Oblicz")
 
     def showImage(self,img):
         img = np.array(img)
@@ -21,7 +23,8 @@ class SelectionDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.pixItem1.setPixmap(pix1)
         scene.addItem(self.pixItem1)
         self.graphicsView.setScene(scene)
-        self.graphicsView.fitInView(self.pixItem1)
+        self.graphicsView.fitInView(self.pixItem1, QtCore.Qt.KeepAspectRatio)
+
     def resizeEvent(self, QResizeEvent):
         super(self.__class__,self).resizeEvent(QResizeEvent)
-        self.graphicsView.fitInView(self.pixItem1)
+        self.graphicsView.fitInView(self.pixItem1,QtCore.Qt.KeepAspectRatio)

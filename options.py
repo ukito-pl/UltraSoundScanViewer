@@ -21,11 +21,12 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.CoefficientC = float(self.textEdit_C.toPlainText().replace('\n', ""))
         self.CoefficientD = float(self.textEdit_D.toPlainText().replace('\n', ""))
         self.DeltaX = float(self.textEdit_deltaX.toPlainText().replace('\n', ""))
-        self.DeltaY = float(self.textEdit_deltaY.toPlainText().replace('\n', ""))
+        self.Diameter = float(self.textEdit_diameter.toPlainText().replace('\n', ""))
+        self.Depth = float(self.textEdit_depth.toPlainText().replace('\n', ""))
         f = open('defaultOptions.txt', 'w')
         lines = [self.dataDir, "\n", self.CoefficientA.__str__(), "\n", self.CoefficientB.__str__(),
                  "\n", self.CoefficientC.__str__(), "\n", self.CoefficientD.__str__(), "\n", self.DeltaX.__str__(),
-                 "\n", self.DeltaY.__str__()]
+                 "\n", self.Diameter.__str__(),"\n", self.Depth.__str__()]
         f.writelines(lines)
         self.updateOptions()
 
@@ -37,7 +38,8 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.CoefficientC = float(f.readline())
         self.CoefficientD = float(f.readline())
         self.DeltaX = float(f.readline())
-        self.DeltaY = float(f.readline())
+        self.Diameter = float(f.readline())
+        self.Depth = float(f.readline())
         self.updateOptions()
 
     def updateOptions(self):
@@ -47,8 +49,8 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.textEdit_C.setText(self.CoefficientC.__str__())
         self.textEdit_D.setText(self.CoefficientD.__str__())
         self.textEdit_deltaX.setText(self.DeltaX.__str__())
-        self.textEdit_deltaY.setText(self.DeltaY.__str__())
-
+        self.textEdit_diameter.setText(self.Diameter.__str__())
+        self.textEdit_depth.setText(self.Depth.__str__())
 
 
 

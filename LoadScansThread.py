@@ -26,6 +26,7 @@ class LoadScansThread(QThread):
         self.wait()
 
     def run(self):
+        print self.start_frame, self.end_frame
         img = np.ones((self.data_length, self.end_frame - self.start_frame + 1, 3), dtype=np.uint8)
         end_file_index = (self.end_frame/self.frames_in_file).__int__()
         end_file_frames_to_get =  self.end_frame - end_file_index*self.frames_in_file + 1
@@ -45,6 +46,7 @@ class LoadScansThread(QThread):
 
             if (end_file_index==start_file_index):
                 count = self.end_frame - self.start_frame + 1
+                f.seek((self.start_frame ) * self.data_frame_length, 0)
             elif (i == start_file_index):
                 f.seek((self.start_frame - start_file_index*self.frames_in_file) * self.data_frame_length, 0)
                 count = start_file_frames_to_get

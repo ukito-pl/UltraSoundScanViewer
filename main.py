@@ -45,19 +45,20 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.graphicsView.setScene(scene)
 
     def goToCurrentFrame(self):
-        self.currentFrame = (float(self.textEdit_km.toPlainText())*1000)/self.optionsDialog.DeltaX.__int__()
+        self.currentFrame = ((float(self.textEdit_km.toPlainText())*1000)/self.optionsDialog.DeltaX).__int__()
+        print self.currentFrame, self.startFrame,self.endFrame
         if (self.startFrame <= self.currentFrame and self.currentFrame <= self.endFrame):
             max = self.graphicsView.horizontalScrollBar().maximum() + self.graphicsView.horizontalScrollBar().pageStep()
             min = self.graphicsView.horizontalScrollBar().minimum()
-            frame_range = self.endFrame - self.startFrame
+            frame_range = (self.endFrame - self.startFrame).__float__()
             scroll_bar_range = max - min
             val = ((self.currentFrame - self.startFrame)/frame_range)*scroll_bar_range
             self.graphicsView.horizontalScrollBar().setValue(val)
         else:
             #load new scans
-            self.startFrame = self.currentFrame - 5000
+            self.startFrame = (self.currentFrame - 5000).__int__()
             self.textEdit_kmFrom.setText((self.startFrame/1000).__str__())
-            self.endFrame = self.currentFrame + 5000
+            self.endFrame = (self.currentFrame + 5000).__int__()
             self.textEdit_kmTo.setText((self.endFrame/1000).__str__())
             text = unicode(self.optionsDialog.dataDir)
             self.loadScansThread = LoadScansThread(text, self.startFrame, self.endFrame)
@@ -79,8 +80,23 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         if self.scanLoaded:
             position = self.graphicsView.mapToScene(pos.x(),pos.y())
             x = ((position.x() + self.startFrame)*self.optionsDialog.DeltaX)/1000 #in meters
-            y = position.y()*self.optionsDialog.DeltaY
-            self.statusbar.showMessage('X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + str(y) + ' mm')
+            deltaY = 3.14 * self.optionsDialog.Diameter / 256.0
+            y = position.y()*deltaY
+
+            indx = position.x()
+            if indx < 0:
+                indx = 0
+            elif indx > (self.imgScan.shape[1] - 1):
+                indx = self.imgScan.shape[1] - 1
+            indy = position.y()
+            if indy < 0:
+                indy = 0
+            elif indy > (self.imgScan.shape[0] - 1):
+                indy = self.imgScan.shape[0] - 1
+            C = self.optionsDialog.CoefficientC
+            D = self.optionsDialog.CoefficientD
+            depth = C * self.imgScan[int(indy),int(indx),0] + D
+            self.statusbar.showMessage('X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:.3F}".format(y) + ' mm  Grubosc: ' + str(depth) + ' mm')
 
 
     def scrollLegend(self):
@@ -88,12 +104,13 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.graphicsView_2.horizontalScrollBar().setValue(val)
 
     def showScans(self):
+        deltaY = 3.14 * self.optionsDialog.Diameter / 256.0
         text = unicode(self.optionsDialog.dataDir)
         self.startFrame = ((float(self.textEdit_kmFrom.toPlainText())*1000) / self.optionsDialog.DeltaX).__int__()
         self.currentFrame = self.startFrame
-        self.textEdit_km.setText((self.currentFrame/ 1000).__str__())
-        self.endFrame = ((float(self.textEdit_kmTo.toPlainText()) * 1000) / self.optionsDialog.DeltaY).__int__()
-        print text
+        self.textEdit_km.setText((self.currentFrame/ 1000.0).__str__())
+        self.endFrame = ((float(self.textEdit_kmTo.toPlainText()) * 1000) / self.optionsDialog.DeltaX).__int__()
+        print text, self.textEdit_km.toPlainText(), self.startFrame, self.endFrame
         self.loadScansThread = LoadScansThread(text, self.startFrame, self.endFrame)
         self.connect(self.loadScansThread, SIGNAL('showImage(PyQt_PyObject)'), self.showImage)
         self.loadScansThread.start()
@@ -104,7 +121,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
     def showImage(self, imag):
         self.imgScan = np.array(imag)
-        print self.imgScan, self.imgScan.shape
+        #print self.imgScan, self.imgScan.shape
         image = QtGui.QImage(self.imgScan, self.imgScan.shape[1], self.imgScan.shape[0], self.imgScan.shape[1] * 3, QtGui.QImage.Format_RGB888)
 
         scene = QtGui.QGraphicsScene()
