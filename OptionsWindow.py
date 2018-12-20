@@ -25,9 +25,9 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(417, 300)
+        Dialog.resize(501, 289)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setGeometry(QtCore.QRect(30, 240, 341, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(140, 240, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
@@ -74,6 +74,31 @@ class Ui_Dialog(object):
         self.label_6 = QtGui.QLabel(Dialog)
         self.label_6.setGeometry(QtCore.QRect(30, 30, 121, 17))
         self.label_6.setObjectName(_fromUtf8("label_6"))
+        self.label_7 = QtGui.QLabel(Dialog)
+        self.label_7.setGeometry(QtCore.QRect(280, 100, 121, 17))
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.label_8 = QtGui.QLabel(Dialog)
+        self.label_8.setGeometry(QtCore.QRect(280, 140, 51, 17))
+        self.label_8.setObjectName(_fromUtf8("label_8"))
+        self.label_9 = QtGui.QLabel(Dialog)
+        self.label_9.setGeometry(QtCore.QRect(280, 190, 51, 17))
+        self.label_9.setObjectName(_fromUtf8("label_9"))
+        self.textEdit_deltaX = QtGui.QTextEdit(Dialog)
+        self.textEdit_deltaX.setGeometry(QtCore.QRect(340, 130, 100, 27))
+        self.textEdit_deltaX.setMinimumSize(QtCore.QSize(0, 0))
+        self.textEdit_deltaX.setMaximumSize(QtCore.QSize(100, 27))
+        self.textEdit_deltaX.setObjectName(_fromUtf8("textEdit_deltaX"))
+        self.textEdit_deltaY = QtGui.QTextEdit(Dialog)
+        self.textEdit_deltaY.setGeometry(QtCore.QRect(340, 180, 100, 27))
+        self.textEdit_deltaY.setMinimumSize(QtCore.QSize(0, 0))
+        self.textEdit_deltaY.setMaximumSize(QtCore.QSize(100, 27))
+        self.textEdit_deltaY.setObjectName(_fromUtf8("textEdit_deltaY"))
+        self.label_10 = QtGui.QLabel(Dialog)
+        self.label_10.setGeometry(QtCore.QRect(440, 140, 31, 17))
+        self.label_10.setObjectName(_fromUtf8("label_10"))
+        self.label_11 = QtGui.QLabel(Dialog)
+        self.label_11.setGeometry(QtCore.QRect(440, 190, 31, 17))
+        self.label_11.setObjectName(_fromUtf8("label_11"))
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
@@ -113,4 +138,19 @@ class Ui_Dialog(object):
 "</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.label_6.setText(_translate("Dialog", "Ścieżka do pliku:", None))
+        self.label_7.setText(_translate("Dialog", "Wymiary pixela:", None))
+        self.label_8.setText(_translate("Dialog", "deltaX:", None))
+        self.label_9.setText(_translate("Dialog", "deltaY:", None))
+        self.textEdit_deltaX.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+        self.textEdit_deltaY.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+        self.label_10.setText(_translate("Dialog", "mm", None))
+        self.label_11.setText(_translate("Dialog", "mm", None))
 
