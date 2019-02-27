@@ -19,8 +19,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setupUi(self)
         self._zoom = 0
         self.mouseMode = 0      #0-przesuwanie, 1 -zaznaczanie
-        self.graphicsView.scale(2, 2)
-        self.graphicsView_2.scale(2, 10)
+        self.graphicsView.scale(1, 1)
+        self.graphicsView_2.scale(2, 6)
         self.graphicsView_2.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.graphicsView_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.imgScan = 0
@@ -128,31 +128,40 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         pix1 = QtGui.QPixmap(image)
         pixItem1 = QtGui.QGraphicsPixmapItem()
         pixItem1.setPixmap(pix1)
+        pixItem1.scale(1,1)
         scene.addItem(pixItem1)
-
-        scaleLineImg = 255 * np.ones((1,self.imgScan.shape[1],3),dtype=np.uint8)
+        scale_height = 7
+        scaleLineImg = 0 * np.ones((scale_height,self.imgScan.shape[1],3),dtype=np.uint8)
 
         for i in  range(self.imgScan.shape[1].__floordiv__(100)):
             if i.__mod__(2)==1:
-                scaleLineImg[0,i*100:i*100+100] = 50* np.ones((1,100,3))
-
+                scaleLineImg[1:scale_height-1,i*100:i*100+100] = 50* np.ones((1,100,3))
             else:
-                scaleLineImg[0, i * 100:i * 100 + 100] = 180* np.ones((1, 100, 3))
+                scaleLineImg[1:scale_height-1, i * 100:i * 100 + 100] = 255* np.ones((1, 100, 3))
 
-        #print scaleLineImg, scaleLineImg.shape
+        print scaleLineImg, scaleLineImg.shape
         scaleLineImage = QtGui.QImage(scaleLineImg, scaleLineImg.shape[1], scaleLineImg.shape[0], scaleLineImg.shape[1] * 3, QtGui.QImage.Format_RGB888)
         pix2 = QtGui.QPixmap(scaleLineImage)
         pixItem2 = QtGui.QGraphicsPixmapItem()
         pixItem2.setPixmap(pix2)
+        pixItem2.setOffset(0,-scale_height)
+        scene.addItem(pixItem2)
 
+        #tutaj pętle wsadz i mamy legendę!!!!! one one one
+        textItem = QtGui.QGraphicsTextItem("0")
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        textItem.setFont(font)
+        textItem.document().setDocumentMargin(0)
+        text_offset_x = textItem.boundingRect().width()
+        text_offset_y = textItem.boundingRect().height()
+        textItem.setPos(0,-scale_height - text_offset_y)
+        print textItem.boundingRect()
+        scene.addItem(textItem)
 
-        scene2 = QtGui.QGraphicsScene()
-
-        scene2.addItem(pixItem2)
 
 
         self.graphicsView.setScene(scene)
-        self.graphicsView_2.setScene(scene2)
         self.scanLoaded = True
         self.goToCurrentFrame()
 
