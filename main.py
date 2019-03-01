@@ -41,8 +41,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.graphicsView, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
         self.connect(self.graphicsView, SIGNAL('mouseButtonReleased()'), self.mouseButtonReleased)
 
-        scene = QtGui.QGraphicsScene()
-        self.graphicsView.setScene(scene)
+        self.scanPixItem = QtGui.QGraphicsPixmapItem()
+        self.scene = QtGui.QGraphicsScene()
+        self.scene.addItem(self.scanPixItem)
+        self.graphicsView.setScene(self.scene)
+
 
     def goToCurrentFrame(self):
         self.currentFrame = ((float(self.textEdit_km.toPlainText())*1000)/self.optionsDialog.DeltaX).__int__()
@@ -75,6 +78,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             print rect,x,y,w,h
             self.selectionDialog.show()
             self.selectionDialog.showImage(self.imgScan[y:y+h, x:x+w, :])
+            self.selectionDialog.activateWindow()
 
     def mousePositionChanged(self, pos):
         if self.scanLoaded:
@@ -96,7 +100,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             C = self.optionsDialog.CoefficientC
             D = self.optionsDialog.CoefficientD
             depth = C * self.imgScan[int(indy),int(indx),0] + D
-            self.statusbar.showMessage('X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:.3F}".format(y) + ' mm  Grubosc: ' + str(depth) + ' mm')
+            self.statusbar.showMessage('X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:.3F}".format(y) + ' mm  Grubosc: ' + "{:.3F}".format(depth) + ' mm')
 
 
     def scrollLegend(self):
@@ -120,51 +124,66 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
 
     def showImage(self, imag):
+
+
+        self.scene = QtGui.QGraphicsScene()
+
         self.imgScan = np.array(imag)
         #print self.imgScan, self.imgScan.shape
         image = QtGui.QImage(self.imgScan, self.imgScan.shape[1], self.imgScan.shape[0], self.imgScan.shape[1] * 3, QtGui.QImage.Format_RGB888)
 
-        scene = QtGui.QGraphicsScene()
-        pix1 = QtGui.QPixmap(image)
-        pixItem1 = QtGui.QGraphicsPixmapItem()
-        pixItem1.setPixmap(pix1)
-        pixItem1.scale(1,1)
-        scene.addItem(pixItem1)
-        scale_height = 7
-        scaleLineImg = 0 * np.ones((scale_height,self.imgScan.shape[1],3),dtype=np.uint8)
 
-        for i in  range(self.imgScan.shape[1].__floordiv__(100)):
-            if i.__mod__(2)==1:
-                scaleLineImg[1:scale_height-1,i*100:i*100+100] = 50* np.ones((1,100,3))
-            else:
-                scaleLineImg[1:scale_height-1, i * 100:i * 100 + 100] = 255* np.ones((1, 100, 3))
+        scanPixMap = QtGui.QPixmap(image)
 
-        print scaleLineImg, scaleLineImg.shape
-        scaleLineImage = QtGui.QImage(scaleLineImg, scaleLineImg.shape[1], scaleLineImg.shape[0], scaleLineImg.shape[1] * 3, QtGui.QImage.Format_RGB888)
-        pix2 = QtGui.QPixmap(scaleLineImage)
-        pixItem2 = QtGui.QGraphicsPixmapItem()
-        pixItem2.setPixmap(pix2)
-        pixItem2.setOffset(0,-scale_height)
-        scene.addItem(pixItem2)
+        self.scanPixItem.setPixmap(scanPixMap)
+        self.scanPixItem.scale(1,1)
+        self.scene.addItem(self.scanPixItem)
 
-        #tutaj pętle wsadz i mamy legendę!!!!! one one one
-        textItem = QtGui.QGraphicsTextItem("0")
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        textItem.setFont(font)
-        textItem.document().setDocumentMargin(0)
-        text_offset_x = textItem.boundingRect().width()
-        text_offset_y = textItem.boundingRect().height()
-        textItem.setPos(0,-scale_height - text_offset_y)
-        print textItem.boundingRect()
-        scene.addItem(textItem)
-
-
-
-        self.graphicsView.setScene(scene)
+        scale_height = self.addScaleBarToImage(200, 7)
+        self.scene.update()
+        self.graphicsView.setScene(self.scene)
         self.scanLoaded = True
         self.goToCurrentFrame()
 
+        hor_bar_height =  self.graphicsView.horizontalScrollBar().height()
+        self.graphicsView.setMinimumSize(QtCore.QSize(0, 256+scale_height+ hor_bar_height/2 ))
+        self.graphicsView.setMaximumSize(QtCore.QSize(16777215, 256+scale_height + hor_bar_height/2 ))
+
+    def addScaleBarToImage(self,spacing, scale_line_height):
+        scaleLineImg = 0 * np.ones((scale_line_height, self.imgScan.shape[1], 3), dtype=np.uint8)
+
+        for i in range(self.imgScan.shape[1].__floordiv__(spacing)):
+            if i.__mod__(2) == 1:
+                scaleLineImg[1:scale_line_height - 1, i * spacing:i * spacing + spacing] = 50 * np.ones((1, spacing, 3))
+            else:
+                scaleLineImg[1:scale_line_height - 1, i * spacing:i * spacing + spacing] = 255 * np.ones((1, spacing, 3))
+
+        print scaleLineImg, scaleLineImg.shape
+        scaleLineImage = QtGui.QImage(scaleLineImg, scaleLineImg.shape[1], scaleLineImg.shape[0],
+                                      scaleLineImg.shape[1] * 3, QtGui.QImage.Format_RGB888)
+        pix2 = QtGui.QPixmap(scaleLineImage)
+        pixItem2 = QtGui.QGraphicsPixmapItem()
+        pixItem2.setPixmap(pix2)
+        pixItem2.setOffset(0, -scale_line_height)
+        self.scene.addItem(pixItem2)
+
+        for i in range(self.imgScan.shape[1].__floordiv__(spacing)):
+            x = ((i * spacing + self.startFrame) * self.optionsDialog.DeltaX) / 1000  # in meters
+
+            textItem = QtGui.QGraphicsTextItem(x.__str__())
+            font = QtGui.QFont()
+            font.setPointSize(8)
+            textItem.setFont(font)
+            textItem.document().setDocumentMargin(0)
+            text_offset_x = textItem.boundingRect().width()
+            text_offset_y = textItem.boundingRect().height()
+            if i == 0:
+                textItem.setPos(0, -scale_line_height - text_offset_y)
+            else:
+                textItem.setPos(0 - text_offset_x / 2 + i * spacing, -scale_line_height - text_offset_y)
+            # print textItem.boundingRect()
+            self.scene.addItem(textItem)
+        return text_offset_y + scale_line_height
 
     def openOptions(self):
 
@@ -179,8 +198,14 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             factor = 0.8
             self._zoom -= 1
 
-        self.graphicsView.scale(factor, 1)
-        self.graphicsView_2.scale(factor, 1)
+        self.scene.removeItem(self.scanPixItem) #remove item from the scene
+        self.scene.clear()                      #delete all items in the scene
+        self.scene = QtGui.QGraphicsScene()
+        self.scanPixItem.scale(factor,factor)
+        self.scene.addItem(self.scanPixItem)
+        self.addScaleBarToImage(200,7)
+        self.graphicsView.setScene(self.scene)
+        #self.graphicsView.scale(factor, 1)
 
     def keyPressEvent(self, QKeyEvent):
         if (QKeyEvent.key() == QtCore.Qt.Key_Control and self.mouseMode == 0):
