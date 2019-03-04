@@ -20,9 +20,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self._zoom = 0
         self.mouseMode = 0      #0-przesuwanie, 1 -zaznaczanie
         self.graphicsView.scale(1, 1)
-        self.graphicsView_2.scale(2, 6)
-        self.graphicsView_2.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.graphicsView_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        
         self.imgScan = 0
         self.startFrame = 0
         self.endFrame = 0
@@ -40,6 +38,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.connect(self.graphicsView, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
         self.connect(self.graphicsView, SIGNAL('mouseButtonReleased()'), self.mouseButtonReleased)
+        self.connect(self.graphicsView, SIGNAL('wheelEvent(PyQt_PyObject)'), self.zoom)
 
         self.scanPixItem = QtGui.QGraphicsPixmapItem()
         self.scene = QtGui.QGraphicsScene()
@@ -81,8 +80,14 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.selectionDialog.activateWindow()
 
     def mousePositionChanged(self, pos):
+        factor = 1
+        if self._zoom > 0:
+            factor = 1.25
+        elif self._zoom < 0:
+            factor = 0.8
         if self.scanLoaded:
             position = self.graphicsView.mapToScene(pos.x(),pos.y())
+            position = position/pow(factor,self._zoom)
             x = ((position.x() + self.startFrame)*self.optionsDialog.DeltaX)/1000 #in meters
             deltaY = 3.14 * self.optionsDialog.Diameter / 256.0
             y = position.y()*deltaY
@@ -150,9 +155,17 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.graphicsView.setMaximumSize(QtCore.QSize(16777215, 256+scale_height + hor_bar_height/2 ))
 
     def addScaleBarToImage(self,spacing, scale_line_height):
-        scaleLineImg = 0 * np.ones((scale_line_height, self.imgScan.shape[1], 3), dtype=np.uint8)
+        org_spacing = spacing
 
-        for i in range(self.imgScan.shape[1].__floordiv__(spacing)):
+        factor = 1
+        if self._zoom > 0:
+            factor = 1.25
+        elif self._zoom < 0:
+            factor = 0.8
+        spacing = (spacing * pow(factor, self._zoom)).__int__()
+        scaleLineImg = 0 * np.ones((scale_line_height, (self.imgScan.shape[1]*pow(factor,self._zoom)).__int__(), 3), dtype=np.uint8)
+
+        for i in range(((self.imgScan.shape[1]*pow(factor,self._zoom)).__floordiv__(spacing)).__int__()):
             if i.__mod__(2) == 1:
                 scaleLineImg[1:scale_line_height - 1, i * spacing:i * spacing + spacing] = 50 * np.ones((1, spacing, 3))
             else:
@@ -167,8 +180,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         pixItem2.setOffset(0, -scale_line_height)
         self.scene.addItem(pixItem2)
 
-        for i in range(self.imgScan.shape[1].__floordiv__(spacing)):
-            x = ((i * spacing + self.startFrame) * self.optionsDialog.DeltaX) / 1000  # in meters
+        for i in range(((self.imgScan.shape[1]*pow(factor,self._zoom)).__floordiv__(spacing)).__int__()):
+            x = ((i * org_spacing + self.startFrame) * self.optionsDialog.DeltaX) / 1000  # in meters
 
             textItem = QtGui.QGraphicsTextItem(x.__str__())
             font = QtGui.QFont()
@@ -189,8 +202,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.optionsDialog.show()
 
-    def wheelEvent(self, event):
-
+    def zoom(self,event):
         if event.delta() > 0:
             factor = 1.25
             self._zoom += 1
@@ -205,7 +217,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scene.addItem(self.scanPixItem)
         self.addScaleBarToImage(200,7)
         self.graphicsView.setScene(self.scene)
-        #self.graphicsView.scale(factor, 1)
+
+
+
 
     def keyPressEvent(self, QKeyEvent):
         if (QKeyEvent.key() == QtCore.Qt.Key_Control and self.mouseMode == 0):

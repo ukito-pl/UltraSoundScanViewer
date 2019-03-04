@@ -21,4 +21,5 @@ class MyGraphicsView(QtGui.QGraphicsView):
         self.emit(SIGNAL('mousePositionChanged(PyQt_PyObject)'), QMouseEvent.pos())
 
     def wheelEvent(self, QWheelEvent):
-        x = 0 #really do nothing
+        super(self.__class__, self).wheelEvent(QWheelEvent)
+        self.emit(SIGNAL('wheelEvent(PyQt_PyObject)'), QWheelEvent)
