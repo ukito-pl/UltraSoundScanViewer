@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="710e25e5-8c9d-400c-a9f5-050efc556a7c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyGraphicsView.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyGraphicsView.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoadScansThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/LoadScansThread.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MainWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1125">
-              <caret line="75" column="8" selection-start-line="74" selection-start-column="62" selection-end-line="75" selection-end-column="8" />
+            <state relative-caret-position="675">
+              <caret line="45" column="8" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -77,11 +78,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="44" column="26" selection-start-line="44" selection-start-column="26" selection-end-line="44" selection-end-column="26" />
+            <state relative-caret-position="330">
+              <caret line="22" column="9" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
-                <marker date="1545337662381" expanded="true" signature="1688:1689" ph="..." />
+                <marker date="1551806104998" expanded="true" signature="1721:1722" ph="..." />
               </folding>
             </state>
           </provider>
@@ -90,12 +91,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2910">
-              <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+            <state relative-caret-position="450">
+              <caret line="189" column="38" lean-forward="true" selection-start-line="189" selection-start-column="38" selection-end-line="189" selection-end-column="38" />
               <folding>
                 <element signature="e#25#85#0" expanded="true" />
-                <marker date="1551731242749" expanded="true" signature="4969:4975" ph="..." />
-                <marker date="1551731242749" expanded="true" signature="5124:5130" ph="..." />
+                <marker date="1551806802067" expanded="true" signature="4031:4032" ph="..." />
               </folding>
             </state>
           </provider>
@@ -123,12 +123,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/LoadFileThread.py" />
-        <option value="$PROJECT_DIR$/LoadScansThread.py" />
         <option value="$PROJECT_DIR$/options.py" />
         <option value="$PROJECT_DIR$/selection.py" />
         <option value="$PROJECT_DIR$/Miscellaneous.py" />
         <option value="$PROJECT_DIR$/MainWindow.py" />
         <option value="$PROJECT_DIR$/MyGraphicsView.py" />
+        <option value="$PROJECT_DIR$/LoadScansThread.py" />
         <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
@@ -145,6 +145,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -160,7 +161,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -250,7 +250,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32912844" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50109893" side_tool="true" weight="0.32875144" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32685715" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32646048" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -260,8 +260,8 @@
     <entry file="file://$PROJECT_DIR$/Main.py" />
     <entry file="file://$PROJECT_DIR$/MainWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1125">
-          <caret line="75" column="8" selection-start-line="74" selection-start-column="62" selection-end-line="75" selection-end-column="8" />
+        <state relative-caret-position="675">
+          <caret line="45" column="8" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -298,11 +298,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="44" column="26" selection-start-line="44" selection-start-column="26" selection-end-line="44" selection-end-column="26" />
+        <state relative-caret-position="330">
+          <caret line="22" column="9" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
-            <marker date="1545337662381" expanded="true" signature="1688:1689" ph="..." />
+            <marker date="1551806104998" expanded="true" signature="1721:1722" ph="..." />
           </folding>
         </state>
       </provider>
@@ -319,12 +319,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2910">
-          <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+        <state relative-caret-position="450">
+          <caret line="189" column="38" lean-forward="true" selection-start-line="189" selection-start-column="38" selection-end-line="189" selection-end-column="38" />
           <folding>
             <element signature="e#25#85#0" expanded="true" />
-            <marker date="1551731242749" expanded="true" signature="4969:4975" ph="..." />
-            <marker date="1551731242749" expanded="true" signature="5124:5130" ph="..." />
+            <marker date="1551806802067" expanded="true" signature="4031:4032" ph="..." />
           </folding>
         </state>
       </provider>
