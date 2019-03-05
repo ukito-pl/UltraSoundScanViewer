@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="710e25e5-8c9d-400c-a9f5-050efc556a7c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoadScansThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/LoadScansThread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyGraphicsView.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyGraphicsView.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,8 +30,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyGraphicsView.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="23" column="47" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
+            <state relative-caret-position="435">
+              <caret line="29" column="41" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="41" />
               <folding>
                 <element signature="e#0#60#0" expanded="true" />
               </folding>
@@ -91,11 +89,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="189" column="38" lean-forward="true" selection-start-line="189" selection-start-column="38" selection-end-line="189" selection-end-column="38" />
+            <state relative-caret-position="465">
+              <caret line="210" lean-forward="true" selection-start-line="210" selection-end-line="210" />
               <folding>
                 <element signature="e#25#85#0" expanded="true" />
-                <marker date="1551806802067" expanded="true" signature="4031:4032" ph="..." />
+                <marker date="1551817967667" expanded="true" signature="4391:4392" ph="..." />
               </folding>
             </state>
           </provider>
@@ -127,8 +125,8 @@
         <option value="$PROJECT_DIR$/selection.py" />
         <option value="$PROJECT_DIR$/Miscellaneous.py" />
         <option value="$PROJECT_DIR$/MainWindow.py" />
-        <option value="$PROJECT_DIR$/MyGraphicsView.py" />
         <option value="$PROJECT_DIR$/LoadScansThread.py" />
+        <option value="$PROJECT_DIR$/MyGraphicsView.py" />
         <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
@@ -309,8 +307,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MyGraphicsView.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="47" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
+        <state relative-caret-position="435">
+          <caret line="29" column="41" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="41" />
           <folding>
             <element signature="e#0#60#0" expanded="true" />
           </folding>
@@ -319,11 +317,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="189" column="38" lean-forward="true" selection-start-line="189" selection-start-column="38" selection-end-line="189" selection-end-column="38" />
+        <state relative-caret-position="465">
+          <caret line="210" lean-forward="true" selection-start-line="210" selection-end-line="210" />
           <folding>
             <element signature="e#25#85#0" expanded="true" />
-            <marker date="1551806802067" expanded="true" signature="4031:4032" ph="..." />
+            <marker date="1551817967667" expanded="true" signature="4391:4392" ph="..." />
           </folding>
         </state>
       </provider>

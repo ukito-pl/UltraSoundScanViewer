@@ -22,6 +22,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.zoom_out_factor = 0.8
         self.mouseMode = 0      #0-przesuwanie, 1 -zaznaczanie
         self.graphicsView.scale(1, 1)
+        self.y = np.zeros(10000)
 
         self.imgScan = 0
         self.startFrame = 0
@@ -39,6 +40,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.graphicsView, SIGNAL('mouseButtonReleased()'), self.mouseButtonReleased)
         self.connect(self.graphicsView, SIGNAL('wheelEvent(PyQt_PyObject)'), self.zoom)
 
+        self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.graphicsView.verticalScrollBar().valueChanged.connect(self.moveScaleBar)
+
         self.scanPixItem = QtGui.QGraphicsPixmapItem()
         self.scene = QtGui.QGraphicsScene()
         self.scene.addItem(self.scanPixItem)
@@ -46,6 +51,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
 
     def goToCurrentFrame(self):
+        self.y = np.zeros(10000)
         self.currentFrame = ((float(self.textEdit_km.toPlainText())*1000)/self.optionsDialog.DeltaX).__int__()
         self.startFrame = (self.currentFrame - 5000).__int__()
         if self.startFrame < 0:
@@ -72,10 +78,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.selectionDialog.activateWindow()
 
     def mousePositionChanged(self, pos):
-
         if self.scanLoaded:
             position = self.graphicsView.mapToScene(pos.x(),pos.y())
-            position = position/self.view_scale
+            #position = position/self.view_scale
             x = ((position.x() + self.startFrame)*self.optionsDialog.DeltaX)/1000 #in meters
             deltaY = 3.14 * self.optionsDialog.Diameter / 256.0
             y = position.y()*deltaY
@@ -93,7 +98,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             C = self.optionsDialog.CoefficientC
             D = self.optionsDialog.CoefficientD
             depth = C * self.imgScan[int(indy),int(indx),0] + D
-            self.statusbar.showMessage('X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:.3F}".format(y) + ' mm  Grubosc: ' + "{:.3F}".format(depth) + ' mm')
+            self.statusbar.showMessage('X: ' + "{:.3F}".format(position.x()) +" m" + ', Y: ' + "{:.3F}".format(position.y()) + ' mm  Grubosc: ' + "{:.3F}".format(depth) + ' mm')
 
 
     def showImage(self, imag):
@@ -127,10 +132,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         val = ((self.currentFrame - self.startFrame) / frame_range) * scroll_bar_range - (page_step/2).__int__()
         self.graphicsView.horizontalScrollBar().setValue(val)
 
+        self.moveScaleBar()
+
     def addScaleBarToImage(self,spacing, scale_line_height):
         org_spacing = spacing
-
-
         spacing = (spacing * self.view_scale)
         scaleLineImg = 0 * np.ones((scale_line_height, (self.imgScan.shape[1]*self.view_scale).__int__(), 3), dtype=np.uint8)
 
@@ -147,7 +152,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         pix2 = QtGui.QPixmap(scaleLineImage)
         pixItem2 = QtGui.QGraphicsPixmapItem()
         pixItem2.setPixmap(pix2)
-        pixItem2.setOffset(0, -scale_line_height)
+        pixItem2.setPos(0, -scale_line_height)
+        pixItem2.setZValue(1000)
         self.scene.addItem(pixItem2)
 
         for i in range(((self.imgScan.shape[1]*self.view_scale).__floordiv__(spacing)).__int__()):
@@ -165,8 +171,43 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             else:
                 textItem.setPos(0 - text_offset_x / 2 + i * spacing, -scale_line_height - text_offset_y)
             # print textItem.boundingRect()
+            textItem.setZValue(1000)
             self.scene.addItem(textItem)
+
+        scale_background = 255 * np.ones(((scale_line_height+ text_offset_y).__int__(), (self.imgScan.shape[1] * self.view_scale).__int__(), 3), dtype=np.uint8)
+        scale_background_image = QtGui.QImage(scale_background, scale_background.shape[1], scale_background.shape[0],
+                                      scale_background.shape[1] * 3, QtGui.QImage.Format_RGB888)
+        pix3 = QtGui.QPixmap(scale_background_image)
+        pixItem3 = QtGui.QGraphicsPixmapItem()
+        pixItem3.setPixmap(pix3)
+        pixItem3.setPos(0, -scale_line_height - text_offset_y)
+        pixItem3.setZValue(900)
+        self.scene.addItem(pixItem3)
+
         return text_offset_y + scale_line_height
+
+    def moveScaleBar(self):
+        offset = 0
+        if self.graphicsView.verticalScrollBar().isVisible():
+            page_step = self.graphicsView.verticalScrollBar().pageStep()
+            max = self.graphicsView.verticalScrollBar().maximum() + page_step
+            min = self.graphicsView.verticalScrollBar().minimum()
+            scroll_bar_range = max - min
+            val = self.graphicsView.verticalScrollBar().value()
+            offset_ratio = (val - min)/float(scroll_bar_range)
+            offset = self.scene.height() * offset_ratio
+
+        self.scene.removeItem(self.scanPixItem) #remove item from the scene
+        scene_items = self.scene.items()
+        for i in range(0,len(scene_items)):
+            if self.y[i] == 0:
+                self.y[i] = scene_items[i].y()
+            scene_items[i].setY(self.y[i] + offset)
+        self.scanPixItem.setZValue(1)
+        self.scene.addItem(self.scanPixItem)
+
+
+
 
     def openOptions(self):
         self.optionsDialog.show()
@@ -191,7 +232,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.graphicsView.setScene(self.scene)
 
         self.graphicsView.centerOn(pos)
-
+        self.moveScaleBar()
 
 
 

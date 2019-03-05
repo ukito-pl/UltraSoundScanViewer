@@ -23,3 +23,8 @@ class MyGraphicsView(QtGui.QGraphicsView):
     def wheelEvent(self, QWheelEvent):
         super(self.__class__, self).wheelEvent(QWheelEvent)
         self.emit(SIGNAL('wheelEvent(PyQt_PyObject)'), QWheelEvent)
+
+    def scrollContentsBy(self, p_int, p_int_1):
+        super(self.__class__,self).scrollContentsBy(p_int, p_int_1)
+        dxy = [p_int,p_int_1]
+        self.emit(SIGNAL('contentScrolled(PyQt_PyObject)'), dxy)
