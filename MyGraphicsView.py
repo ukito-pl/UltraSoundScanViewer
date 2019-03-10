@@ -26,5 +26,4 @@ class MyGraphicsView(QtGui.QGraphicsView):
 
     def scrollContentsBy(self, p_int, p_int_1):
         super(self.__class__,self).scrollContentsBy(p_int, p_int_1)
-        dxy = [p_int,p_int_1]
-        self.emit(SIGNAL('contentScrolled(PyQt_PyObject)'), dxy)
+        self.emit(SIGNAL('contentScrolled()'))
