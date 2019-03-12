@@ -70,4 +70,4 @@ class LoadScansThread(QThread):
             it2 = it2 + 1
 
 
-        self.emit(SIGNAL('showImage(PyQt_PyObject)'), img)
+        self.emit(SIGNAL('scansLoaded(PyQt_PyObject)'), img)

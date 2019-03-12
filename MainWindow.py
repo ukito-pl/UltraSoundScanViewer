@@ -74,12 +74,12 @@ class Ui_MainWindow(object):
         self.verticalSlider.setInvertedAppearance(True)
         self.verticalSlider.setObjectName(_fromUtf8("verticalSlider"))
         self.horizontalLayout_3.addWidget(self.verticalSlider)
-        self.graphicsView = MyGraphicsView(self.centralwidget)
-        self.graphicsView.setMinimumSize(QtCore.QSize(0, 0))
-        self.graphicsView.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.graphicsView.setLineWidth(0)
-        self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
-        self.horizontalLayout_3.addWidget(self.graphicsView)
+        self.scanViewer = ScanViewer(self.centralwidget)
+        self.scanViewer.setMinimumSize(QtCore.QSize(0, 0))
+        self.scanViewer.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.scanViewer.setLineWidth(0)
+        self.scanViewer.setObjectName(_fromUtf8("graphicsView"))
+        self.horizontalLayout_3.addWidget(self.scanViewer)
         self.graphicsView_2 = QtGui.QGraphicsView(self.centralwidget)
         self.graphicsView_2.setMaximumSize(QtCore.QSize(30, 16777215))
         self.graphicsView_2.setAutoFillBackground(True)
@@ -147,4 +147,4 @@ class Ui_MainWindow(object):
         self.toolBar_4.setWindowTitle(_translate("MainWindow", "toolBar_4", None))
         self.toolBar_5.setWindowTitle(_translate("MainWindow", "toolBar_5", None))
 
-from MyGraphicsView import MyGraphicsView
+from ScanViewer import ScanViewer
