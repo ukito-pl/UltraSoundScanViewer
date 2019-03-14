@@ -13,13 +13,15 @@ class ScanViewer(QtGui.QGraphicsView):
         self.setMouseTracking(True)
         self.scanPixItem = QtGui.QGraphicsPixmapItem()
         self.scanScene = QtGui.QGraphicsScene()
-        self.scanScene.addItem(self.scanPixItem)
-        self.setScene(self.scanScene)
+        self.aspect_ratio = 1 #y/x
         self.view_scale = 1
         self.zoom_in_factor = 1.25
         self.zoom_out_factor = 0.8
-        self.pos = np.zeros((10000, 2))
+        self.pos = []
+        self.lockPos = []
+        self.sceneItems = []
 
+        self.scanScene.addItem(self.scanPixItem)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
@@ -41,22 +43,15 @@ class ScanViewer(QtGui.QGraphicsView):
         else:
             self.view_scale = self.view_scale * self.zoom_out_factor
             pos = pos * self.zoom_out_factor
-
-
-        self.scanScene.removeItem(self.scanPixItem)  # remove item from the scene
-        self.scanScene.clear()  # delete all items in the scene
+        self.clearItems()
         self.scanScene = QtGui.QGraphicsScene()
         self.scanPixItem.setScale(self.view_scale)
+        #self.scanPixItem.scale(1,self.aspect_ratio)
         self.scanScene.addItem(self.scanPixItem)
-
         self.emit(SIGNAL('changeScale()'))
-
         self.setScene(self.scanScene)
-
         self.centerOn(pos)
         self.moveScaleBar()
-        self.scanScene.update()
-        self.update()
 
     def scrollContentsBy(self, p_int, p_int_1):
         super(self.__class__,self).scrollContentsBy(p_int, p_int_1)
@@ -64,8 +59,9 @@ class ScanViewer(QtGui.QGraphicsView):
 
     def setScanImage(self, scan_image):
         scanPixMap = QtGui.QPixmap(scan_image)
+        scanPixMap = scanPixMap.scaled(scanPixMap.width(), int(scanPixMap.height()*self.aspect_ratio))
         self.scanPixItem.setPixmap(scanPixMap)
-        self.scanPixItem.scale(1, 1)
+        self.scanPixItem.setScale(self.view_scale)
         self.scanScene.update()
         self.setScene(self.scanScene)
         self.update()
@@ -79,17 +75,20 @@ class ScanViewer(QtGui.QGraphicsView):
         val = px * scroll_bar_range - (page_step / 2).__int__()
         self.horizontalScrollBar().setValue(val)
 
-    def addImage(self,image,pos_x, pos_y, z):
-        pix = QtGui.QPixmap(image)
-        pixItem = QtGui.QGraphicsPixmapItem()
-        pixItem.setPixmap(pix)
-        pixItem.setPos(pos_x, pos_y)
-        pixItem.setZValue(z)
-        self.scanScene.addItem(pixItem)
 
-    def clearScene(self):
+    def addItem(self,qgraphicsitem, lockX, lockY):
+        self.scanScene.addItem(qgraphicsitem)
+        self.pos.append([qgraphicsitem.x(), qgraphicsitem.y()])
+        self.lockPos.append([lockX,lockY])
+        self.sceneItems.append(qgraphicsitem)
+
+
+    def clearItems(self):
         self.scanScene.removeItem(self.scanPixItem)  # remove item from the scene
         self.scanScene.clear()
+        self.sceneItems = []
+        self.pos = []
+        self.lockPos = []
         self.scanScene.addItem((self.scanPixItem))
 
     def moveScaleBar(self):
@@ -114,17 +113,12 @@ class ScanViewer(QtGui.QGraphicsView):
             offset_ratio = (val - min) / float(scroll_bar_range)
             horizontal_offset = self.scanScene.width() * offset_ratio
 
-        self.scanScene.removeItem(self.scanPixItem) #remove item from the scene
-        scene_items = self.scanScene.items()
-        for i in range(0,len(scene_items)):
-            if self.pos[i,1] == 0:
-                self.pos[i,1] = scene_items[i].y()
-                self.pos[i, 0] = scene_items[i].x()
-            scene_items[i].setY(self.pos[i,1] + vertical_offset)
-            if isinstance(scene_items[i],QtGui.QGraphicsTextItem):
-                text = scene_items[i].toPlainText()
-                if text == "[m]":
-                    scene_items[i].setX(self.pos[i, 0] + horizontal_offset)
+        self.scanScene.removeItem(self.scanPixItem)
+        for i in range(0,len(self.sceneItems)):
+            if self.lockPos[i][1] == True:
+                self.sceneItems[i].setY(self.pos[i][1] + vertical_offset)
+            if self.lockPos[i][0] == True:
+                self.sceneItems[i].setX(self.pos[i][0] + horizontal_offset)
         self.scanPixItem.setZValue(1)
         self.scanScene.addItem(self.scanPixItem)
         self.scanScene.update()
