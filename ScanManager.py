@@ -12,13 +12,13 @@ class ScanManager(QObject):
         self.imgScan = -1
         self.imgScanRearranged = -1
         self.imgScanColored = -1
+        self.imgScanColoredRearranged = -1
         self.scanDir = ""
         self.currentFrame = -1
         self.frameRange = 5000
         self.colorMapping = ColorMapping()
         self.startFrame = 0
         self.endFrame = 0
-        self.createDefaultColorScale()
         self.a = 0
         self.b = 0
         self.c = 0
@@ -27,15 +27,21 @@ class ScanManager(QObject):
         self.deltaY = 0
         self.diameter = 0
         self.nominalDepth = 0
+        self.nominalDepthval = 0
         self.dataPerFrame = 256
         self.resolutionRatio = 1 #transverse resolution / longitudinal resolution
 
     def createDefaultColorScale(self):
         self.colorMapping.addScale("ironfire")
+        self.colorMapping.setColorAt("ironfire", 255, QtGui.QColor(0, 64, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.5, QtGui.QColor(0, 64, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.2, QtGui.QColor(0, 128, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval, QtGui.QColor(0, 255, 0))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.9, QtGui.QColor(255, 255, 0))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.7, QtGui.QColor(255, 128, 0))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.5, QtGui.QColor(255, 20, 0))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.1, QtGui.QColor(255, 0, 0))
         self.colorMapping.setColorAt("ironfire", 0, QtGui.QColor(0, 0, 0))
-        self.colorMapping.setColorAt("ironfire", 255, QtGui.QColor(255, 255, 255))
-        self.colorMapping.setColorAt("ironfire", 65, QtGui.QColor(0, 0, 255))
-        self.colorMapping.setColorAt("ironfire", 60, QtGui.QColor(100, 0, 255))
 
     def getXYD(self,pixel_x,pixel_y):
         x = ((pixel_x + self.startFrame) * self.deltaX) / 1000  # in meters
@@ -67,6 +73,7 @@ class ScanManager(QObject):
         self.deltaY = 3.14 * self.diameter / self.dataPerFrame
         self.resolutionRatio = self.deltaY/self.deltaX
         self.nominalDepth = nominal_depth
+        self.nominalDepthval = (self.nominalDepth - self.d) / self.c
         self.currentFrame = ( milimeters / self.deltaX).__int__()
         self.frameRange = (milimeters_range / self.deltaX).__int__()
         self.startFrame = (self.currentFrame - self.frameRange).__int__()
@@ -77,6 +84,8 @@ class ScanManager(QObject):
         self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame)
         self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.produceImage)
         self.loadScansThread.start()
+        self.createDefaultColorScale()
+
 
     def produceImage(self,imag):
         self.imgScan = np.array(imag)
@@ -106,7 +115,7 @@ class ScanManager(QObject):
         rearranged_array = np.zeros(self.imgScanColored.shape, dtype=np.uint8)
         rearranged_array[0:first_row, :, :] = self.imgScanColored[rows - first_row:rows, :, :]
         rearranged_array[first_row:rows, :, :] = self.imgScanColored[0:rows - first_row, :, :]
-
+        self.imgScanColoredRearranged = rearranged_array
         image = QtGui.QImage(rearranged_array, rearranged_array.shape[1], rearranged_array.shape[0],
                              rearranged_array.shape[1] * 3,
                              QtGui.QImage.Format_RGB888)

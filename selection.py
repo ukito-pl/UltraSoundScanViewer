@@ -14,12 +14,13 @@ class SelectionDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.pixItem1 = QtGui.QGraphicsPixmapItem()
         self.buttonBox.button(QtGui.QDialogButtonBox.Ok).setText("Oblicz")
 
-    def showImage(self,img):
+    def showImage(self,img, aspect_ratio ):
         img = np.array(img)
         #print img, img.shape
         image = QtGui.QImage(img, img.shape[1], img.shape[0], img.shape[1] * 3, QtGui.QImage.Format_RGB888)
         scene = QtGui.QGraphicsScene()
         pix1 = QtGui.QPixmap(image)
+        pix1 = pix1.scaled(pix1.width(), int(pix1.height() * aspect_ratio))
         self.pixItem1.setPixmap(pix1)
         scene.addItem(self.pixItem1)
         self.graphicsView.setScene(scene)

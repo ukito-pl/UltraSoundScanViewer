@@ -20,7 +20,6 @@ class ScanViewer(QtGui.QGraphicsView):
         self.pos = []
         self.lockPos = []
         self.sceneItems = []
-
         self.scanScene.addItem(self.scanPixItem)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -28,7 +27,13 @@ class ScanViewer(QtGui.QGraphicsView):
 
     def mouseReleaseEvent(self, QMouseEvent):
         super(self.__class__, self). mouseReleaseEvent(QMouseEvent)
-        self.emit(SIGNAL('mouseButtonReleased()'))
+        if (self.dragMode() == QtGui.QGraphicsView.RubberBandDrag and self.scene() != 0):
+            rect =self.scene().selectionArea().controlPointRect()
+            x = (rect.x()/self.view_scale).__int__()
+            y = (rect.y() / (self.view_scale*self.aspect_ratio)).__int__()
+            w = (rect.width() / self.view_scale).__int__()
+            h = (rect.height() / (self.view_scale*self.aspect_ratio)).__int__()
+            self.emit(SIGNAL('areaSelected(PyQt_PyObject)'),[x,y,w,h])
 
     def mouseMoveEvent(self, QMouseEvent):
         super(self.__class__, self).mouseMoveEvent(QMouseEvent)
@@ -53,6 +58,12 @@ class ScanViewer(QtGui.QGraphicsView):
     def scrollContentsBy(self, p_int, p_int_1):
         super(self.__class__,self).scrollContentsBy(p_int, p_int_1)
         self.moveScaleBar()
+
+    def changeDragMode(self):
+        if self.dragMode() == QtGui.QGraphicsView.ScrollHandDrag:
+            self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+        elif self.dragMode() == QtGui.QGraphicsView.RubberBandDrag:
+            self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
 
     def setScanImage(self, scan_image):
         scanPixMap = QtGui.QPixmap(scan_image)

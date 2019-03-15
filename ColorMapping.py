@@ -10,8 +10,8 @@ class ColorMapping():
 
     def addScale(self,scale_name):
         array = np.zeros((256,3), dtype=np.uint8)
-        if scale_name in self.lookUpTables:
-            print "Name taken, overriding"
+        #if scale_name in self.lookUpTables:
+            #print "Name taken, overriding"
         self.lookUpTables[scale_name] = array
         self.gradientColors[scale_name] = []
         qcolor = QtGui.QColor(0,0,0)

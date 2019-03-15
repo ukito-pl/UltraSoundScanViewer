@@ -14,12 +14,12 @@ import MainWindow # This file holds our MainWindow and all design related things
 from options import OptionsDialog
 from selection import SelectionDialog
 from ScanManager import ScanManager
+from math import log10
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-        self.mouseMode = 0      #0-przesuwanie, 1 -zaznaczanie
         self.scale_spacing = 0.1 # in meters
         self.statusBarMessage = ""
         self.statusLabel = QtGui.QLabel()
@@ -33,7 +33,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.pushButton_go, SIGNAL('clicked()'), self.loadScan)
 
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
-        self.connect(self.scanViewer, SIGNAL('mouseButtonReleased()'), self.mouseButtonReleased)
+        self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.showSelection)
+
         self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
 
         self.connect(self.scanManager, SIGNAL('showScan(PyQt_PyObject)'), self.showScan)
@@ -41,17 +42,19 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
 
-    def mouseButtonReleased(self):
-        if (self.mouseMode == 1 and self.scanViewer.scene() != 0):
-            rect =self.scanViewer.scene().selectionArea().controlPointRect()
-            x = rect.x().__int__()
-            y = rect.y().__int__()
-            w = rect.width().__int__()
-            h = rect.height().__int__()
-            print rect,x,y,w,h
-            self.selectionDialog.show()
-            self.selectionDialog.showImage(self.scanManager.imgScan[y:y+h, x:x+w, :])
-            self.selectionDialog.activateWindow()
+    def closeEvent(self, QCloseEvent):
+        self.selectionDialog.close()
+        self.optionsDialog.close()
+        super(self.__class__, self).closeEvent(QCloseEvent)
+
+    def showSelection(self, rect):
+        x = rect[0]
+        y = rect[1]
+        w = rect[2]
+        h = rect[3]
+        self.selectionDialog.show()
+        self.selectionDialog.showImage(self.scanManager.imgScanColoredRearranged[y:y+h, x:x+w, :],self.scanViewer.aspect_ratio)
+        self.selectionDialog.activateWindow()
 
     def mousePositionChanged(self, QMouseEvent):
         try:
@@ -66,12 +69,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             return
 
     def keyPressEvent(self, QKeyEvent):
-        if (QKeyEvent.key() == QtCore.Qt.Key_Control and self.mouseMode == 0):
-            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-            self.mouseMode = 1
-        elif (QKeyEvent.key() == QtCore.Qt.Key_Control and self.mouseMode == 1):
-            self.scanViewer.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-            self.mouseMode = 0
+        if (QKeyEvent.key() == QtCore.Qt.Key_Control):
+            self.scanViewer.changeDragMode()
+
 
     def openOptions(self):
         self.optionsDialog.show()
@@ -147,7 +147,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
     def colorLegend(self,scale_name):
         legend_array =  np.zeros((256,20,3),dtype=np.uint8)
-        for i in range(1,legend_array.shape[0] - 1):
+        ndval = self.scanManager.nominalDepthval
+        for i in range(0,legend_array.shape[0] - 1):
+            if i != 0:
+                k = log10(i/ndval)
+                val =pow(10,k)
             legend_array[i,1:19 , :] = self.scanManager.colorMapping.lookUpTables["ironfire"][-i-1]
 
         image = QtGui.QImage(legend_array, legend_array.shape[1], legend_array.shape[0], legend_array.shape[1] * 3,
