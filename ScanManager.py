@@ -10,10 +10,11 @@ class ScanManager(QObject):
     def __init__(self):
         super(self.__class__,self).__init__()
         self.imgScan = -1
+        self.imgScanRearranged = -1
         self.imgScanColored = -1
         self.scanDir = ""
         self.currentFrame = -1
-        self.plusMinusFrames = 5000
+        self.frameRange = 5000
         self.colorMapping = ColorMapping()
         self.startFrame = 0
         self.endFrame = 0
@@ -56,7 +57,7 @@ class ScanManager(QObject):
         depth = self.c * self.imgScan[int(indy), int(indx), 0] + self.d
         return [x,y,depth]
 
-    def loadScan(self,frame, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth):
+    def loadScan(self,milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth):
         self.a = a
         self.b = b
         self.c = c
@@ -66,11 +67,12 @@ class ScanManager(QObject):
         self.deltaY = 3.14 * self.diameter / self.dataPerFrame
         self.resolutionRatio = self.deltaY/self.deltaX
         self.nominalDepth = nominal_depth
-        self.currentFrame = frame
-        self.startFrame = (self.currentFrame - self.plusMinusFrames).__int__()
+        self.currentFrame = ( milimeters / self.deltaX).__int__()
+        self.frameRange = (milimeters_range / self.deltaX).__int__()
+        self.startFrame = (self.currentFrame - self.frameRange).__int__()
         if self.startFrame < 0:
             self.startFrame = 0;
-        self.endFrame = (self.currentFrame + self.plusMinusFrames).__int__()
+        self.endFrame = (self.currentFrame + self.frameRange).__int__()
         self.scanDir = scan_dir
         self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame)
         self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.produceImage)
@@ -78,6 +80,7 @@ class ScanManager(QObject):
 
     def produceImage(self,imag):
         self.imgScan = np.array(imag)
+        self.imgScanRearranged = self.imgScan
         self.imgScanColored = self.colorScan(self.imgScan, "ironfire")
         # print self.imgScan, self.imgScan.shape
         image = QtGui.QImage(self.imgScanColored, self.imgScanColored.shape[1], self.imgScanColored.shape[0], self.imgScanColored.shape[1] * 3,
@@ -95,6 +98,10 @@ class ScanManager(QObject):
 
         rows = self.imgScan.shape[0]
         first_row = int(rows*val_ratio)
+
+        self.imgScanRearranged = np.zeros(self.imgScan.shape, dtype=np.uint8)
+        self.imgScanRearranged[0:first_row, :, :] = self.imgScan[rows - first_row:rows, :, :]
+        self.imgScanRearranged[first_row:rows, :, :] = self.imgScan[0:rows - first_row, :, :]
 
         rearranged_array = np.zeros(self.imgScanColored.shape, dtype=np.uint8)
         rearranged_array[0:first_row, :, :] = self.imgScanColored[rows - first_row:rows, :, :]

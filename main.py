@@ -93,7 +93,14 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanManager.rearrangeScan(val_ratio)
 
     def loadScan(self):
-        currentFrame = ((float(self.textEdit_km.toPlainText()) * 1000) / self.optionsDialog.DeltaX).__int__()
+        if self.comboBox_3.currentIndex() == 0:
+            multiplier = 1
+        elif self.comboBox_3.currentIndex() == 1:
+            multiplier = 1000
+        elif self.comboBox_3.currentIndex() == 2:
+            multiplier = 1000000
+        milimeters = float(self.textEdit_km.toPlainText().replace(",",".")) * multiplier
+        milimeters_range = float(self.textEdit_km_range.toPlainText().replace(",",".")) * 1000
         scan_dir = unicode(self.optionsDialog.dataDir)
         a = self.optionsDialog.CoefficientA
         b = self.optionsDialog.CoefficientB
@@ -102,10 +109,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         delta_x = self.optionsDialog.DeltaX
         diameter = self.optionsDialog.Diameter
         nominal_depth = self.optionsDialog.Depth
-        self.scanManager.loadScan(currentFrame, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth)
+        self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth)
 
     def showScan(self, image):
-        self.scanViewer.clearItems()
+        self.scanViewer.clearScene()
+        self.scanViewer.resetViewScale()
         self.scanViewer.aspect_ratio = self.scanManager.resolutionRatio
         self.scanViewer.setScanImage(image)
 
@@ -113,13 +121,14 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         hor_bar_height = self.scanViewer.horizontalScrollBar().height()
 
-        if self.scanViewer.view_scale == 1:
-            self.scanViewer.setMinimumSize(QtCore.QSize(0, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
-            self.scanViewer.setMaximumSize(QtCore.QSize(16777215, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
-            self.graphicsView_2.setMaximumHeight(self.scanViewer.height())
-            self.verticalSlider.setMaximumHeight(self.scanViewer.height())
+        self.scanViewer.setMinimumSize(QtCore.QSize(0, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
+        self.scanViewer.setMaximumSize(QtCore.QSize(16777215, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
+        self.graphicsView_2.setMaximumHeight(self.scanViewer.height())
+        self.verticalSlider.setMaximumHeight(self.scanViewer.height())
 
         self.colorLegend("ironfire")
+
+        self.rearrangeScan()
 
         frame_range = (self.scanManager.endFrame - self.scanManager.startFrame).__float__()
         px = ((self.scanManager.currentFrame - self.scanManager.startFrame) / frame_range)
