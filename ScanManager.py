@@ -34,8 +34,9 @@ class ScanManager(QObject):
     def createDefaultColorScale(self):
         self.colorMapping.addScale("ironfire")
         self.colorMapping.setColorAt("ironfire", 255, QtGui.QColor(0, 64, 255))
-        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.5, QtGui.QColor(0, 64, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.5, QtGui.QColor(0, 0, 255))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.2, QtGui.QColor(0, 128, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.1, QtGui.QColor(0, 128, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval, QtGui.QColor(0, 255, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.9, QtGui.QColor(255, 255, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.7, QtGui.QColor(255, 128, 0))
@@ -211,5 +212,56 @@ class ScanManager(QObject):
         textItem.setPos(text_offset_x, -scale_line_height - text_offset_y)
         textItem.setZValue(1000)
         items.append([textItem, True,True])
+
+        return items
+
+    def getColorLegendItems(self, legend_height):
+        items = []
+        ndval = self.nominalDepthval
+        max_dval = ndval * 1.5
+        min_dval = ndval * 0.5
+        scale_values = np.array([0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5]) * ndval
+        scale_values = [int(x) for x in scale_values]
+        step = legend_height / (max_dval - min_dval + 1)
+        legend_array = np.zeros((legend_height, 20, 4), dtype=np.uint8)
+        j = 0
+        for val in range(int(min_dval), int(max_dval + 1)):
+            color = self.colorMapping.lookUpTables["ironfire"][val]
+            legend_array[int((-j - 1) * step - 1):int((-j) * step - 1), 1:15, 0:3] = list(reversed(color))
+            legend_array[int(j * step):int((j + 1) * step), 1:15, 3] = 255
+
+            if val in scale_values:
+                mid = int((int((-j - 1) * step - 1) + int((-j) * step - 1)) / 2)
+                legend_array[mid, 10:20, :] = [0, 0, 0, 255]
+                real_val = self.c * val + self.d
+                textItem = QtGui.QGraphicsTextItem(real_val.__str__())
+                font = QtGui.QFont()
+                font.setPointSize(8)
+                textItem.setFont(font)
+                textItem.document().setDocumentMargin(0)
+                text_offset_y = textItem.boundingRect().height()
+                textItem.setPos(20, legend_array.shape[0] + mid - text_offset_y / 2)
+                items.append(textItem)
+
+            j = j + 1
+
+        textItem = QtGui.QGraphicsTextItem("[mm]")
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        textItem.setFont(font)
+        textItem.document().setDocumentMargin(0)
+        textItem.setPos(-5, -15 )
+        items.append(textItem)
+
+        legend_array[:, 0, :] = [0, 0, 0, 255]
+        legend_array[:, 15, :] = [0, 0, 0, 255]
+        legend_array[0, 0:15, :] = [0, 0, 0, 255]
+        legend_array[-1, 0:15, :] = [0, 0, 0, 255]
+
+        image = QtGui.QImage(legend_array, legend_array.shape[1], legend_array.shape[0], legend_array.shape[1] * 4,
+                             QtGui.QImage.Format_ARGB32)
+        legendPixMap = QtGui.QPixmap(image)
+        legendPixMapItem = QtGui.QGraphicsPixmapItem(legendPixMap)
+        items.append(legendPixMapItem)
 
         return items

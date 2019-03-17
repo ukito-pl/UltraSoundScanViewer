@@ -15,6 +15,7 @@ from options import OptionsDialog
 from selection import SelectionDialog
 from ScanManager import ScanManager
 from math import log10
+from Miscellaneous import isclose
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
@@ -121,12 +122,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         hor_bar_height = self.scanViewer.horizontalScrollBar().height()
 
-        self.scanViewer.setMinimumSize(QtCore.QSize(0, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
-        self.scanViewer.setMaximumSize(QtCore.QSize(16777215, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
-        self.graphicsView_2.setMaximumHeight(self.scanViewer.height())
-        self.verticalSlider.setMaximumHeight(self.scanViewer.height())
-
-        self.colorLegend("ironfire")
+        #self.scanViewer.setMinimumSize(QtCore.QSize(0, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
+        #self.scanViewer.setMaximumSize(QtCore.QSize(16777215, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
+        #self.graphicsView_2.setMaximumHeight(self.scanViewer.height())
+        #self.verticalSlider.setMaximumHeight(self.scanViewer.height())
 
         self.rearrangeScan()
 
@@ -134,6 +133,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         px = ((self.scanManager.currentFrame - self.scanManager.startFrame) / frame_range)
         self.scanViewer.goTo(px)
         self.scanViewer.moveScaleBar()
+        self.scanViewer.moveScaleBar()
+        self.colorLegend("ironfire")
 
     def updateScan(self,image):
         self.scanViewer.setScanImage(image)
@@ -146,22 +147,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
 
     def colorLegend(self,scale_name):
-        legend_array =  np.zeros((256,20,3),dtype=np.uint8)
-        ndval = self.scanManager.nominalDepthval
-        for i in range(0,legend_array.shape[0] - 1):
-            if i != 0:
-                k = log10(i/ndval)
-                val =pow(10,k)
-            legend_array[i,1:19 , :] = self.scanManager.colorMapping.lookUpTables["ironfire"][-i-1]
-
-        image = QtGui.QImage(legend_array, legend_array.shape[1], legend_array.shape[0], legend_array.shape[1] * 3,
-                             QtGui.QImage.Format_RGB888)
-        legendPixMap = QtGui.QPixmap(image)
-        legendPixMapItem = QtGui.QGraphicsPixmapItem(legendPixMap)
         scene = QtGui.QGraphicsScene()
-        scene.addItem(legendPixMapItem)
+        items = self.scanManager.getColorLegendItems(400)
+        for item in items:
+            scene.addItem(item)
         self.graphicsView_2.setScene(scene)
-        self.graphicsView_2.fitInView(scene.sceneRect())
+        self.graphicsView_2.setMinimumHeight(scene.sceneRect().height())
 
 
 

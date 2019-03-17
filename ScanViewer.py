@@ -112,7 +112,6 @@ class ScanViewer(QtGui.QGraphicsView):
             val = self.verticalScrollBar().value()
             offset_ratio = (val - min)/float(scroll_bar_range)
             vertical_offset = self.scanScene.height() * offset_ratio
-
         horizontal_offset = 0
         if self.horizontalScrollBar().isVisible():
             page_step = self.horizontalScrollBar().pageStep()
@@ -129,6 +128,7 @@ class ScanViewer(QtGui.QGraphicsView):
                 self.sceneItems[i].setY(self.pos[i][1] + vertical_offset)
             if self.lockPos[i][0] == True:
                 self.sceneItems[i].setX(self.pos[i][0] + horizontal_offset)
+
         self.scanPixItem.setZValue(1)
         self.scanScene.addItem(self.scanPixItem)
         self.scanScene.update()

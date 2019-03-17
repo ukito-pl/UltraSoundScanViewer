@@ -189,6 +189,9 @@ p, li { white-space: pre-wrap; }
           <height>16777215</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color:  rgba(255, 255, 255, 0)</string>
+        </property>
         <property name="lineWidth">
          <number>0</number>
         </property>
@@ -198,7 +201,7 @@ p, li { white-space: pre-wrap; }
        <widget class="QGraphicsView" name="graphicsView_2">
         <property name="maximumSize">
          <size>
-          <width>30</width>
+          <width>60</width>
           <height>16777215</height>
          </size>
         </property>
