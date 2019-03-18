@@ -35,11 +35,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
         self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.showSelection)
-
         self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
 
         self.connect(self.scanManager, SIGNAL('showScan(PyQt_PyObject)'), self.showScan)
         self.connect(self.scanManager, SIGNAL('updateScan(PyQt_PyObject)'), self.updateScan)
+
+        self.connect(self.selectionDialog, SIGNAL('evaluateMAOP(PyQt_PyObject)'), self.scanManager.evaluateMAOP)
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
 
@@ -54,7 +55,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         w = rect[2]
         h = rect[3]
         self.selectionDialog.show()
-        self.selectionDialog.showImage(self.scanManager.imgScanColoredRearranged[y:y+h, x:x+w, :],self.scanViewer.aspect_ratio)
+        self.selectionDialog.showImage(rect,self.scanManager.imgScanColoredRearranged[y:y+h, x:x+w, :],self.scanViewer.aspect_ratio)
         self.selectionDialog.activateWindow()
 
     def mousePositionChanged(self, QMouseEvent):
@@ -119,13 +120,6 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanViewer.setScanImage(image)
 
         self.addScaleBar(7)
-
-        hor_bar_height = self.scanViewer.horizontalScrollBar().height()
-
-        #self.scanViewer.setMinimumSize(QtCore.QSize(0, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
-        #self.scanViewer.setMaximumSize(QtCore.QSize(16777215, self.scanViewer.scanScene.height() + hor_bar_height + self.scanViewer.frameWidth()*2))
-        #self.graphicsView_2.setMaximumHeight(self.scanViewer.height())
-        #self.verticalSlider.setMaximumHeight(self.scanViewer.height())
 
         self.rearrangeScan()
 

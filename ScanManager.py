@@ -5,6 +5,7 @@ from PyQt4 import QtGui
 
 from LoadScansThread import LoadScansThread
 from ColorMapping import ColorMapping
+from EvaluatorMAOP import EvaulatorMAOP
 
 class ScanManager(QObject):
     def __init__(self):
@@ -30,18 +31,19 @@ class ScanManager(QObject):
         self.nominalDepthval = 0
         self.dataPerFrame = 256
         self.resolutionRatio = 1 #transverse resolution / longitudinal resolution
+        self.evaluatorMAOP = EvaulatorMAOP()
 
     def createDefaultColorScale(self):
         self.colorMapping.addScale("ironfire")
-        self.colorMapping.setColorAt("ironfire", 255, QtGui.QColor(0, 64, 255))
-        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.5, QtGui.QColor(0, 0, 255))
+        self.colorMapping.setColorAt("ironfire", 255, QtGui.QColor(0, 191, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.5, QtGui.QColor(0, 191, 255))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.2, QtGui.QColor(0, 128, 255))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 1.1, QtGui.QColor(0, 128, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval, QtGui.QColor(0, 255, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.9, QtGui.QColor(255, 255, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.7, QtGui.QColor(255, 128, 0))
-        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.5, QtGui.QColor(255, 20, 0))
-        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.1, QtGui.QColor(255, 0, 0))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.5, QtGui.QColor(255, 0, 0))
+        self.colorMapping.setColorAt("ironfire", self.nominalDepthval * 0.2, QtGui.QColor(255, 0, 0))
         self.colorMapping.setColorAt("ironfire", 0, QtGui.QColor(0, 0, 0))
 
     def getXYD(self,pixel_x,pixel_y):
@@ -219,8 +221,8 @@ class ScanManager(QObject):
         items = []
         ndval = self.nominalDepthval
         max_dval = ndval * 1.5
-        min_dval = ndval * 0.5
-        scale_values = np.array([0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5]) * ndval
+        min_dval = ndval * 0.01
+        scale_values = np.array([0,0.25,0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5]) * ndval
         scale_values = [int(x) for x in scale_values]
         step = legend_height / (max_dval - min_dval + 1)
         legend_array = np.zeros((legend_height, 20, 4), dtype=np.uint8)
@@ -265,3 +267,11 @@ class ScanManager(QObject):
         items.append(legendPixMapItem)
 
         return items
+
+    def evaluateMAOP(self,rect):
+        x = rect[0]
+        y = rect[1]
+        w = rect[2]
+        h = rect[3]
+        data_to_eval = [self.c * el + self.d for el in self.imgScanRearranged[y:y+h, x:x+w, 0]]
+        self.evaluatorMAOP.evaluateMAOP(data_to_eval, self.nominalDepth,self.diameter)
