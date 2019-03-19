@@ -7,6 +7,7 @@ import numpy as np
 from LoadScansThread import LoadScansThread
 from PyQt4 import QtCore
 import time
+import pyqtgraph.opengl as gl
 
 
 import MainWindow # This file holds our MainWindow and all design related things
@@ -43,6 +44,22 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.selectionDialog, SIGNAL('evaluateMAOP(PyQt_PyObject)'), self.scanManager.evaluateMAOP)
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
+
+        ukl_wsp_line_length = 3
+        ukl_wsp_line_width = 4
+        ukl_wsp_x = gl.GLLinePlotItem(pos=np.array([[0, 0, 0], [ukl_wsp_line_length, 0, 0]]), color=[1, 0, 0, 1],
+                                      width=ukl_wsp_line_width,
+                                      antialias=True, mode='lines')
+        ukl_wsp_y = gl.GLLinePlotItem(pos=np.array([[0, 0, 0], [0, ukl_wsp_line_length, 0]]), color=[0, 1, 0, 1],
+                                      width=ukl_wsp_line_width,
+                                      antialias=True, mode='lines')
+        ukl_wsp_z = gl.GLLinePlotItem(pos=np.array([[0, 0, 0], [0, 0, ukl_wsp_line_length]]), color=[0, 0, 1, 1],
+                                      width=ukl_wsp_line_width,
+                                      antialias=True, mode='lines')
+        self.graphicsView.addItem(ukl_wsp_x)
+        self.graphicsView.addItem(ukl_wsp_y)
+        self.graphicsView.addItem(ukl_wsp_z)
+        self.graphicsView.setBackgroundColor([128,128,128,255])
 
     def closeEvent(self, QCloseEvent):
         self.selectionDialog.close()

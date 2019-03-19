@@ -152,7 +152,6 @@ class ScanManager(QObject):
         scaleLineImg = 0 * np.ones(
             (scale_line_height, (self.imgScan.shape[1] * scale).__int__(), 3),
             dtype=np.uint8)
-        # print spacing_px
         for i in range(((self.imgScan.shape[1] * scale) // spacing_px).__int__()):
             left_bound = (i * spacing_px).__int__()
             right_bound = (i * spacing_px + spacing_px).__int__()
@@ -173,9 +172,9 @@ class ScanManager(QObject):
         items.append([pixItem,False,True])
 
         for i in range(((self.imgScan.shape[1] * scale) // spacing_px).__int__()):
-            x = ((i * spacing_px_org.__int__() + self.startFrame) * deltaX) / 1000  # in meters
+            x = ((i * spacing_px_org + self.startFrame) * deltaX) / 1000  # in meters
 
-            textItem = QtGui.QGraphicsTextItem(x.__str__())
+            textItem = QtGui.QGraphicsTextItem("{:.3F}".format(x))
             font = QtGui.QFont()
             font.setPointSize(8)
             textItem.setFont(font)
@@ -274,4 +273,4 @@ class ScanManager(QObject):
         w = rect[2]
         h = rect[3]
         data_to_eval = [self.c * el + self.d for el in self.imgScanRearranged[y:y+h, x:x+w, 0]]
-        self.evaluatorMAOP.evaluateMAOP(data_to_eval, self.nominalDepth,self.diameter)
+        self.evaluatorMAOP.evaluateMAOP(data_to_eval, self.nominalDepth,self.diameter, self.deltaX)
