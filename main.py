@@ -15,7 +15,7 @@ import MainWindow # This file holds our MainWindow and all design related things
 from options import OptionsDialog
 from selection import SelectionDialog
 from ScanManager import ScanManager
-from math import log10
+from math import sqrt
 from Miscellaneous import isclose
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -45,20 +45,31 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
 
-        ukl_wsp_line_length = 3
-        ukl_wsp_line_width = 4
-        ukl_wsp_x = gl.GLLinePlotItem(pos=np.array([[0, 0, 0], [ukl_wsp_line_length, 0, 0]]), color=[1, 0, 0, 1],
-                                      width=ukl_wsp_line_width,
-                                      antialias=True, mode='lines')
-        ukl_wsp_y = gl.GLLinePlotItem(pos=np.array([[0, 0, 0], [0, ukl_wsp_line_length, 0]]), color=[0, 1, 0, 1],
-                                      width=ukl_wsp_line_width,
-                                      antialias=True, mode='lines')
-        ukl_wsp_z = gl.GLLinePlotItem(pos=np.array([[0, 0, 0], [0, 0, ukl_wsp_line_length]]), color=[0, 0, 1, 1],
-                                      width=ukl_wsp_line_width,
-                                      antialias=True, mode='lines')
-        self.graphicsView.addItem(ukl_wsp_x)
-        self.graphicsView.addItem(ukl_wsp_y)
-        self.graphicsView.addItem(ukl_wsp_z)
+
+        ## Add a grid to the view
+        g = gl.GLGridItem()
+        g.scale(2, 2, 1)
+        g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
+        self.graphicsView.addItem(g)
+
+        x = np.linspace(-1, 1, 50)
+        y = np.linspace(-8, 8, 50)
+        z = np.zeros((50,50))
+        for i in range(len(x)):
+            for j in range(len(y)):
+                z[i,j] = - sqrt(abs(1 - x[i]*x[i]))
+        plot3d = gl.GLSurfacePlotItem(x=x, y=y, z=z)
+
+        x = np.linspace(1, -1, 50)
+        y = np.linspace(8, -8, 50)
+        z = np.zeros((50, 50))
+        for i in range(len(x)):
+            for j in range(len(y)):
+                z[i, j] = sqrt(abs(1 - x[i] * x[i]))
+        plot3d2 = gl.GLSurfacePlotItem(x=x, y=y, z=z)
+
+        self.graphicsView.addItem(plot3d)
+        self.graphicsView.addItem(plot3d2)
         self.graphicsView.setBackgroundColor([128,128,128,255])
 
     def closeEvent(self, QCloseEvent):
