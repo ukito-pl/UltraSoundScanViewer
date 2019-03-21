@@ -2,7 +2,8 @@ import numpy as np
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
-
+import pyqtgraph.opengl as gl
+from math import sqrt
 from LoadScansThread import LoadScansThread
 from ColorMapping import ColorMapping
 from EvaluatorMAOP import EvaulatorMAOP
@@ -123,27 +124,6 @@ class ScanManager(QObject):
                              rearranged_array.shape[1] * 3,
                              QtGui.QImage.Format_RGB888)
         self.emit(SIGNAL('updateScan(PyQt_PyObject)'), image)
-
-    def getScaleBarImage(self,spacing, scale_line_height, scale, deltaX):
-        spacing_px_org = spacing / deltaX * 1000  # because deltaX is in mm
-        spacing_px = float(spacing_px_org * scale)
-        scaleLineImg = 0 * np.ones(
-            (scale_line_height, (self.imgScan.shape[1] * scale).__int__(), 3),
-            dtype=np.uint8)
-        # print spacing_px
-        for i in range(((self.imgScan.shape[1] * scale) // spacing_px).__int__()):
-            left_bound = (i * spacing_px).__int__()
-            right_bound = (i * spacing_px + spacing_px).__int__()
-            if i.__mod__(2) == 1:
-                scaleLineImg[1:scale_line_height - 1, left_bound:right_bound] = 50 * np.ones(
-                    (1, right_bound - left_bound, 3))
-            else:
-                scaleLineImg[1:scale_line_height - 1, left_bound:right_bound] = 255 * np.ones(
-                    (1, right_bound - left_bound, 3))
-
-        scaleLineImage = QtGui.QImage(scaleLineImg, scaleLineImg.shape[1], scaleLineImg.shape[0],
-                                      scaleLineImg.shape[1] * 3, QtGui.QImage.Format_RGB888)
-        return scaleLineImage
 
     def getScaleBarItems(self,spacing, scale_line_height, scale, deltaX):
         items = []
@@ -274,3 +254,43 @@ class ScanManager(QObject):
         h = rect[3]
         data_to_eval = [self.c * el + self.d for el in self.imgScanRearranged[y:y+h, x:x+w, 0]]
         self.evaluatorMAOP.evaluateMAOP(data_to_eval, self.nominalDepth,self.diameter, self.deltaX)
+
+    def get3DViewPipeItems(self):
+        items = []
+        N = self.dataPerFrame
+        L = 1000
+        x1 = np.linspace(-1, 1, N/2)
+        x2 = np.linspace(1, -1, N/2 +1)
+        y = np.linspace(8, -8, L)
+        z = np.zeros((N, L))
+        x = np.concatenate((x1,x2[1:N/2+1]),axis=0)
+        for i in range(len(x)):
+            for j in range(len(y)):
+                if i < N/2:
+                    z[i, j] =- sqrt(abs(1 - x[i] * x[i]))
+                else:
+                    z[i, j] = sqrt(abs(1 - x[i] * x[i]))
+
+        colors = np.ones((len(x),len(y),4))
+        for i in range(len(x)):
+            for j in range(len(y)):
+                colors[i,j,0:3] = [(float(w)/255) for w in self.imgScanColoredRearranged[i,self.imgScanColoredRearranged.shape[1]/2 + j]]
+        #print x,x.shape,y,z
+        plot3d2 = gl.GLSurfacePlotItem(x=x, y=y, z=z, shader='shaded', colors=colors)
+        items.append(plot3d2)
+
+
+        # x = np.array([0, 1 ])
+        # y = np.array([0, 1])
+        # z = np.array([[1, 1], [1, 1]])
+        # colors = np.zeros((2, 2, 4))
+        # colors[0, 0, :] = np.array([1, 0, 0, 1.0])
+        # colors[0, 1, :] = np.array([0, 0.5, 0, 1.0])
+        # colors[1, 0, :] = np.array([0, 0.5, 0, 1.0])
+        # colors[1, 1, :] = np.array([0, 0.5, 0, 1.0])
+        #
+        # print colors
+        # plot3d3 = gl.GLSurfacePlotItem(x=x, y=y, z=z, colors=colors)
+        # items.append(plot3d3)
+
+        return items

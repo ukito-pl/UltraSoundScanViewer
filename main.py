@@ -15,7 +15,7 @@ import MainWindow # This file holds our MainWindow and all design related things
 from options import OptionsDialog
 from selection import SelectionDialog
 from ScanManager import ScanManager
-from math import sqrt
+
 from Miscellaneous import isclose
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -46,30 +46,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
 
 
-        ## Add a grid to the view
-        g = gl.GLGridItem()
-        g.scale(2, 2, 1)
-        g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
-        self.graphicsView.addItem(g)
 
-        x = np.linspace(-1, 1, 50)
-        y = np.linspace(-8, 8, 50)
-        z = np.zeros((50,50))
-        for i in range(len(x)):
-            for j in range(len(y)):
-                z[i,j] = - sqrt(abs(1 - x[i]*x[i]))
-        plot3d = gl.GLSurfacePlotItem(x=x, y=y, z=z)
 
-        x = np.linspace(1, -1, 50)
-        y = np.linspace(8, -8, 50)
-        z = np.zeros((50, 50))
-        for i in range(len(x)):
-            for j in range(len(y)):
-                z[i, j] = sqrt(abs(1 - x[i] * x[i]))
-        plot3d2 = gl.GLSurfacePlotItem(x=x, y=y, z=z)
-
-        self.graphicsView.addItem(plot3d)
-        self.graphicsView.addItem(plot3d2)
         self.graphicsView.setBackgroundColor([128,128,128,255])
 
     def closeEvent(self, QCloseEvent):
@@ -157,6 +135,16 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanViewer.moveScaleBar()
         self.scanViewer.moveScaleBar()
         self.colorLegend("ironfire")
+
+        #3dview
+        g = gl.GLGridItem()
+        g.scale(2, 2, 1)
+        g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
+        self.graphicsView.addItem(g)
+
+        items = self.scanManager.get3DViewPipeItems()
+        for item in items:
+            self.graphicsView.addItem(item)
 
     def updateScan(self,image):
         self.scanViewer.setScanImage(image)
