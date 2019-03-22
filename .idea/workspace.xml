@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="710e25e5-8c9d-400c-a9f5-050efc556a7c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoadScansThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/LoadScansThread.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ScanManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/ScanManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/defaultOptions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/defaultOptions.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,11 +31,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1050">
-              <caret line="72" column="51" selection-start-line="72" selection-start-column="38" selection-end-line="72" selection-end-column="51" />
+            <state relative-caret-position="679">
+              <caret line="69" column="18" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
-                <marker date="1552412875120" expanded="true" signature="1721:1722" ph="..." />
+                <marker date="1553262017446" expanded="true" signature="1851:1852" ph="..." />
               </folding>
             </state>
           </provider>
@@ -41,8 +44,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="138" column="8" selection-start-line="138" selection-start-column="8" selection-end-line="138" selection-end-column="8" />
+            <state relative-caret-position="375">
+              <caret line="150" selection-start-line="150" selection-end-line="150" />
               <folding>
                 <element signature="e#25#85#0" expanded="true" />
               </folding>
@@ -71,8 +74,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ScanManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="293" column="31" lean-forward="true" selection-start-line="293" selection-start-column="31" selection-end-line="293" selection-end-column="31" />
+            <state relative-caret-position="457">
+              <caret line="317" column="67" selection-start-line="317" selection-start-column="67" selection-end-line="317" selection-end-column="67" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -130,13 +133,13 @@
         <option value="$PROJECT_DIR$/options.py" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/MyGraphicsView.py" />
-        <option value="$PROJECT_DIR$/LoadScansThread.py" />
         <option value="$PROJECT_DIR$/MainWindow.py" />
         <option value="$PROJECT_DIR$/ColorMapping.py" />
         <option value="$PROJECT_DIR$/Miscellaneous.py" />
         <option value="$PROJECT_DIR$/ScanViewer.py" />
         <option value="$PROJECT_DIR$/selection.py" />
         <option value="$PROJECT_DIR$/EvaluatorMAOP.py" />
+        <option value="$PROJECT_DIR$/LoadScansThread.py" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/ScanManager.py" />
       </list>
@@ -154,6 +157,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -169,7 +173,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -251,7 +254,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3291536" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4989011" visible="true" weight="0.2998955" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4989011" weight="0.30825496" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39811912" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -324,17 +327,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1050">
-          <caret line="72" column="51" selection-start-line="72" selection-start-column="38" selection-end-line="72" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-            <marker date="1552412875120" expanded="true" signature="1721:1722" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MainWindow.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2670">
@@ -359,6 +351,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="150" selection-start-line="150" selection-end-line="150" />
+          <folding>
+            <element signature="e#25#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="679">
+          <caret line="69" column="18" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+            <marker date="1553262017446" expanded="true" signature="1851:1852" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/EvaluatorMAOP.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
@@ -369,20 +382,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="138" column="8" selection-start-line="138" selection-start-column="8" selection-end-line="138" selection-end-column="8" />
-          <folding>
-            <element signature="e#25#85#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ScanManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="293" column="31" lean-forward="true" selection-start-line="293" selection-start-column="31" selection-end-line="293" selection-end-column="31" />
+        <state relative-caret-position="457">
+          <caret line="317" column="67" selection-start-line="317" selection-start-column="67" selection-end-line="317" selection-end-column="67" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

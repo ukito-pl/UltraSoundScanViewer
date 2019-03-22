@@ -3,7 +3,7 @@ from PyQt4.QtCore import SIGNAL
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 import pyqtgraph.opengl as gl
-from math import sqrt
+from math import sqrt,cos,pi
 from LoadScansThread import LoadScansThread
 from ColorMapping import ColorMapping
 from EvaluatorMAOP import EvaulatorMAOP
@@ -11,6 +11,7 @@ from EvaluatorMAOP import EvaulatorMAOP
 class ScanManager(QObject):
     def __init__(self):
         super(self.__class__,self).__init__()
+        self.distArray = -1
         self.imgScan = -1
         self.imgScanRearranged = -1
         self.imgScanColored = -1
@@ -91,8 +92,10 @@ class ScanManager(QObject):
         self.createDefaultColorScale()
 
 
-    def produceImage(self,imag):
-        self.imgScan = np.array(imag)
+    def produceImage(self,data):
+        self.distArray = np.array(data[1])
+        print self.distArray
+        self.imgScan = np.array(data[0])
         self.imgScanRearranged = self.imgScan
         self.imgScanColored = self.colorScan(self.imgScan, "ironfire")
         # print self.imgScan, self.imgScan.shape
@@ -258,39 +261,86 @@ class ScanManager(QObject):
     def get3DViewPipeItems(self):
         items = []
         N = self.dataPerFrame
-        L = 1000
-        x1 = np.linspace(-1, 1, N/2)
-        x2 = np.linspace(1, -1, N/2 +1)
-        y = np.linspace(8, -8, L)
+        length = 1000 #in millimeters
+        L = int(length/self.deltaX)
+        r = 1 #in scene coordinates
+        nominal_r_mm = self.diameter/2
+        base = 60 #mm
+        l = float(length/nominal_r_mm*r)
+        phi = np.linspace(0,2*pi,N)
+        x = np.zeros((N,1))
+        y = np.linspace(0, l, L)
         z = np.zeros((N, L))
-        x = np.concatenate((x1,x2[1:N/2+1]),axis=0)
-        for i in range(len(x)):
+        for i in range(len(phi)):
             for j in range(len(y)):
+                r_mm = base + self.a * self.distArray[i, self.distArray.shape[1]/2 + j] + self.b
+                #print self.distArray[i, self.distArray.shape[1]/2 + j], r_mm
+                r = float(r_mm/nominal_r_mm)
+                #print r
+                x[i] = r * cos(phi[i])
+
                 if i < N/2:
-                    z[i, j] =- sqrt(abs(1 - x[i] * x[i]))
+                    z[i, j] =- sqrt(abs(r*r - x[i] * x[i]))
                 else:
-                    z[i, j] = sqrt(abs(1 - x[i] * x[i]))
+                    z[i, j] = sqrt(abs(r*r - x[i] * x[i]))
 
         colors = np.ones((len(x),len(y),4))
         for i in range(len(x)):
             for j in range(len(y)):
-                colors[i,j,0:3] = [(float(w)/255) for w in self.imgScanColoredRearranged[i,self.imgScanColoredRearranged.shape[1]/2 + j]]
+                if self.distArray[i, self.distArray.shape[1]/2 + j] == 255:
+                    colors[i, j, 3] = 0
+
+
+                colors[i,j,0:3] = [(float(w)/255) for w in self.imgScanColored[i,self.imgScanColored.shape[1]/2 + j]]
         #print x,x.shape,y,z
-        plot3d2 = gl.GLSurfacePlotItem(x=x, y=y, z=z, shader='shaded', colors=colors)
+        plot3d2 = gl.GLSurfacePlotItem(x=x, y=y, z=z, colors=colors)
+        plot3d2.setGLOptions('translucent')
         items.append(plot3d2)
+        verts = np.zeros((2*len(x),3))
+        faces =  np.zeros((2*len(x)-2,3),dtype=np.int32)
+        colors = np.ones((2*len(x),4))
+
+        verts[0, :] = [x[0], 0, z[0, 0]]
+        verts[1, :] = [x[0], 1, z[0, 1]]
+        colors[0, 0:3] = [(float(w)/255) for w in self.imgScanColored[0,self.imgScanColored.shape[1]/2 + 0 ]]
+        colors[1, 0:3] = [(float(w)/255) for w in self.imgScanColored[0,self.imgScanColored.shape[1]/2 + 1 ]]
+        j = 2
+        f = 0
+        for i in range(1,len(x)):
+            verts[j,:] = [x[i],0,z[i,0]]
+            colors[j, 0:3] = [(float(w) / 255) for w in self.imgScanColored[i, self.imgScanColored.shape[1] / 2]]
+
+            if  self.distArray[i, self.distArray.shape[1] / 2 + 0] != 255 and self.distArray[i-1, self.distArray.shape[1] / 2 + 0] != 255 and self.distArray[i-1, self.distArray.shape[1] / 2 + 1] != 255:
+                faces[f,:] = [j-2,j-1,j]
+            verts[j + 1, :] = [x[i], 1, z[i, 1]]
+            colors[j + 1, 0:3] = [(float(w) / 255) for w in
+                                  self.imgScanColored[i, self.imgScanColored.shape[1] / 2 + 1]]
+            if self.distArray[i, self.distArray.shape[1] / 2 + 1] != 255 and self.distArray[i, self.distArray.shape[1] / 2 + 0] != 255 and self.distArray[i-1, self.distArray.shape[1] / 2 + 1] != 255:
+                faces[f+1, :] = [j +1 , j , j-1]
 
 
-        # x = np.array([0, 1 ])
-        # y = np.array([0, 1])
-        # z = np.array([[1, 1], [1, 1]])
-        # colors = np.zeros((2, 2, 4))
-        # colors[0, 0, :] = np.array([1, 0, 0, 1.0])
-        # colors[0, 1, :] = np.array([0, 0.5, 0, 1.0])
-        # colors[1, 0, :] = np.array([0, 0.5, 0, 1.0])
-        # colors[1, 1, :] = np.array([0, 0.5, 0, 1.0])
-        #
-        # print colors
-        # plot3d3 = gl.GLSurfacePlotItem(x=x, y=y, z=z, colors=colors)
-        # items.append(plot3d3)
+            j = j+2
+            f = f+2
+        # verts = np.array([
+        #     [0.5, 0.5, 0.5],
+        #     [2, 0, 0],
+        #     [1, 2, 0],
+        #     [1, 1, 1],
+        # ])
+        # faces = np.array([
+        #     [0, 1, 2],
+        #     [0, 2, 3],
+        # ])
+        # colors = np.array([
+        #     [1, 0, 0, 0.3],
+        #     [0, 1, 0, 0.3],
+        #     [0, 0, 1, 0.3],
+        #     [1, 1, 0, 0.3]
+        # ])
+        print verts,faces,colors
+        ## Mesh item will automatically compute face normals.
+        m1 = gl.GLMeshItem(vertexes=verts, faces=faces, vertexColors=colors, smooth=False)
+        m1.translate(5, 5, 0)
+        items.append(m1)
 
         return items

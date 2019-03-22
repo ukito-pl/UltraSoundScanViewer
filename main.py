@@ -137,6 +137,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.colorLegend("ironfire")
 
         #3dview
+        if self.graphicsView.items.__len__() > 0:
+            for i in range(0, self.graphicsView.items.__len__()):
+                self.graphicsView.items.__delitem__(0)
         g = gl.GLGridItem()
         g.scale(2, 2, 1)
         g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
@@ -145,6 +148,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         items = self.scanManager.get3DViewPipeItems()
         for item in items:
             self.graphicsView.addItem(item)
+
 
     def updateScan(self,image):
         self.scanViewer.setScanImage(image)

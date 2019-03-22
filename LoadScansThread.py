@@ -11,7 +11,7 @@ class LoadScansThread(QThread):
         self.data_frame_length = 517    #in bytes
         self.data_length = 256          #
         self.start_byte = 261           #
-
+        self.start_byte_dist = 5
         #scan variables
         self.start_frame = start_frame
         self.end_frame = end_frame
@@ -29,6 +29,7 @@ class LoadScansThread(QThread):
         #print "run thread"
         #print self.start_frame, self.end_frame
         img = np.ones((self.data_length, self.end_frame - self.start_frame + 1, 3), dtype=np.uint8)
+        dist = np.ones((self.data_length, self.end_frame - self.start_frame + 1), dtype=np.uint8)
         end_file_index = (self.end_frame/self.frames_in_file).__int__()
         end_file_frames_to_get =  self.end_frame - end_file_index*self.frames_in_file + 1
         start_file_index =  (self.start_frame/self.frames_in_file).__int__()
@@ -57,7 +58,12 @@ class LoadScansThread(QThread):
                 count = start_file_frames_to_get + (it2) * self.frames_in_file
             #print count
             while ( it < count):
-                f.seek(self.start_byte,1)
+                f.seek(self.start_byte_dist, 1)
+                f1 = f.read(self.data_length)
+                b = bytearray()
+                b.extend(f1)
+                dist[:, it] = b
+                #f.seek(self.start_byte,1)
                 f1 = f.read(self.data_length)
                 b = bytearray()
                 b.extend(f1)
@@ -70,4 +76,4 @@ class LoadScansThread(QThread):
             it2 = it2 + 1
 
 
-        self.emit(SIGNAL('scansLoaded(PyQt_PyObject)'), img)
+        self.emit(SIGNAL('scansLoaded(PyQt_PyObject)'), [img,dist])
