@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="710e25e5-8c9d-400c-a9f5-050efc556a7c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoadScansThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/LoadScansThread.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ScanManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/ScanManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/defaultOptions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/defaultOptions.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="679">
+            <state relative-caret-position="1005">
               <caret line="69" column="18" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
@@ -44,7 +41,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
+            <state relative-caret-position="2010">
               <caret line="150" selection-start-line="150" selection-end-line="150" />
               <folding>
                 <element signature="e#25#85#0" expanded="true" />
@@ -74,8 +71,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ScanManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="457">
-              <caret line="317" column="67" selection-start-line="317" selection-start-column="67" selection-end-line="317" selection-end-column="67" />
+            <state relative-caret-position="1403">
+              <caret line="263" column="20" selection-start-line="263" selection-start-column="20" selection-end-line="263" selection-end-column="20" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -157,7 +154,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -173,6 +169,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -254,7 +251,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3291536" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4989011" weight="0.30825496" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4989011" visible="true" weight="0.30825496" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39811912" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -262,7 +259,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32810867" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50109893" side_tool="true" weight="0.32875144" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.34378266" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.35414425" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -327,6 +324,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1005">
+          <caret line="69" column="18" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+            <marker date="1553262017446" expanded="true" signature="1851:1852" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2010">
+          <caret line="150" selection-start-line="150" selection-end-line="150" />
+          <folding>
+            <element signature="e#25#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MainWindow.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2670">
@@ -351,27 +369,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="150" selection-start-line="150" selection-end-line="150" />
-          <folding>
-            <element signature="e#25#85#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LoadScansThread.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="679">
-          <caret line="69" column="18" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-            <marker date="1553262017446" expanded="true" signature="1851:1852" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/EvaluatorMAOP.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
@@ -384,8 +381,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ScanManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="457">
-          <caret line="317" column="67" selection-start-line="317" selection-start-column="67" selection-end-line="317" selection-end-column="67" />
+        <state relative-caret-position="1403">
+          <caret line="263" column="20" selection-start-line="263" selection-start-column="20" selection-end-line="263" selection-end-column="20" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
