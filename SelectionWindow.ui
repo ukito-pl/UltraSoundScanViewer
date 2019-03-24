@@ -6,31 +6,111 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>321</height>
+    <width>816</width>
+    <height>456</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0" rowspan="3">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Parametry służące do analizy:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>Zmień parametry</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Oblicz MAOP</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="1" rowspan="3">
+    <widget class="QGraphicsView" name="graphicsView"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>Wykryj korozje</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Paramnetry wybranej korozji</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>- Długość:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>- Maksymalna głębokość:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QGraphicsView" name="graphicsView"/>
-   </item>
-   <item row="0" column="1">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Oblicz</string>
      </property>
     </widget>
    </item>

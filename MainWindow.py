@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(691, 529)
+        MainWindow.resize(790, 766)
         self.centralwidget = QtGui.QWidget(MainWindow)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -111,7 +111,7 @@ class Ui_MainWindow(object):
         self.pushButton_3d.setObjectName(_fromUtf8("pushButton_3d"))
         self.verticalLayout.addWidget(self.pushButton_3d)
         self.graphicsView = GLViewWidget(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.graphicsView.sizePolicy().hasHeightForWidth())
@@ -122,7 +122,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.graphicsView)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 691, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 790, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)

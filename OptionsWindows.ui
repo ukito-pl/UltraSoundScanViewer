@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
-    <height>407</height>
+    <width>667</width>
+    <height>573</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -19,80 +19,232 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0" colspan="2">
-    <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <widget class="Line" name="line_2">
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_30">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Dane wejściowe</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Ścieżka do pliku:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QTextEdit" name="textEdit_url">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>27</height>
+      </size>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Struktura ramki danych</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <spacer name="verticalSpacer_2">
+      <widget class="QLabel" name="label_23">
+       <property name="minimumSize">
+        <size>
+         <width>260</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Odległość</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
-         <height>40</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Ścieżka do pliku:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="textEdit_url">
+      <widget class="QLabel" name="label_22">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>260</width>
          <height>0</height>
         </size>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>27</height>
-        </size>
+       <property name="text">
+        <string>Grubość:</string>
        </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="3" column="0" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="1">
-      <widget class="QTextEdit" name="textEdit_diameter">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   <item row="6" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_24">
+       <property name="text">
+        <string>Od bajtu:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item>
+      <widget class="QSpinBox" name="spinBox">
+       <property name="maximum">
+        <number>999</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_25">
+       <property name="text">
+        <string>Do bajtu:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBox_2">
+       <property name="maximum">
+        <number>999</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_27">
+       <property name="text">
+        <string>Od bajtu:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBox_4">
+       <property name="maximum">
+        <number>999</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_26">
+       <property name="text">
+        <string>Do bajtu:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBox_3">
+       <property name="maximum">
+        <number>999</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="0">
+    <widget class="Line" name="line_3">
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_28">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Parametry pomiaru</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="5" rowspan="2">
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>Rozdzielczość wzdłużna 
+pomiaru:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6" rowspan="2">
       <widget class="QTextEdit" name="textEdit_deltaX">
        <property name="minimumSize">
         <size>
@@ -115,22 +267,191 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Nominalna grubość
-ścianki</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
+     <item row="0" column="7" rowspan="2">
       <widget class="QLabel" name="label_13">
        <property name="text">
         <string>mm</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>A:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QTextEdit" name="textEdit_A">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_3">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>B:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QTextEdit" name="textEdit_B">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>C:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QTextEdit" name="textEdit_C">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="label_5">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>D:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QTextEdit" name="textEdit_D">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="5">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>Nominalna odległość
+czujników od ścianki:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="6">
       <widget class="QTextEdit" name="textEdit_dist">
        <property name="minimumSize">
         <size>
@@ -153,7 +474,54 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="7">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>mm</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Współczynniki:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="10" column="0">
+    <widget class="Line" name="line_4">
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_29">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Parametry rurociągu</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
         <string>Zewnętrzna średnica
@@ -161,22 +529,8 @@ rurociągu:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="6">
-      <widget class="QLabel" name="label_18">
-       <property name="text">
-        <string>%</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QLabel" name="label_17">
-       <property name="text">
-        <string>Próg korozji:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5">
-      <widget class="QTextEdit" name="textEdit_corr_treshold">
+     <item row="0" column="1">
+      <widget class="QTextEdit" name="textEdit_diameter">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -198,59 +552,21 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="2" column="4">
-      <widget class="QLabel" name="label_20">
-       <property name="text">
-        <string>Współczynnik F:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="5">
-      <widget class="QTextEdit" name="textEdit_F">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_15">
-       <property name="text">
-        <string>Nominalna odległość
-czujników od ścianki</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLabel" name="label_16">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_10">
        <property name="text">
         <string>mm</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="4">
+     <item row="0" column="3">
       <widget class="QLabel" name="label_19">
        <property name="text">
         <string>SMYS:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="5">
+     <item row="0" column="4">
       <widget class="QTextEdit" name="textEdit_smys">
        <property name="minimumSize">
         <size>
@@ -273,7 +589,7 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="1" column="6">
+     <item row="0" column="5">
       <widget class="QComboBox" name="comboBox">
        <property name="maximumSize">
         <size>
@@ -308,7 +624,15 @@ p, li { white-space: pre-wrap; }
        </item>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Nominalna grubość
+ścianki:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
       <widget class="QTextEdit" name="textEdit_depth">
        <property name="minimumSize">
         <size>
@@ -331,52 +655,7 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="3" column="4">
-      <widget class="QLabel" name="label_21">
-       <property name="text">
-        <string>Współczynnik T:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="5">
-      <widget class="QTextEdit" name="textEdit_T">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_14">
-       <property name="text">
-        <string>Odległosć pomiędzy
-pomiarami:</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="2">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>mm</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
       <widget class="QLabel" name="label_11">
        <property name="text">
         <string>mm</string>
@@ -384,140 +663,14 @@ pomiarami:</string>
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="1">
-      <widget class="QTextEdit" name="textEdit_C">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QTextEdit" name="textEdit_D">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_3">
-       <property name="maximumSize">
-        <size>
-         <width>20</width>
-         <height>16777215</height>
-        </size>
-       </property>
+      <widget class="QLabel" name="label_20">
        <property name="text">
-        <string>B:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <string>Współczynnik F:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QTextEdit" name="textEdit_B">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="maximumSize">
-        <size>
-         <width>20</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>A:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QTextEdit" name="textEdit_A">
+     <item row="1" column="4">
+      <widget class="QTextEdit" name="textEdit_F">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -540,53 +693,189 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="maximumSize">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Ciśnienie robocze:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QTextEdit" name="textEdit_T_2">
+       <property name="minimumSize">
         <size>
-         <width>20</width>
-         <height>16777215</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
-       <property name="text">
-        <string>C:</string>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QLabel" name="label_5">
+      <widget class="QComboBox" name="comboBox_2">
        <property name="maximumSize">
         <size>
-         <width>20</width>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>Pa</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>hPa</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>bar</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>psi</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>atm</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Współczynnik T:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="4">
+      <widget class="QTextEdit" name="textEdit_T">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="13" column="0">
+    <widget class="Line" name="line_5">
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="label_31">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Pozostałe</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_17">
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>D:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <string>Próg korozji:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="4">
-      <spacer name="horizontalSpacer">
+     <item row="0" column="1">
+      <widget class="QTextEdit" name="textEdit_corr_treshold">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>%</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <spacer name="verticalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>40</height>
         </size>
        </property>
       </spacer>
      </item>
     </layout>
    </item>
-   <item row="5" column="1">
+   <item row="16" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -595,29 +884,6 @@ p, li { white-space: pre-wrap; }
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Współczynniki:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
