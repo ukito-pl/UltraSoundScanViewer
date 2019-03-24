@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
-    <height>573</height>
+    <width>604</width>
+    <height>685</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
     <widget class="Line" name="line_2">
      <property name="lineWidth">
@@ -87,6 +87,37 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="5" column="0">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_32">
+       <property name="text">
+        <string>Długość ramki w bajtach:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spinBox_frame_length">
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="label_23">
@@ -135,7 +166,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_24">
@@ -208,7 +239,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="Line" name="line_3">
      <property name="lineWidth">
       <number>2</number>
@@ -218,7 +249,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="label_28">
      <property name="font">
       <font>
@@ -234,7 +265,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="10" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="5" rowspan="2">
       <widget class="QLabel" name="label_14">
@@ -493,7 +524,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="10" column="0">
+   <item row="11" column="0">
     <widget class="Line" name="line_4">
      <property name="lineWidth">
       <number>2</number>
@@ -503,7 +534,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
+   <item row="12" column="0">
     <widget class="QLabel" name="label_29">
      <property name="font">
       <font>
@@ -519,13 +550,13 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="12" column="0">
+   <item row="13" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
         <string>Zewnętrzna średnica
-rurociągu:</string>
+rurociągu (D):</string>
        </property>
       </widget>
      </item>
@@ -628,7 +659,7 @@ p, li { white-space: pre-wrap; }
       <widget class="QLabel" name="label_12">
        <property name="text">
         <string>Nominalna grubość
-ścianki:</string>
+ścianki (t):</string>
        </property>
       </widget>
      </item>
@@ -695,7 +726,8 @@ p, li { white-space: pre-wrap; }
      <item row="2" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Ciśnienie robocze:</string>
+        <string>Maksymalne dopuszczalne
+ciśnienie robocze (MAOP):</string>
        </property>
       </widget>
      </item>
@@ -789,7 +821,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="13" column="0">
+   <item row="14" column="0">
     <widget class="Line" name="line_5">
      <property name="lineWidth">
       <number>2</number>
@@ -799,7 +831,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="14" column="0">
+   <item row="15" column="0">
     <widget class="QLabel" name="label_31">
      <property name="font">
       <font>
@@ -815,18 +847,18 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="15" column="0">
+   <item row="16" column="0">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
       <widget class="QLabel" name="label_17">
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Próg korozji:</string>
+        <string>Próg korozji (th):</string>
        </property>
       </widget>
      </item>
@@ -873,9 +905,22 @@ p, li { white-space: pre-wrap; }
        </property>
       </spacer>
      </item>
+     <item row="0" column="3">
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </item>
-   <item row="16" column="0">
+   <item row="17" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

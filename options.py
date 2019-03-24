@@ -31,13 +31,14 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.factorF = float(self.textEdit_F.toPlainText().replace('\n', ""))
         self.factorT = float(self.textEdit_T.toPlainText().replace('\n', ""))
         self.corrosionTreshold = float(self.textEdit_corr_treshold.toPlainText().replace('\n', ""))
+        self.frameLength = self.spinBox_frame_length.value()
         f = open('defaultOptions.txt', 'w')
         lines = [self.dataDir, "\n", self.CoefficientA.__str__(), "\n", self.CoefficientB.__str__(),
                  "\n", self.CoefficientC.__str__(), "\n", self.CoefficientD.__str__(), "\n", self.DeltaX.__str__(),
                  "\n", self.Diameter.__str__(),"\n", self.thickness.__str__(),"\n", self.nominalDistance.__str__(),
                  "\n", self.operatingPressure.__str__(), "\n", self.pressureUnitP.__str__(), "\n", self.smys.__str__(),
                  "\n", self.pressureUnitSMYS.__str__(),"\n", self.factorF.__str__(),"\n", self.factorT.__str__(),
-                 "\n", self.corrosionTreshold.__str__()]
+                 "\n", self.corrosionTreshold.__str__(), "\n", self.frameLength.__str__()]
         f.writelines(lines)
         self.distanceStartByte = self.spinBox_dist_b_start.value()
         self.distanceEndByte = self.spinBox_dist_b_end.value()
@@ -50,6 +51,7 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         f.writelines(lines)
         f.close()
         self.updateOptions()
+        self.emit(SIGNAL("accepted()"))
 
     def loadOptions(self):
         f = open('defaultOptions.txt', 'r')
@@ -69,6 +71,7 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.factorF = float(f.readline())
         self.factorT = float(f.readline())
         self.corrosionTreshold = float(f.readline())
+        self.frameLength = int(f.readline())
         f.close()
         f = open('dataStruct.txt', 'r')
         self.distanceStartByte = int(f.readline())
@@ -95,6 +98,7 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.textEdit_F.setText(self.factorF.__str__())
         self.textEdit_T.setText(self.factorT.__str__())
         self.textEdit_corr_treshold.setText(self.corrosionTreshold.__str__())
+        self.spinBox_frame_length.setValue(self.frameLength)
         self.spinBox_dist_b_start.setValue(self.distanceStartByte)
         self.spinBox_dist_b_end.setValue(self.distanceEndByte)
         self.spinBox_thick_b_start.setValue(self.thicknessStartByte)

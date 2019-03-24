@@ -13,7 +13,7 @@ import pyqtgraph.opengl as gl
 import MainWindow # This file holds our MainWindow and all design related things
               # it also keeps events etc that we defined in Qt Designer
 from options import OptionsDialog
-from selection import SelectionDialog
+from evaluate import EvaluationDialog
 from ScanManager import ScanManager
 from generate3d import Generate3dDialog
 
@@ -29,7 +29,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.statusLabel.setText(self.statusBarMessage)
         self.statusbar.addWidget(self.statusLabel)
         self.optionsDialog = OptionsDialog()
-        self.selectionDialog = SelectionDialog()
+        self.evaluationDialog = EvaluationDialog()
         self.scanManager = ScanManager()
         self.generate3dDialog = Generate3dDialog()
 
@@ -37,35 +37,58 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.pushButton_3d,SIGNAL('clicked()'),self.openGenerete3dDialog)
         self.connect(self.pushButton_go, SIGNAL('clicked()'), self.loadScan)
 
+        self.connect(self.optionsDialog,SIGNAL("accepted()"),self.optionsAccepted)
+
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
-        self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.showSelection)
+        self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.showEvalDialog)
         self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
 
         self.connect(self.scanManager, SIGNAL('showScan(PyQt_PyObject)'), self.showScan)
         self.connect(self.scanManager, SIGNAL('updateScan(PyQt_PyObject)'), self.updateScan)
         self.connect(self.scanManager, SIGNAL('show3dScan(PyQt_PyObject)'), self.show3dScan)
 
-        self.connect(self.selectionDialog, SIGNAL('evaluateMAOP(PyQt_PyObject)'), self.scanManager.evaluateMAOP)
+        #self.connect(self.evaluationDialog, SIGNAL('evaluateMAOP(PyQt_PyObject)'), self.scanManager.evaluateMAOP)
+        self.connect(self.evaluationDialog, SIGNAL('changeParams(PyQt_PyObject)'), self.openOptions)
 
         self.connect(self.generate3dDialog,SIGNAL('generate3d(PyQt_PyObject)'),self.generate3d)
+
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
         #self.verticalSlider.setTracking(False)
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
 
+    def optionsAccepted(self):
+        self.setEvalDialogParams()
+
     def closeEvent(self, QCloseEvent):
-        self.selectionDialog.close()
+        self.evaluationDialog.close()
         self.optionsDialog.close()
         super(self.__class__, self).closeEvent(QCloseEvent)
 
-    def showSelection(self, rect):
+
+    def setEvalDialogParams(self):
+        d = self.optionsDialog.Diameter
+        dx = self.optionsDialog.DeltaX
+        t = self.optionsDialog.thickness
+        smys = self.optionsDialog.smys
+        smys_unit = self.optionsDialog.pressureUnitSMYS
+        p = self.optionsDialog.operatingPressure
+        p_unit = self.optionsDialog.pressureUnitP
+        factor_T = self.optionsDialog.factorT
+        factor_F = self.optionsDialog.factorF
+        th = self.optionsDialog.corrosionTreshold
+        self.evaluationDialog.setParameters(d, dx, t, smys, smys_unit, p, p_unit, factor_T, factor_F, th)
+
+    def showEvalDialog(self, rect):
         x = rect[0]
         y = rect[1]
         w = rect[2]
         h = rect[3]
-        self.selectionDialog.show()
-        self.selectionDialog.showImage(rect,self.scanManager.imgScanColoredRearranged[y:y+h, x:x+w, :],self.scanViewer.aspect_ratio)
-        self.selectionDialog.activateWindow()
+        self.evaluationDialog.show()
+        self.setEvalDialogParams()
+        thickness_data_array = self.scanManager.getThicknessData(y,y+h,x,x+w)
+        self.evaluationDialog.setData(thickness_data_array,self.scanManager.imgScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio)
+        self.evaluationDialog.activateWindow()
 
     def mousePositionChanged(self, QMouseEvent):
         try:
@@ -83,8 +106,28 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         if (QKeyEvent.key() == QtCore.Qt.Key_Control):
             self.scanViewer.changeDragMode()
 
-    def openOptions(self):
+    def enableOnlyPipeParameters(self,bool):
+        bool = not bool
+        self.optionsDialog.textEdit_url.setEnabled(bool)
+        self.optionsDialog.spinBox_frame_length.setEnabled(bool)
+        self.optionsDialog.spinBox_thick_b_start.setEnabled(bool)
+        self.optionsDialog.spinBox_thick_b_end.setEnabled(bool)
+        self.optionsDialog.spinBox_dist_b_start.setEnabled(bool)
+        self.optionsDialog.spinBox_dist_b_end.setEnabled(bool)
+        self.optionsDialog.textEdit_A.setEnabled(bool)
+        self.optionsDialog.textEdit_B.setEnabled(bool)
+        self.optionsDialog.textEdit_C.setEnabled(bool)
+        self.optionsDialog.textEdit_D.setEnabled(bool)
+        self.optionsDialog.textEdit_deltaX.setEnabled(bool)
+        self.optionsDialog.textEdit_dist.setEnabled(bool)
+
+    def openOptions(self, onlyPipeParameters = False):
+        if onlyPipeParameters:
+            self.enableOnlyPipeParameters(True)
+        else:
+            self.enableOnlyPipeParameters(False)
         self.optionsDialog.show()
+        self.optionsDialog.activateWindow()
 
     def openGenerete3dDialog(self):
         if self.comboBox_3.currentIndex() == 0:
@@ -161,7 +204,13 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         delta_x = self.optionsDialog.DeltaX
         diameter = self.optionsDialog.Diameter
         nominal_thickness = self.optionsDialog.thickness
-        self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_thickness)
+        bd0 = self.optionsDialog.distanceStartByte
+        bd1 = self.optionsDialog.distanceEndByte
+        bt0 = self.optionsDialog.thicknessStartByte
+        bt1 = self.optionsDialog.thicknessEndByte
+        frame_length = self.optionsDialog.frameLength
+        self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter,
+                                  nominal_thickness, bd0,bd1,bt0,bt1,frame_length)
 
     def showScan(self, image):
         self.scanViewer.clearScene()

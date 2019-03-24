@@ -4,7 +4,7 @@ from math import sqrt
 class EvaulatorMAOP:
     def __init__(self):
         self.MAOP = 0
-        self.data = 0 #matrix of processed data, every element in data represents depth (in mm) of segment of pipeline
+        self.data = 0 #matrix of processed data, every element in data represents thickness (in mm) of segment of pipeline
         self.P = 1
     def evaluateMAOP(self,data,nominal_depth,nominal_diameter,dx):
         nominal_diameter = float(nominal_diameter)
@@ -71,8 +71,8 @@ class EvaulatorMAOP:
         L = 1.12*B*sqrt(diameter*nominal_depth)
         return L
 
-    def findCorrosions(self, data,nominal_depth):
-        corrosion_map = self.createOccupancyGrid(data, 0.9*nominal_depth)
+    def findCorrosions(self, data,nominal_thickness,treshold):
+        corrosion_map = self.createOccupancyGrid(data, treshold*nominal_thickness)
         corrosion_sets = []
         corrosion_sets.append([])
         s = 1

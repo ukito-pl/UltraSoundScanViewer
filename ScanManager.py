@@ -31,7 +31,7 @@ class ScanManager(QObject):
         self.diameter = 0
         self.nominalDepth = 0
         self.nominalDepthval = 0
-        self.dataPerFrame = 256
+        self.dataPerFrame = 0
         self.resolutionRatio = 1 #transverse resolution / longitudinal resolution
         self.evaluatorMAOP = EvaulatorMAOP()
 
@@ -68,7 +68,8 @@ class ScanManager(QObject):
         depth = self.c * self.imgScan[int(indy), int(indx), 0] + self.d
         return [x,y,depth]
 
-    def loadScan(self,milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth):
+    def loadScan(self,milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth,bd0,bd1,bt0,bt1,frame_length):
+        self.dataPerFrame = bt1 - bt0 +1
         self.a = a
         self.b = b
         self.c = c
@@ -86,7 +87,7 @@ class ScanManager(QObject):
             self.startFrame = 0;
         self.endFrame = (self.currentFrame + self.frameRange).__int__()
         self.scanDir = scan_dir
-        self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame)
+        self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame,bd0,bd1,bt0,bt1,frame_length)
         self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.produceImage)
         self.loadScansThread.start()
         self.createDefaultColorScale()
@@ -94,7 +95,6 @@ class ScanManager(QObject):
 
     def produceImage(self,data):
         self.distArray = np.array(data[1])
-        print self.distArray
         self.imgScan = np.array(data[0])
         self.imgScanRearranged = self.imgScan
         self.imgScanColored = self.colorScan(self.imgScan, "ironfire")
@@ -263,7 +263,16 @@ class ScanManager(QObject):
         self.connect(self.create3dScanThread, SIGNAL('3dScanCreated(PyQt_PyObject)'), self.show3dScan)
         self.create3dScanThread.start()
 
-
-
     def show3dScan(self,items):
         self.emit(SIGNAL('show3dScan(PyQt_PyObject)'), items)
+
+    def getThicknessData(self,i1,i2,j1,j2):
+        data = np.zeros((i2-i1,j2-j1))
+        k = 0
+        for i in range(i1,i2):
+            l = 0
+            for j in range(j1,j2):
+                data[k,l] = self.c * self.imgScanRearranged[i,j,0] + self.d
+                l = l+1
+            k = k+1
+        return data

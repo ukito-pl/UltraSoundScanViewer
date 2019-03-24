@@ -3,14 +3,14 @@ import numpy as np
 
 class LoadScansThread(QThread):
 
-    def __init__(self, file_dir, start_frame, end_frame):
+    def __init__(self, file_dir, start_frame, end_frame, bd0,bd1,bt0,bt1,frame_length):
         QThread.__init__(self)
         self.base_file_dir = file_dir        #directory of a base file i.e. F0000000.800
         #frame variables
-        self.data_frame_length = 517    #in bytes
-        self.data_length = 256          #
-        self.start_byte = 261           #
-        self.start_byte_dist = 5
+        self.data_frame_length = frame_length    #in bytes
+        self.data_length = bt1-bt0 + 1          #
+        self.start_byte = bt0           #
+        self.start_byte_dist = bd0
         #scan variables
         self.start_frame = start_frame
         self.end_frame = end_frame
@@ -62,7 +62,6 @@ class LoadScansThread(QThread):
                 b = bytearray()
                 b.extend(f1)
                 dist[:, it] = b
-                #f.seek(self.start_byte,1)
                 f1 = f.read(self.data_length)
                 b = bytearray()
                 b.extend(f1)
