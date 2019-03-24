@@ -97,7 +97,7 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
        <property name="text">
-        <string>Odległość</string>
+        <string>Pomiary odległości</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -126,7 +126,7 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
        <property name="text">
-        <string>Grubość:</string>
+        <string>Pomiary grubości:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -145,7 +145,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBox">
+      <widget class="QSpinBox" name="spinBox_dist_b_start">
        <property name="maximum">
         <number>999</number>
        </property>
@@ -159,7 +159,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBox_2">
+      <widget class="QSpinBox" name="spinBox_dist_b_end">
        <property name="maximum">
         <number>999</number>
        </property>
@@ -186,7 +186,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBox_4">
+      <widget class="QSpinBox" name="spinBox_thick_b_start">
        <property name="maximum">
         <number>999</number>
        </property>
@@ -200,7 +200,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBox_3">
+      <widget class="QSpinBox" name="spinBox_thick_b_end">
        <property name="maximum">
         <number>999</number>
        </property>
@@ -633,7 +633,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QTextEdit" name="textEdit_depth">
+      <widget class="QTextEdit" name="textEdit_thickness">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -700,7 +700,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QTextEdit" name="textEdit_T_2">
+      <widget class="QTextEdit" name="textEdit_P">
        <property name="minimumSize">
         <size>
          <width>0</width>

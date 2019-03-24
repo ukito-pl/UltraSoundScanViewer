@@ -160,8 +160,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         d = self.optionsDialog.CoefficientD
         delta_x = self.optionsDialog.DeltaX
         diameter = self.optionsDialog.Diameter
-        nominal_depth = self.optionsDialog.Depth
-        self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth)
+        nominal_thickness = self.optionsDialog.thickness
+        self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_thickness)
 
     def showScan(self, image):
         self.scanViewer.clearScene()

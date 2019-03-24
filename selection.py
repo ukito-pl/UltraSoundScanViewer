@@ -13,7 +13,7 @@ class SelectionDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.setupUi(self)
         self.graphicsView.scale(2,2)
         self.pixItem1 = QtGui.QGraphicsPixmapItem()
-        self.connect(self.pushButton,SIGNAL("clicked()"),self.evaluateClicked)
+        self.connect(self.pushButton_maop,SIGNAL("clicked()"),self.evaluateClicked)
         self.data_rect = 0
 
     def evaluateClicked(self):
