@@ -1,6 +1,5 @@
 from PyQt4.QtCore import QThread,SIGNAL
 import numpy as np
-import colorsys
 
 class LoadScansThread(QThread):
 

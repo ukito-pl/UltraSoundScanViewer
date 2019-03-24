@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(559, 513)
+        MainWindow.resize(691, 529)
         self.centralwidget = QtGui.QWidget(MainWindow)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -40,9 +40,6 @@ class Ui_MainWindow(object):
         self.pushButton_options = QtGui.QPushButton(self.centralwidget)
         self.pushButton_options.setObjectName(_fromUtf8("pushButton_options"))
         self.horizontalLayout_2.addWidget(self.pushButton_options)
-        self.pushButton_scans = QtGui.QPushButton(self.centralwidget)
-        self.pushButton_scans.setObjectName(_fromUtf8("pushButton_scans"))
-        self.horizontalLayout_2.addWidget(self.pushButton_scans)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -56,7 +53,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.label_3, 0, 0, 1, 1)
         self.textEdit_km = QtGui.QTextEdit(self.centralwidget)
         self.textEdit_km.setMinimumSize(QtCore.QSize(0, 0))
-        self.textEdit_km.setMaximumSize(QtCore.QSize(100, 27))
+        self.textEdit_km.setMaximumSize(QtCore.QSize(150, 27))
         self.textEdit_km.setObjectName(_fromUtf8("textEdit_km"))
         self.gridLayout.addWidget(self.textEdit_km, 0, 1, 1, 1)
         self.comboBox_3 = QtGui.QComboBox(self.centralwidget)
@@ -109,6 +106,10 @@ class Ui_MainWindow(object):
         self.graphicsView_2.setObjectName(_fromUtf8("graphicsView_2"))
         self.horizontalLayout_3.addWidget(self.graphicsView_2)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.pushButton_3d = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_3d.setEnabled(False)
+        self.pushButton_3d.setObjectName(_fromUtf8("pushButton_3d"))
+        self.verticalLayout.addWidget(self.pushButton_3d)
         self.graphicsView = GLViewWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
@@ -121,7 +122,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.graphicsView)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 559, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 691, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -130,18 +131,6 @@ class Ui_MainWindow(object):
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.toolBar_2 = QtGui.QToolBar(MainWindow)
-        self.toolBar_2.setObjectName(_fromUtf8("toolBar_2"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar_2)
-        self.toolBar_3 = QtGui.QToolBar(MainWindow)
-        self.toolBar_3.setObjectName(_fromUtf8("toolBar_3"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar_3)
-        self.toolBar_4 = QtGui.QToolBar(MainWindow)
-        self.toolBar_4.setObjectName(_fromUtf8("toolBar_4"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar_4)
-        self.toolBar_5 = QtGui.QToolBar(MainWindow)
-        self.toolBar_5.setObjectName(_fromUtf8("toolBar_5"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar_5)
 
         self.retranslateUi(MainWindow)
         self.comboBox_3.setCurrentIndex(1)
@@ -150,7 +139,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
         self.pushButton_options.setText(_translate("MainWindow", "Opcje", None))
-        self.pushButton_scans.setText(_translate("MainWindow", "Załaduj i wyświetl scany", None))
         self.textEdit_km_range.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -168,11 +156,8 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "±", None))
         self.pushButton_go.setText(_translate("MainWindow", "Idź!", None))
         self.label_2.setText(_translate("MainWindow", "m", None))
+        self.pushButton_3d.setText(_translate("MainWindow", "Generuj widok 3D", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.toolBar_2.setWindowTitle(_translate("MainWindow", "toolBar_2", None))
-        self.toolBar_3.setWindowTitle(_translate("MainWindow", "toolBar_3", None))
-        self.toolBar_4.setWindowTitle(_translate("MainWindow", "toolBar_4", None))
-        self.toolBar_5.setWindowTitle(_translate("MainWindow", "toolBar_5", None))
 
 from ScanViewer import ScanViewer
 from pyqtgraph.opengl import GLViewWidget

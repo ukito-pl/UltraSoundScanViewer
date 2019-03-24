@@ -15,6 +15,7 @@ import MainWindow # This file holds our MainWindow and all design related things
 from options import OptionsDialog
 from selection import SelectionDialog
 from ScanManager import ScanManager
+from generate3d import Generate3dDialog
 
 from Miscellaneous import isclose
 
@@ -30,8 +31,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.optionsDialog = OptionsDialog()
         self.selectionDialog = SelectionDialog()
         self.scanManager = ScanManager()
+        self.generate3dDialog = Generate3dDialog()
 
         self.connect(self.pushButton_options, SIGNAL('clicked()'), self.openOptions)
+        self.connect(self.pushButton_3d,SIGNAL('clicked()'),self.openGenerete3dDialog)
         self.connect(self.pushButton_go, SIGNAL('clicked()'), self.loadScan)
 
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
@@ -40,13 +43,13 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.connect(self.scanManager, SIGNAL('showScan(PyQt_PyObject)'), self.showScan)
         self.connect(self.scanManager, SIGNAL('updateScan(PyQt_PyObject)'), self.updateScan)
+        self.connect(self.scanManager, SIGNAL('show3dScan(PyQt_PyObject)'), self.show3dScan)
 
         self.connect(self.selectionDialog, SIGNAL('evaluateMAOP(PyQt_PyObject)'), self.scanManager.evaluateMAOP)
 
+        self.connect(self.generate3dDialog,SIGNAL('generate3d(PyQt_PyObject)'),self.generate3d)
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
-
-
-
+        #self.verticalSlider.setTracking(False)
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
 
@@ -80,9 +83,48 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         if (QKeyEvent.key() == QtCore.Qt.Key_Control):
             self.scanViewer.changeDragMode()
 
-
     def openOptions(self):
         self.optionsDialog.show()
+
+    def openGenerete3dDialog(self):
+        if self.comboBox_3.currentIndex() == 0:
+            multiplier = 0.001
+        elif self.comboBox_3.currentIndex() == 1:
+            multiplier = 1
+        elif self.comboBox_3.currentIndex() == 2:
+            multiplier = 1000
+        meters = float(self.textEdit_km.toPlainText().replace(",", ".")) * multiplier
+        x1 = meters - 0.5
+        x2 = meters + 0.5
+        if self.generate3dDialog.textEdit.toPlainText() == '':
+            self.generate3dDialog.textEdit.setText(x1.__str__())
+        if self.generate3dDialog.textEdit_2.toPlainText() == '':
+            self.generate3dDialog.textEdit_2.setText(x2.__str__())
+        self.generate3dDialog.show()
+
+    def generate3d(self,data):
+        self.pushButton_3d.setEnabled(False)
+        x1 = data[0]
+        x2 = data[1]
+        smooth = data[2]
+        shaded = data[3]
+
+        print 'generuje'
+        self.scanManager.load3dScan(x1,x2,smooth,shaded)
+
+
+    def show3dScan(self,items):
+        if self.graphicsView.items.__len__() > 0:
+            for i in range(0, self.graphicsView.items.__len__()):
+                self.graphicsView.items.__delitem__(0)
+        g = gl.GLGridItem()
+        g.scale(2, 2, 1)
+        g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
+        self.graphicsView.addItem(g)
+
+        for item in items:
+            self.graphicsView.addItem(item)
+        self.pushButton_3d.setEnabled(True)
 
     def changeScale(self):
         spacing_px_org = self.scale_spacing / self.optionsDialog.DeltaX * 1000
@@ -101,6 +143,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanManager.rearrangeScan(val_ratio)
 
     def loadScan(self):
+        self.generate3dDialog.textEdit.clear()
+        self.generate3dDialog.textEdit_2.clear()
         if self.comboBox_3.currentIndex() == 0:
             multiplier = 1
         elif self.comboBox_3.currentIndex() == 1:
@@ -136,18 +180,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanViewer.moveScaleBar()
         self.colorLegend("ironfire")
 
-        #3dview
-        if self.graphicsView.items.__len__() > 0:
-            for i in range(0, self.graphicsView.items.__len__()):
-                self.graphicsView.items.__delitem__(0)
-        g = gl.GLGridItem()
-        g.scale(2, 2, 1)
-        g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
-        self.graphicsView.addItem(g)
+        self.pushButton_3d.setEnabled(True)
 
-        items = self.scanManager.get3DViewPipeItems()
-        for item in items:
-            self.graphicsView.addItem(item)
 
 
     def updateScan(self,image):
@@ -167,6 +201,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             scene.addItem(item)
         self.graphicsView_2.setScene(scene)
         self.graphicsView_2.setMinimumHeight(scene.sceneRect().height())
+
 
 
 

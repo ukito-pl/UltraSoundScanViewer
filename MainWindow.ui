@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>559</width>
-    <height>513</height>
+    <width>691</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,13 +27,6 @@
        <widget class="QPushButton" name="pushButton_options">
         <property name="text">
          <string>Opcje</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_scans">
-        <property name="text">
-         <string>Załaduj i wyświetl scany</string>
         </property>
        </widget>
       </item>
@@ -81,7 +74,7 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>150</width>
           <height>27</height>
          </size>
         </property>
@@ -243,6 +236,16 @@ p, li { white-space: pre-wrap; }
      </layout>
     </item>
     <item>
+     <widget class="QPushButton" name="pushButton_3d">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Generuj widok 3D</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="GLViewWidget" name="graphicsView">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -268,7 +271,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>559</width>
+     <width>691</width>
      <height>25</height>
     </rect>
    </property>
@@ -277,50 +280,6 @@ p, li { white-space: pre-wrap; }
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar_2">
-   <property name="windowTitle">
-    <string>toolBar_2</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar_3">
-   <property name="windowTitle">
-    <string>toolBar_3</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar_4">
-   <property name="windowTitle">
-    <string>toolBar_4</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar_5">
-   <property name="windowTitle">
-    <string>toolBar_5</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
