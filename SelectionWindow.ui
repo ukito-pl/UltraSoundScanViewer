@@ -127,7 +127,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_maop">
        <property name="text">
-        <string>Oblicz MAOP</string>
+        <string>Oceń ryzyko eksploatacji</string>
        </property>
       </widget>
      </item>

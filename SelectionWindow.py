@@ -112,6 +112,6 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "- Długość korozji (Lm):", None))
         self.label_3.setText(_translate("Dialog", "- Maksymalna głębokość\n"
 " korozji (d):", None))
-        self.pushButton_maop.setText(_translate("Dialog", "Oblicz MAOP", None))
+        self.pushButton_maop.setText(_translate("Dialog", "Oceń ryzyko eksploatacji", None))
 
 from CorrosionViewer import CorrosionViewer

@@ -9,7 +9,7 @@ import SelectionWindow # This file holds our MainWindow and all design related t
               # it also keeps events etc that we defined in Qt Designer
 
 from EvaluatorMAOP import EvaulatorMAOP
-
+from results import ResultsDialog
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
@@ -48,51 +48,69 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.thicknessDataAray = 0
         self.aspectRatio = 1
         self.evaluatorMOAP = EvaulatorMAOP()
+        self.resultsWindow = ResultsDialog()
 
     def evaluateMAOP(self):
-        message_box = QtGui.QMessageBox(self)
+        self.resultsWindow.clearResults()
         index = self.selectedCorrosionIndex
         if index >= 0:
             d = self.corrosionsParams[index][0] #depth of corrsion
-            Lm = self.corrosionsParams[index][1]  # measured lenth of corrosion
+            Lm = self.corrosionsParams[index][1]  # measured length of corrosion
             t = self.nominalThickness
             D = self.diameter
             F = self.factorF
             T = self.factorT
-            S = self.smys / self.pressureUnitsDividers[self.pressureUnitSMYS]
-            MAOP = self.pressureMAOP / self.pressureUnitsDividers[self.pressureUnitMAOP]
+            S = self.smys / self.pressureUnitsDividers[self.pressureUnitSMYS] #convert to bars
+            MAOP = self.pressureMAOP / self.pressureUnitsDividers[self.pressureUnitMAOP]#convert to bars
             print d/t
             if d / t > 0.1 and d / t < 0.8:
                 Lmax = self.evaluatorMOAP.evaluateL(D, t, d)
+                A = 0.893 * (Lm / sqrt(d * t))
+                P = max(MAOP, 2 * S * t * F * T / D) # in bars
+                self.resultsWindow.label_P.setText("{:.3F}".format(P*self.pressureUnitsDividers[self.pressureUnitMAOP]) + self.pressureUnitsList[self.pressureUnitMAOP])
+                self.resultsWindow.label_A.setText("{:.3F}".format(A))
+                self.resultsWindow.label_Lmax.setText("{:.3F}".format(Lmax)+ " mm")
                 if Lm > Lmax:
-                    A = 0.893 * (Lm / sqrt(d * t))
-                    P = max(MAOP,2*S*t*F*T/D)
                     if A > 4:
                         Pprim = 1.1*P*(1 - d/t)
                     elif A < 4:
                         skl = ((1-2.0/3.0*(d/t))/(1 - 2.0/3.0*(d/(t*sqrt(A*A+1)))))
                         Pprim = 1.1*P*skl
-                    Pprim = Pprim * self.pressureUnitsDividers[self.pressureUnitMAOP]
-                    message_box.setText(_translate("Dialog",
-                                                   "Wynik: Maksymalne dopuszczalne ciśnienie robocze: " + Pprim.__str__() + " " + self.pressureUnitsList[self.pressureUnitMAOP],
+                    Pprim = Pprim * self.pressureUnitsDividers[self.pressureUnitMAOP] #convert to original unit
+                    MAOP = MAOP * self.pressureUnitsDividers[self.pressureUnitMAOP] #convert to original unit
+                    self.resultsWindow.label_Pprim.setText("{:.3F}".format(Pprim) + self.pressureUnitsList[self.pressureUnitMAOP])
+                    print Pprim, MAOP
+                    if Pprim > MAOP:
+                        self.resultsWindow.label_results.setText(_translate("Dialog",
+                                                                            " Rurociąg może być dalej bezpiecznie eksploatowany przy ciśnieniu roboczym: " + "{:.3F}".format(MAOP) + " " +
+                                                                            self.pressureUnitsList[
+                                                                                self.pressureUnitMAOP],
+                                                                            None))
+                    elif Pprim < MAOP:
+                        self.resultsWindow.label_results.setText(_translate("Dialog",
+                                                   "Należy zredukować ciśnienie robocze do: " + "{:.3F}".format(Pprim) + " " +
+                                                                            self.pressureUnitsList[self.pressureUnitMAOP]
+                                                                            +",\n aby rurociąg mógł być bezpiecznie eksploatowany",
                                                    None))
                 else:
-                    message_box.setText(_translate("Dialog",
-                                                   "Wynik: Długość korozji mniejsza niż Lmax, rurociąg zdatny do użytku",
+                    self.resultsWindow.label_results.setText(_translate("Dialog",
+                                                   "Długość korozji: " + "{:.3F}".format(Lm) + " mm" + " mniejsza niż Lmax: "+ "{:.3F}".format(Lmax)+" mm"+"\n Rurociąg może być bezpiecznie eksploatowany",
                                                    None))
             elif d / t < 0.1:
-                message_box.setText(_translate("Dialog",
-                                               "Wynik: Minimalna grubość ścianki mniejsza niż 10% nominalnej grubości, rurociąg niezdatny do użytku",
+                self.resultsWindow.label_results.setText(_translate("Dialog",
+                                               "Minimalna grubość ścianki mniejsza niż 10% nominalnej grubości\n Rurociąg należy naprawić",
                                                None))
             elif d / t > 0.8:
-                message_box.setText(_translate("Dialog",
-                                               "Wynik: Minimalna grubość ścianki większa niż 80% nominalnej grubości, rurociąg zdatny do użytku",
-                                               None))
+                self.resultsWindow.label_results.setText(
+                    _translate("Dialog",
+                               "Minimalna grubość ścianki większa niż 80% nominalnej grubości\n Rurociąg może być bezpiecznie eksploatowany",
+                               None))
         else:
-            message_box.setText(_translate("Dialog", "Błąd: Nie wybrano żadnego obszaru korozji", None))
+            self.resultsWindow.label_results.setText(_translate("Dialog", "Błąd: Nie wybrano żadnego obszaru korozji", None))
 
 
-        message_box.show()
+
+        self.resultsWindow.show()
 
     def mouseSelect(self, QMouseEvent):
         for i in range(len(self.selectionPixItems)):
