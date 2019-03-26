@@ -38,7 +38,7 @@
        <widget class="QTextEdit" name="textEdit_km_range">
         <property name="maximumSize">
          <size>
-          <width>30</width>
+          <width>50</width>
           <height>27</height>
          </size>
         </property>

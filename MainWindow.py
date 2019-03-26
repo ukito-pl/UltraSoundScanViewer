@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.textEdit_km_range = QtGui.QTextEdit(self.centralwidget)
-        self.textEdit_km_range.setMaximumSize(QtCore.QSize(30, 27))
+        self.textEdit_km_range.setMaximumSize(QtCore.QSize(50, 27))
         self.textEdit_km_range.setObjectName(_fromUtf8("textEdit_km_range"))
         self.gridLayout.addWidget(self.textEdit_km_range, 0, 4, 1, 1)
         self.label_3 = QtGui.QLabel(self.centralwidget)
