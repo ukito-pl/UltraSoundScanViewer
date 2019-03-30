@@ -28,6 +28,7 @@ class ScanManager(QObject):
         self.d = 0
         self.deltaX = 0
         self.deltaY = 0
+        self.offsetY = 0
         self.diameter = 0
         self.nominalDepth = 0
         self.nominalDepthval = 0
@@ -50,23 +51,39 @@ class ScanManager(QObject):
 
     def getXYD(self,pixel_x,pixel_y):
         x = ((pixel_x + self.startFrame) * self.deltaX) / 1000  # in meters
-        y = pixel_y/self.resolutionRatio * self.deltaY
+        print self.offsetY
+        y = pixel_y/self.resolutionRatio * self.deltaY - self.offsetY*self.deltaY
+        x_min = ((0 + self.startFrame) * self.deltaX) / 1000  # in meters
+        x_max = ((self.endFrame) * self.deltaX) / 1000  # in meters
+        indx_min = 0
+        indx_max = (self.imgScanRearranged.shape[1] - 1)
         indx = pixel_x
-        if indx < 0:
-            indx = 0
-            x = ((0 + self.startFrame) * self.deltaX) / 1000  # in meters
-        elif indx > (self.imgScan.shape[1] - 1):
-            indx = self.imgScan.shape[1] - 1
-            x = ((self.endFrame) * self.deltaX) / 1000  # in meters
+        if indx < indx_min:
+            indx = indx_min
+            x = x_min
+        elif indx > indx_max:
+            indx = indx_max
+            x = x_max
+        y_range = self.dataPerFrame * self.deltaY
+        y_min = - self.offsetY*self.deltaY
+        y_max = y_range - self.offsetY*self.deltaY
+        indy_min = 0
+        indy_max = (self.imgScanRearranged.shape[0] - 1)
         indy = pixel_y//self.resolutionRatio
-        if indy < 0:
-            indy = 0
-            y = 0
-        elif indy > (self.imgScan.shape[0] - 1):
-            indy = self.imgScan.shape[0] - 1
-            y = self.dataPerFrame*self.deltaY
-        depth = self.c * self.imgScan[int(indy), int(indx), 0] + self.d
-        return [x,y,depth]
+        if indy < indy_min:
+            indy = indy_min
+            y = y_min
+        elif indy > indy_max:
+            indy = indy_max
+            y = y_max
+        if y < 0:
+            y = y_range + y
+        new_range = 12
+        y = new_range*y/y_range
+        minutes = int((y - int(y))*60)
+        hours = int(y)
+        depth = self.c * self.imgScanRearranged[int(indy), int(indx), 0] + self.d
+        return [x,[hours,minutes],depth]
 
     def loadScan(self,milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth,bd0,bd1,bt0,bt1,frame_length):
         self.dataPerFrame = bt1 - bt0 +1
@@ -114,6 +131,7 @@ class ScanManager(QObject):
 
         rows = self.imgScan.shape[0]
         first_row = int(rows*val_ratio)
+        self.offsetY = first_row
 
         self.imgScanRearranged = np.zeros(self.imgScan.shape, dtype=np.uint8)
         self.imgScanRearranged[0:first_row, :, :] = self.imgScan[rows - first_row:rows, :, :]

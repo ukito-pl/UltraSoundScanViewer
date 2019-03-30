@@ -95,7 +95,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             position = self.scanViewer.mapToScene(QMouseEvent.pos().x(), QMouseEvent.pos().y())
             position = position/self.scanViewer.view_scale
             [x, y, d] = self.scanManager.getXYD(position.x(), position.y())
-            self.statusBarMessage = 'X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:.3F}".format(y) + ' mm  Grubosc: ' + "{:.3F}".format(d) + ' mm'
+            self.statusBarMessage = 'X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ' + 'Grubosc: ' + "{:.3F}".format(d) + ' mm'
             self.statusLabel.setText(self.statusBarMessage)
             self.statusbar.update()
         except:
