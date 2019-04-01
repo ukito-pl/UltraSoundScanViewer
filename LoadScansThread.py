@@ -27,7 +27,7 @@ class LoadScansThread(QThread):
     def run(self):
         #print "run thread"
         #print self.start_frame, self.end_frame
-        img = np.ones((self.data_length, self.end_frame - self.start_frame + 1, 3), dtype=np.uint8)
+        img = np.ones((self.data_length, self.end_frame - self.start_frame + 1), dtype=np.uint8)
         dist = np.ones((self.data_length, self.end_frame - self.start_frame + 1), dtype=np.uint8)
         end_file_index = (self.end_frame/self.frames_in_file).__int__()
         end_file_frames_to_get =  self.end_frame - end_file_index*self.frames_in_file + 1
@@ -65,9 +65,8 @@ class LoadScansThread(QThread):
                 f1 = f.read(self.data_length)
                 b = bytearray()
                 b.extend(f1)
-                img[:,it,0] = b
-                img[:, it, 1] = b
-                img[:, it, 2] = b
+                img[:,it] = b
+
                 it = it + 1
             f.close()
 

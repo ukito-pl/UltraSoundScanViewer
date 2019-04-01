@@ -44,7 +44,7 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.factorF = 0
         self.thicknessTreshold = 0
         self.pressureUnitsList = ["Pa", "hPa", "bar", "psi", "atm"]
-        self.pressureUnitsDividers = [10000.0,100.0,1.0,14.5038,0.987] #convertion array to bars
+        self.pressureUnitsDividers = [10000.0, 100.0, 1.0, 14.5038, 0.987] #convertion array to bars
         self.thicknessDataAray = 0
         self.aspectRatio = 1
         self.evaluatorMOAP = EvaulatorMAOP()

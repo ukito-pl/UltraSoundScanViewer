@@ -5,7 +5,7 @@ from math import sqrt,cos,pi
 
 class Create3dScanThread(QThread):
 
-    def __init__(self,dataPerFrame,deltaX, diameter,startFrame,a,b,distArray,imgScanColored, x_start,x_end,smooth,shaded):
+    def __init__(self,dataPerFrame,deltaX, diameter, nominal_distance,startFrame,a,b,distArray,imgScanColored, x_start,x_end,smooth,shaded):
         QThread.__init__(self)
         self.dataPerFrame = dataPerFrame
         self.deltaX = deltaX
@@ -19,7 +19,7 @@ class Create3dScanThread(QThread):
         self.x_end = x_end
         self.smooth = smooth
         self.shaded = shaded
-
+        self.standOff = nominal_distance
 
     def __del__(self):
         self.wait()
@@ -31,7 +31,7 @@ class Create3dScanThread(QThread):
         L = int(length / self.deltaX)
         r = 1  # in scene coordinates
         nominal_r_mm = self.diameter / 2
-        r_base = 60  # mm
+        r_base = self.diameter - self.standOff  # mm
         y_base = int(self.x_start / (self.deltaX / 1000.0) - self.startFrame)
         l = float(length / nominal_r_mm * r)
         phi = np.linspace(0, 2 * pi, N)
