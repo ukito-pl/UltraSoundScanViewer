@@ -104,6 +104,9 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
         self.spinBox_thick_b_start.setValue(self.thicknessStartByte)
         self.spinBox_thick_b_end.setValue(self.thicknessEndByte)
 
-
+    def setTreshold(self,t):
+        self.thickness = t
+        self.updateOptions()
+        self.emit(SIGNAL('accepted()'))
 
 

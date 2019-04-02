@@ -265,7 +265,6 @@ class ScanManager(QObject):
             scale_name = "ironfire2"
         max_dval = ndval * 1.5
         min_dval = ndval * 0
-        print min_dval,max_dval
         scale_values = np.array([0,0.25,0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5]) * ndval
         scale_values = [int(x) for x in scale_values]
         step = legend_height / (max_dval - min_dval + 1)
@@ -274,7 +273,6 @@ class ScanManager(QObject):
         j = 0
         for val in range(int(min_dval), int(max_dval + 1)):
             color = self.colorMapping.lookUpTables[scale_name][val]
-            print int((-j - 1) * step - 1 -1 ),int((-j) * step - 1)
             legend_array[int((-j - 1) * step - 1 -1 ):int((-j) * step - 1), 1:15, 0:3] = list(reversed(color))
 
             if val in scale_values:

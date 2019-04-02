@@ -25,6 +25,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setupUi(self)
         self.scale_spacing = 0.1 # in meters
         self.viewDataType = "thickness"
+        self.refSelectionMode = False
         self.thicknessButtonClicked()
         self.statusBarMessage = ""
         self.statusLabel = QtGui.QLabel()
@@ -43,9 +44,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.pushButton_go, SIGNAL('clicked()'), self.loadScan)
 
         self.connect(self.optionsDialog,SIGNAL("accepted()"),self.optionsAccepted)
+        self.optionsDialog.connect(self.evaluationDialog,SIGNAL('changeTreshold(PyQt_PyObject)'),self.optionsDialog.setTreshold)
 
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
-        self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.showEvalDialog)
+        self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.areaSelected)
         self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
 
         self.connect(self.scanManager, SIGNAL('showScan(PyQt_PyObject)'), self.showScan)
@@ -53,6 +55,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.scanManager, SIGNAL('show3dScan(PyQt_PyObject)'), self.show3dScan)
 
         self.connect(self.evaluationDialog, SIGNAL('changeParams(PyQt_PyObject)'), self.openOptions)
+        self.connect(self.evaluationDialog, SIGNAL('activateRefSelection()'), self.activateRefSelectionMode)
+        self.connect(self.evaluationDialog, SIGNAL('deactivateRefSelection()'), self.deactivateRefSelectionMode)
 
         self.connect(self.generate3dDialog,SIGNAL('generate3d(PyQt_PyObject)'),self.generate3d)
 
@@ -60,6 +64,24 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         #self.verticalSlider.setTracking(False)
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
+
+    def activateRefSelectionMode(self):
+        self.setRefSelectionMode(True)
+        self.activateWindow()
+
+    def deactivateRefSelectionMode(self):
+        self.setRefSelectionMode(False)
+
+    def setRefSelectionMode(self,bool):
+        self.refSelectionMode = bool
+        self.thicknessButtonClicked()
+        self.pushButton_3d.setEnabled(not bool)
+        self.pushButton_go.setEnabled(not bool)
+        self.pushButton_options.setEnabled(not bool)
+        self.textEdit_km.setEnabled(not bool)
+        self.textEdit_km_range.setEnabled(not bool)
+        self.pushButton_distance.setEnabled(not bool)
+        self.comboBox_3.setEnabled(not bool)
 
     def thicknessButtonClicked(self):
         self.pushButton_thickness.setChecked(True)
@@ -103,16 +125,19 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         th = self.optionsDialog.corrosionTreshold
         self.evaluationDialog.setParameters(d, dx, t, smys, smys_unit, p, p_unit, factor_T, factor_F, th)
 
-    def showEvalDialog(self, rect):
+    def areaSelected(self, rect):
         x = rect[0]
         y = rect[1]
         w = rect[2]
         h = rect[3]
-        self.evaluationDialog.show()
-        self.setEvalDialogParams()
-        thickness_data_array = self.scanManager.getThicknessData(y,y+h,x,x+w)
-        self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio)
-        self.evaluationDialog.activateWindow()
+        thickness_data_array = self.scanManager.getThicknessData(y, y + h, x, x + w)
+        if self.refSelectionMode:
+            self.evaluationDialog.showRefDialog(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :],self.scanViewer.aspect_ratio)
+        else:
+            self.evaluationDialog.show()
+            self.setEvalDialogParams()
+            self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio)
+            self.evaluationDialog.activateWindow()
 
     def mousePositionChanged(self, QMouseEvent):
         try:

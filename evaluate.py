@@ -10,6 +10,7 @@ import SelectionWindow # This file holds our MainWindow and all design related t
 
 from EvaluatorMAOP import EvaulatorMAOP
 from results import ResultsDialog
+from reference import ReferenceSelectionDialog
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
@@ -28,10 +29,17 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.corrosions = []
         self.corrosionsParams = []
         self.selectedCorrosionIndex = -1
+        self.evaluatorMOAP = EvaulatorMAOP()
+        self.resultsWindow = ResultsDialog()
+        self.referenceDialog = ReferenceSelectionDialog()
+
         self.connect(self.pushButton_params,SIGNAL("clicked()"), self.changeParams)
         self.connect(self.pushButton_detect_corr,SIGNAL('clicked()'),self.detectCorrosions)
         self.connect(self.pushButton_maop,SIGNAL('clicked()'),self.evaluateMAOP)
         self.connect(self.graphicsView,SIGNAL("mouseClicked(PyQt_PyObject)"),self.mouseSelect)
+        self.connect(self.pushButton_choose_ref_plane,SIGNAL('clicked()'),self.activateRefSelection)
+        self.connect(self.referenceDialog,SIGNAL('rejected()'), self.enable)
+        self.connect(self.referenceDialog, SIGNAL('setNominalThickness(PyQt_PyObject)'), self.setNominalThickness)
 
         self.diameter = 0
         self.deltaX = 0
@@ -47,8 +55,26 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.pressureUnitsDividers = [10000.0, 100.0, 1.0, 14.5038, 0.987] #convertion array to bars
         self.thicknessDataAray = 0
         self.aspectRatio = 1
-        self.evaluatorMOAP = EvaulatorMAOP()
-        self.resultsWindow = ResultsDialog()
+
+    def setNominalThickness(self,t):
+        self.enable()
+        self.thicknessTreshold = t
+        self.emit(SIGNAL('changeTreshold(PyQt_PyObject)'),t)
+
+    def enable(self):
+        self.setEnabled(True)
+        self.emit(SIGNAL('deactivateRefSelection()'))
+
+    def activateRefSelection(self):
+        self.emit(SIGNAL('activateRefSelection()'))
+        self.setEnabled(False)
+
+    def showRefDialog(self,data,data_colored,aspect_ratio):
+        self.activateWindow()
+        self.referenceDialog.setData(data,data_colored,aspect_ratio)
+        self.referenceDialog.evaluateThickness()
+        self.referenceDialog.show()
+        self.referenceDialog.activateWindow()
 
     def evaluateMAOP(self):
         self.resultsWindow.clearResults()
