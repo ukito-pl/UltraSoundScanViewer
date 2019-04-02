@@ -71,9 +71,9 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
 
     def showRefDialog(self,data,data_colored,aspect_ratio):
         self.activateWindow()
+        self.referenceDialog.show()
         self.referenceDialog.setData(data,data_colored,aspect_ratio)
         self.referenceDialog.evaluateThickness()
-        self.referenceDialog.show()
         self.referenceDialog.activateWindow()
 
     def evaluateMAOP(self):

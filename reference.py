@@ -22,19 +22,21 @@ class ReferenceSelectionDialog(QtGui.QDialog, ReferenceSelectionWindow.Ui_Dialog
         self.setupUi(self)
         self.data = -1
         self.t = -1
+        self.pixItem = QtGui.QGraphicsPixmapItem()
+        self.scene = QtGui.QGraphicsScene()
         self.connect(self.buttonBox, SIGNAL('accepted()'), self.setReferenceThickness)
 
     def setData(self,data,data_colored,aspect_ratio):
         self.data = data
         img = np.array(data_colored)
         image = QtGui.QImage(img, img.shape[1], img.shape[0], img.shape[1] * 3, QtGui.QImage.Format_RGB888)
-        scene = QtGui.QGraphicsScene()
+        self.scene = QtGui.QGraphicsScene()
         pix1 = QtGui.QPixmap(image)
-        pixItem = QtGui.QGraphicsPixmapItem(pix1)
-        pixItem.scale(1, aspect_ratio)
-        scene.addItem(pixItem)
-        self.graphicsView.setScene(scene)
-        self.graphicsView.fitInView(pixItem, QtCore.Qt.KeepAspectRatio)
+        self.pixItem = QtGui.QGraphicsPixmapItem(pix1)
+        self.pixItem.scale(1, aspect_ratio)
+        self.scene.addItem(self.pixItem)
+        self.graphicsView.setScene(self.scene)
+        self.graphicsView.fitInView(self.pixItem, QtCore.Qt.KeepAspectRatio)
 
     def evaluateThickness(self):
         t_sum = 0.0
@@ -48,3 +50,7 @@ class ReferenceSelectionDialog(QtGui.QDialog, ReferenceSelectionWindow.Ui_Dialog
 
     def setReferenceThickness(self):
         self.emit(SIGNAL('setNominalThickness(PyQt_PyObject)'),self.t)
+
+    def resizeEvent(self, QResizeEvent):
+        super(self.__class__,self).resizeEvent(QResizeEvent)
+        self.graphicsView.fitInView(self.pixItem,QtCore.Qt.KeepAspectRatio)

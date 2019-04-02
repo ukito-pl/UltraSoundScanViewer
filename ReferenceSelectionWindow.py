@@ -60,5 +60,5 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
         self.label.setText(_translate("Dialog", "Wykryta nominalna grubość ścianki (t):", None))
         self.label_t.setText(_translate("Dialog", "-", None))
-        self.label_2.setText(_translate("Dialog", "Czy chcesz zaakceptować taki wynik?", None))
+        self.label_2.setText(_translate("Dialog", "Czy chcesz zaakceptować taki wynik i zmienić parametr t?", None))
 

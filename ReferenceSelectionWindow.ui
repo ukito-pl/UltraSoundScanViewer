@@ -38,7 +38,7 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Czy chcesz zaakceptować taki wynik?</string>
+      <string>Czy chcesz zaakceptować taki wynik i zmienić parametr t?</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

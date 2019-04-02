@@ -107,6 +107,6 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
     def setTreshold(self,t):
         self.thickness = t
         self.updateOptions()
-        self.emit(SIGNAL('accepted()'))
+        self.setOptions()
 
 
