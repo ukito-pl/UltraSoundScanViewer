@@ -264,23 +264,26 @@ class ScanManager(QObject):
             ndval = self.nominalDistanceVal
             scale_name = "ironfire2"
         max_dval = ndval * 1.5
-        min_dval = ndval * 0.01
+        min_dval = ndval * 0
         print min_dval,max_dval
         scale_values = np.array([0,0.25,0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5]) * ndval
         scale_values = [int(x) for x in scale_values]
         step = legend_height / (max_dval - min_dval + 1)
         legend_array = np.zeros((legend_height, 20, 4), dtype=np.uint8)
+        legend_array[:,0:15,3] = 255
         j = 0
         for val in range(int(min_dval), int(max_dval + 1)):
             color = self.colorMapping.lookUpTables[scale_name][val]
-            legend_array[int((-j - 1) * step - 1):int((-j) * step - 1), 1:15, 0:3] = list(reversed(color))
-            legend_array[int(j * step):int((j + 1) * step), 1:15, 3] = 255
+            print int((-j - 1) * step - 1 -1 ),int((-j) * step - 1)
+            legend_array[int((-j - 1) * step - 1 -1 ):int((-j) * step - 1), 1:15, 0:3] = list(reversed(color))
 
             if val in scale_values:
-                mid = int(((-j - 1) * step - 1 + (-j) * step - 1) / 2)
-                print mid
+                mid = int(((-j - 1) * step - 1 - 1 + (-j) * step - 1) / 2)
                 legend_array[mid, 10:20, :] = [0, 0, 0, 255]
-                real_val = self.c * val + self.d
+                if data_type == "thickness":
+                    real_val = self.c * val + self.d
+                elif data_type == "distance":
+                    real_val = self.a * val + self.b
                 textItem = QtGui.QGraphicsTextItem(real_val.__str__())
                 font = QtGui.QFont()
                 font.setPointSize(8)
@@ -327,7 +330,7 @@ class ScanManager(QObject):
         for i in range(i1,i2):
             l = 0
             for j in range(j1,j2):
-                data[k,l] = self.c * self.thicknessScanRearranged[i, j, 0] + self.d
+                data[k,l] = self.c * self.thicknessScanRearranged[i, j] + self.d
                 l = l+1
             k = k+1
         return data

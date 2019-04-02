@@ -67,6 +67,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.viewDataType = "thickness"
         try:
             self.rearrangeScan()
+            self.colorLegend()
         except:
             return
 
@@ -76,6 +77,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.viewDataType = "distance"
         try:
             self.rearrangeScan()
+            self.colorLegend()
         except:
             return
 
