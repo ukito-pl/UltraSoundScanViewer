@@ -25,6 +25,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setupUi(self)
         self.scale_spacing = 0.1 # in meters
         self.viewDataType = "thickness"
+        self.scans2dLoaded = False
+        self.scans3dLoaded = False
         self.refSelectionMode = False
         self.thicknessButtonClicked()
         self.statusBarMessage = ""
@@ -50,9 +52,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.areaSelected)
         self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
 
-        self.connect(self.scanManager, SIGNAL('showScan(PyQt_PyObject)'), self.showScan)
-        self.connect(self.scanManager, SIGNAL('updateScan(PyQt_PyObject)'), self.updateScan)
-        self.connect(self.scanManager, SIGNAL('show3dScan(PyQt_PyObject)'), self.show3dScan)
+        self.connect(self.scanManager, SIGNAL('scans2dLoaded()'), self.setScans2dLoaded)
+        self.connect(self.scanManager, SIGNAL('scans3dLoaded()'), self.setScans3dLoaded)
+
 
         self.connect(self.evaluationDialog, SIGNAL('changeParams(PyQt_PyObject)'), self.openOptions)
         self.connect(self.evaluationDialog, SIGNAL('activateRefSelection()'), self.activateRefSelectionMode)
@@ -61,9 +63,16 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.generate3dDialog,SIGNAL('generate3d(PyQt_PyObject)'),self.generate3d)
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
-        #self.verticalSlider.setTracking(False)
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
+
+    def setScans2dLoaded(self):
+        self.scans2dLoaded = True
+        self.show2dScan()
+
+    def setScans3dLoaded(self):
+        self.scans3dLoaded = True
+        self.show3dScan()
 
     def activateRefSelectionMode(self):
         self.setRefSelectionMode(True)
@@ -200,23 +209,22 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         x2 = data[1]
         smooth = data[2]
         shaded = data[3]
-
-        print 'generuje'
         self.scanManager.load3dScan(x1,x2,smooth,shaded)
 
+    def show3dScan(self):
+        if self.scans3dLoaded:
+            if self.graphicsView.items.__len__() > 0:
+                for i in range(0, self.graphicsView.items.__len__()):
+                    self.graphicsView.items.__delitem__(0)
+            g = gl.GLGridItem()
+            g.scale(2, 2, 1)
+            g.setDepthValue(10)
+            self.graphicsView.addItem(g)
 
-    def show3dScan(self,items):
-        if self.graphicsView.items.__len__() > 0:
-            for i in range(0, self.graphicsView.items.__len__()):
-                self.graphicsView.items.__delitem__(0)
-        g = gl.GLGridItem()
-        g.scale(2, 2, 1)
-        g.setDepthValue(10)  # draw grid after surfaces since they may be translucent
-        self.graphicsView.addItem(g)
-
-        for item in items:
-            self.graphicsView.addItem(item)
-        self.pushButton_3d.setEnabled(True)
+            items = self.scanManager.get3dScanItems()
+            for item in items:
+                self.graphicsView.addItem(item)
+            self.pushButton_3d.setEnabled(True)
 
     def changeScale(self):
         spacing_px_org = self.scale_spacing / self.optionsDialog.DeltaX * 1000
@@ -233,8 +241,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         max = float(self.verticalSlider.maximum())
         val_ratio = float(val / (max - min))
         self.scanManager.rearrangeScan(val_ratio)
+        self.update2dScan()
 
     def loadScan(self):
+        self.scans2dLoaded = False
+        self.scans3dLoaded = False
         self.generate3dDialog.textEdit.clear()
         self.generate3dDialog.textEdit_2.clear()
         if self.comboBox_3.currentIndex() == 0:
@@ -262,36 +273,33 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter,
                                   nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
 
-    def showScan(self, scans):
+    def show2dScan(self):
+        if self.scans2dLoaded:
+            if self.viewDataType == "thickness":
+                image = self.scanManager.getThicknessImageScan()
+            elif self.viewDataType == "distance":
+                image = self.scanManager.getDistanceImageScan()
+            self.scanViewer.clearScene()
+            self.scanViewer.resetViewScale()
+            self.scanViewer.aspect_ratio = self.scanManager.resolutionRatio
+            self.scanViewer.setScanImage(image)
+
+            self.addScaleBar(7)
+
+            frame_range = (self.scanManager.endFrame - self.scanManager.startFrame).__float__()
+            px = ((self.scanManager.currentFrame - self.scanManager.startFrame) / frame_range)
+            self.scanViewer.goTo(px)
+            self.scanViewer.moveScaleBar()
+            self.scanViewer.moveScaleBar()
+            self.colorLegend()
+
+            self.pushButton_3d.setEnabled(True)
+
+    def update2dScan(self):
         if self.viewDataType == "thickness":
-            image = scans[0]
+            image = self.scanManager.getThicknessImageScan()
         elif self.viewDataType == "distance":
-            image = scans[1]
-        self.scanViewer.clearScene()
-        self.scanViewer.resetViewScale()
-        self.scanViewer.aspect_ratio = self.scanManager.resolutionRatio
-        self.scanViewer.setScanImage(image)
-
-        self.addScaleBar(7)
-
-        self.rearrangeScan()
-
-        frame_range = (self.scanManager.endFrame - self.scanManager.startFrame).__float__()
-        px = ((self.scanManager.currentFrame - self.scanManager.startFrame) / frame_range)
-        self.scanViewer.goTo(px)
-        self.scanViewer.moveScaleBar()
-        self.scanViewer.moveScaleBar()
-        self.colorLegend()
-
-        self.pushButton_3d.setEnabled(True)
-
-
-
-    def updateScan(self,scans):
-        if self.viewDataType == "thickness":
-            image = scans[0]
-        elif self.viewDataType == "distance":
-            image = scans[1]
+            image = self.scanManager.getDistanceImageScan()
         self.scanViewer.setScanImage(image)
 
     def addScaleBar(self, scale_line_height):

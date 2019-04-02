@@ -18,6 +18,7 @@ class ScanManager(QObject):
         self.thicknessScanRearranged = -1
         self.thicknessScanColored = -1
         self.thicknessScanColoredRearranged = -1
+        self.scan3dItems = -1
         self.scanDir = ""
         self.currentFrame = -1
         self.frameRange = 5000
@@ -30,6 +31,7 @@ class ScanManager(QObject):
         self.d = 0
         self.deltaX = 0
         self.deltaY = 0
+        self.offsetRatio = 0
         self.offsetY = 0
         self.diameter = 0
         self.nominalDistance = 0
@@ -122,28 +124,24 @@ class ScanManager(QObject):
         self.endFrame = (self.currentFrame + self.frameRange).__int__()
         self.scanDir = scan_dir
         self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame,bd0,bd1,bt0,bt1,frame_length)
-        self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.produceImage)
+        self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.set2dScans)
         self.loadScansThread.start()
         self.createDefaultColorScale()
 
 
-    def produceImage(self,data):
+    def set2dScans(self,data):
         self.thicknessScan = np.array(data[0])
         self.thicknessScanRearranged = self.thicknessScan
         self.thicknessScanColored = self.colorScan(self.thicknessScan, "ironfire")
-        # print self.imgScan, self.imgScan.shape
-        image_thick = QtGui.QImage(self.thicknessScanColored, self.thicknessScanColored.shape[1], self.thicknessScanColored.shape[0], self.thicknessScanColored.shape[1] * 3,
-                             QtGui.QImage.Format_RGB888)
+        self.thicknessScanColoredRearranged = self.thicknessScanColored
 
         self.distanceScan = np.array(data[1])
         self.distanceScanRearranged = self.thicknessScan
         self.distanceScanColored = self.colorScan(self.distanceScan, "ironfire2")
-        # print self.imgScan, self.imgScan.shape
-        image_dist = QtGui.QImage(self.distanceScanColored, self.distanceScanColored.shape[1],
-                             self.distanceScanColored.shape[0], self.distanceScanColored.shape[1] * 3,
-                             QtGui.QImage.Format_RGB888)
+        self.distanceScanColoredRearranged = self.distanceScanColored
 
-        self.emit(SIGNAL('showScan(PyQt_PyObject)'), [image_thick,image_dist])
+        self.rearrangeScan(self.offsetRatio)
+        self.emit(SIGNAL('scans2dLoaded()'))
 
 
     def colorScan(self, scan, color_scale_name):
@@ -154,6 +152,7 @@ class ScanManager(QObject):
 
     def rearrangeScan(self,val_ratio):
 
+        self.offsetRatio = val_ratio
         rows = self.thicknessScan.shape[0]
         first_row = int(rows*val_ratio)
         self.offsetY = first_row
@@ -166,9 +165,6 @@ class ScanManager(QObject):
         rearranged_array[0:first_row, :, :] = self.thicknessScanColored[rows - first_row:rows, :, :]
         rearranged_array[first_row:rows, :, :] = self.thicknessScanColored[0:rows - first_row, :, :]
         self.thicknessScanColoredRearranged = rearranged_array
-        image_thick = QtGui.QImage(rearranged_array, rearranged_array.shape[1], rearranged_array.shape[0],
-                             rearranged_array.shape[1] * 3,
-                             QtGui.QImage.Format_RGB888)
 
         self.distanceScanRearranged = np.zeros(self.distanceScan.shape, dtype=np.uint8)
         self.distanceScanRearranged[0:first_row, :] = self.distanceScan[rows - first_row:rows, :]
@@ -178,11 +174,7 @@ class ScanManager(QObject):
         rearranged_array[0:first_row, :, :] = self.distanceScanColored[rows - first_row:rows, :, :]
         rearranged_array[first_row:rows, :, :] = self.distanceScanColored[0:rows - first_row, :, :]
         self.distanceScanColoredRearranged = rearranged_array
-        image_dist = QtGui.QImage(rearranged_array, rearranged_array.shape[1], rearranged_array.shape[0],
-                             rearranged_array.shape[1] * 3,
-                             QtGui.QImage.Format_RGB888)
 
-        self.emit(SIGNAL('updateScan(PyQt_PyObject)'), [image_thick, image_dist])
 
     def getScaleBarItems(self,spacing, scale_line_height, scale, deltaX):
         items = []
@@ -316,11 +308,12 @@ class ScanManager(QObject):
 
     def load3dScan(self,x_start,x_end, smooth, shaded):
         self.create3dScanThread = Create3dScanThread(self.dataPerFrame, self.deltaX, self.diameter, self.nominalDistance,  self.startFrame, self.a, self.b, self.distanceScan, self.thicknessScanColored, x_start, x_end, smooth, shaded)
-        self.connect(self.create3dScanThread, SIGNAL('3dScanCreated(PyQt_PyObject)'), self.show3dScan)
+        self.connect(self.create3dScanThread, SIGNAL('3dScanCreated(PyQt_PyObject)'), self.set3dScan)
         self.create3dScanThread.start()
 
-    def show3dScan(self,items):
-        self.emit(SIGNAL('show3dScan(PyQt_PyObject)'), items)
+    def set3dScan(self,items):
+        self.scan3dItems = items
+        self.emit(SIGNAL('scans3dLoaded()'))
 
     def getThicknessData(self,i1,i2,j1,j2):
         data = np.zeros((i2-i1,j2-j1))
@@ -332,3 +325,18 @@ class ScanManager(QObject):
                 l = l+1
             k = k+1
         return data
+
+    def getThicknessImageScan(self):
+        image_thick = QtGui.QImage(self.thicknessScanColoredRearranged, self.thicknessScanColoredRearranged.shape[1],
+                                   self.thicknessScanColoredRearranged.shape[0], self.thicknessScanColoredRearranged.shape[1] * 3,
+                                   QtGui.QImage.Format_RGB888)
+        return image_thick
+
+    def getDistanceImageScan(self):
+        image_dist = QtGui.QImage(self.distanceScanColoredRearranged, self.distanceScanColoredRearranged.shape[1],
+                                  self.distanceScanColoredRearranged.shape[0], self.distanceScanColoredRearranged.shape[1] * 3,
+                                  QtGui.QImage.Format_RGB888)
+        return image_dist
+
+    def get3dScanItems(self):
+        return self.scan3dItems
