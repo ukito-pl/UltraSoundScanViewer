@@ -79,7 +79,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
     def tempDragModeDisable(self):
         self.setToolMode(self.toolMode)
-        
+
     def moveButtonClicked(self):
         self.setToolMode(ToolModes.MoveMode)
 
@@ -131,7 +131,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setRefSelectionMode(False)
 
     def setRefSelectionMode(self,bool):
-        self.refSelectionMode = bool
+
+        if bool:
+            self.toolMode = ToolModes.RefSelectionMode
+        else:
+            self.setToolMode(ToolModes.CorrosionMode)
         self.thicknessButtonClicked()
         self.pushButton_3d.setEnabled(not bool)
         self.pushButton_go.setEnabled(not bool)
@@ -140,6 +144,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.textEdit_km_range.setEnabled(not bool)
         self.pushButton_distance.setEnabled(not bool)
         self.comboBox_3.setEnabled(not bool)
+        self.pushButton_raport.setEnabled(not bool)
+        self.pushButton_auto_detect.setEnabled(not bool)
+        self.pushButton_corrosions.setEnabled(not bool)
+        self.pushButton_move.setEnabled(not bool)
 
     def thicknessButtonClicked(self):
         self.pushButton_thickness.setChecked(True)
@@ -189,9 +197,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         w = rect[2]
         h = rect[3]
         thickness_data_array = self.scanManager.getThicknessData(y, y + h, x, x + w)
-        if self.refSelectionMode:
+        if self.toolMode == ToolModes.RefSelectionMode:
             self.evaluationDialog.showRefDialog(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :],self.scanViewer.aspect_ratio)
-        else:
+        elif self.toolMode == ToolModes.CorrosionMode:
             self.evaluationDialog.show()
             self.setEvalDialogParams()
             self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio)
