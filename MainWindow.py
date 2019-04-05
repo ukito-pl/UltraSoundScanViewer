@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(790, 766)
+        MainWindow.resize(803, 723)
         self.centralwidget = QtGui.QWidget(MainWindow)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -80,17 +80,81 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.pushButton_thickness = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_thickness.setMinimumSize(QtCore.QSize(0, 23))
+        self.pushButton_thickness.setStyleSheet(_fromUtf8("QPushButton{\n"
+"background-color: rgb(248, 248, 248);\n"
+"border-style: solid;\n"
+"border-width: 1px;\n"
+"border-color: rgb(180, 180, 180);\n"
+"border-top-left-radius: 5px;\n"
+"\n"
+"\n"
+"}\n"
+"QPushButton:checked{\n"
+"    background-color: rgb(225, 225, 225);\n"
+"    border-style: solid;\n"
+"    border-width: 1px;\n"
+"    border-color: rgb(180, 180, 180);\n"
+"    border-top-left-radius: 5px;\n"
+"\n"
+"}\n"
+"\n"
+""))
         self.pushButton_thickness.setCheckable(True)
         self.pushButton_thickness.setChecked(False)
+        self.pushButton_thickness.setFlat(True)
         self.pushButton_thickness.setObjectName(_fromUtf8("pushButton_thickness"))
         self.horizontalLayout.addWidget(self.pushButton_thickness)
         self.pushButton_distance = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_distance.setMinimumSize(QtCore.QSize(0, 23))
+        self.pushButton_distance.setStyleSheet(_fromUtf8("QPushButton{\n"
+"background-color: rgb(248, 248, 248);\n"
+"border-style: solid;\n"
+"border-width: 1px;\n"
+"border-color: rgb(180, 180, 180);\n"
+"border-top-right-radius: 5px;\n"
+"\n"
+"}\n"
+"\n"
+"QPushButton:checked{\n"
+"    background-color: rgb(225, 225, 225);\n"
+"    border-style: solid;\n"
+"    border-width: 1px;\n"
+"    border-color: rgb(180, 180, 180);\n"
+"    border-top-right-radius: 5px;\n"
+"\n"
+"\n"
+"}"))
         self.pushButton_distance.setCheckable(True)
         self.pushButton_distance.setChecked(False)
         self.pushButton_distance.setObjectName(_fromUtf8("pushButton_distance"))
         self.horizontalLayout.addWidget(self.pushButton_distance)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.label_4 = QtGui.QLabel(self.centralwidget)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.horizontalLayout.addWidget(self.label_4)
+        self.pushButton_move = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_move.setMaximumSize(QtCore.QSize(30, 16777215))
+        self.pushButton_move.setCheckable(True)
+        self.pushButton_move.setObjectName(_fromUtf8("pushButton_move"))
+        self.horizontalLayout.addWidget(self.pushButton_move)
+        self.pushButton_corrosions = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_corrosions.setMaximumSize(QtCore.QSize(30, 16777215))
+        self.pushButton_corrosions.setCheckable(True)
+        self.pushButton_corrosions.setObjectName(_fromUtf8("pushButton_corrosions"))
+        self.horizontalLayout.addWidget(self.pushButton_corrosions)
+        self.pushButton_raport = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_raport.setMaximumSize(QtCore.QSize(30, 16777215))
+        self.pushButton_raport.setCheckable(True)
+        self.pushButton_raport.setObjectName(_fromUtf8("pushButton_raport"))
+        self.horizontalLayout.addWidget(self.pushButton_raport)
+        self.pushButton_auto_detect = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_auto_detect.setMaximumSize(QtCore.QSize(30, 16777215))
+        self.pushButton_auto_detect.setObjectName(_fromUtf8("pushButton_auto_detect"))
+        self.horizontalLayout.addWidget(self.pushButton_auto_detect)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
@@ -102,7 +166,8 @@ class Ui_MainWindow(object):
         self.scanViewer = ScanViewer(self.centralwidget)
         self.scanViewer.setMinimumSize(QtCore.QSize(0, 0))
         self.scanViewer.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.scanViewer.setStyleSheet(_fromUtf8("background-color:  rgba(255, 255, 255, 0)"))
+        self.scanViewer.setStyleSheet(_fromUtf8("background-color:  rgba(255, 255, 255, 0);\n"
+""))
         self.scanViewer.setLineWidth(0)
         self.scanViewer.setObjectName(_fromUtf8("scanViewer"))
         self.horizontalLayout_3.addWidget(self.scanViewer)
@@ -138,7 +203,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.graphicsView)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 790, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 803, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -174,6 +239,11 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "m", None))
         self.pushButton_thickness.setText(_translate("MainWindow", "Grubość", None))
         self.pushButton_distance.setText(_translate("MainWindow", "Odległość", None))
+        self.label_4.setText(_translate("MainWindow", "Narzędzia:", None))
+        self.pushButton_move.setText(_translate("MainWindow", "M", None))
+        self.pushButton_corrosions.setText(_translate("MainWindow", "C", None))
+        self.pushButton_raport.setText(_translate("MainWindow", "R", None))
+        self.pushButton_auto_detect.setText(_translate("MainWindow", "A", None))
         self.pushButton_3d.setText(_translate("MainWindow", "Generuj widok 3D", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
 

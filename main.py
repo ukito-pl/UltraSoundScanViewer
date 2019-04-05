@@ -3,10 +3,8 @@
 from PyQt4 import QtGui # Import the PyQt4 module we'll need
 from PyQt4.QtCore import  SIGNAL
 import sys # We need sys so that we can pass argv to QApplication
-import numpy as np
-from LoadScansThread import LoadScansThread
+
 from PyQt4 import QtCore
-import time
 import pyqtgraph.opengl as gl
 
 
@@ -16,8 +14,7 @@ from options import OptionsDialog
 from evaluate import EvaluationDialog
 from ScanManager import ScanManager
 from generate3d import Generate3dDialog
-
-from Miscellaneous import isclose
+from Miscellaneous import ToolModes
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
@@ -28,6 +25,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scans2dLoaded = False
         self.scans3dLoaded = False
         self.refSelectionMode = False
+        self.toolMode = -1
+        self.setToolMode(ToolModes.MoveMode)
         self.thicknessButtonClicked()
         self.statusBarMessage = ""
         self.statusLabel = QtGui.QLabel()
@@ -37,6 +36,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.evaluationDialog = EvaluationDialog()
         self.scanManager = ScanManager()
         self.generate3dDialog = Generate3dDialog()
+
+        self.connect(self.pushButton_move,SIGNAL('released()'),self.moveButtonClicked)
+        self.connect(self.pushButton_corrosions, SIGNAL('released()'), self.corosionButtonClicked)
+        self.connect(self.pushButton_raport, SIGNAL('released()'), self.raportButtonClicked)
+        self.connect(self.pushButton_auto_detect, SIGNAL('released()'), self.autoDetectButtonClicked)
 
         self.connect(self.pushButton_thickness,SIGNAL('clicked()'),self.thicknessButtonClicked)
         self.connect(self.pushButton_distance, SIGNAL('clicked()'), self.distanceButtonClicked)
@@ -51,10 +55,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
         self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.areaSelected)
         self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
+        self.connect(self.scanViewer, SIGNAL('tempDragModeActivated()'), self.tempDragModeEnable)
+        self.connect(self.scanViewer, SIGNAL('tempDragModeDeactivated()'), self.tempDragModeDisable)
 
         self.connect(self.scanManager, SIGNAL('scans2dLoaded()'), self.setScans2dLoaded)
         self.connect(self.scanManager, SIGNAL('scans3dLoaded()'), self.setScans3dLoaded)
-
 
         self.connect(self.evaluationDialog, SIGNAL('changeParams(PyQt_PyObject)'), self.openOptions)
         self.connect(self.evaluationDialog, SIGNAL('activateRefSelection()'), self.activateRefSelectionMode)
@@ -65,6 +70,50 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
+
+    def tempDragModeEnable(self):
+        self.pushButton_move.setChecked(True)
+        self.pushButton_corrosions.setChecked(False)
+        self.pushButton_raport.setChecked(False)
+        self.pushButton_auto_detect.setChecked(False)
+
+    def tempDragModeDisable(self):
+        self.setToolMode(self.toolMode)
+        
+    def moveButtonClicked(self):
+        self.setToolMode(ToolModes.MoveMode)
+
+    def corosionButtonClicked(self):
+        self.setToolMode(ToolModes.CorrosionMode)
+
+    def raportButtonClicked(self):
+        self.setToolMode(ToolModes.RaportMode)
+
+    def autoDetectButtonClicked(self):
+        self.setToolMode(ToolModes.AutoDetectMode)
+
+    def setToolMode(self, mode):
+        self.pushButton_move.setChecked(False)
+        self.pushButton_corrosions.setChecked(False)
+        self.pushButton_raport.setChecked(False)
+        self.pushButton_auto_detect.setChecked(False)
+        if mode == ToolModes.MoveMode:
+
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)####to psuje, pewnie dlatego że te zmienione eventy moje są
+            self.toolMode = mode
+            self.pushButton_move.setChecked(True)
+        elif mode == ToolModes.CorrosionMode:
+            self.toolMode = mode
+            self.pushButton_corrosions.setChecked(True)
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+        elif mode == ToolModes.RaportMode:
+            self.toolMode = mode
+            self.pushButton_raport.setChecked(True)
+        elif mode == ToolModes.AutoDetectMode:
+            self.toolMode = mode
+            self.pushButton_auto_detect.setChecked(True)
+        elif mode == ToolModes.RefSelectionMode:
+            self.toolMode = mode
 
     def setScans2dLoaded(self):
         self.scans2dLoaded = True
@@ -149,20 +198,15 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.evaluationDialog.activateWindow()
 
     def mousePositionChanged(self, QMouseEvent):
-        try:
+        if self.scans2dLoaded:
             position = self.scanViewer.mapToScene(QMouseEvent.pos().x(), QMouseEvent.pos().y())
             position = position/self.scanViewer.view_scale
             [x, y, d] = self.scanManager.getXYD(position.x(), position.y())
             self.statusBarMessage = 'X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ' + 'Grubosc: ' + "{:.3F}".format(d) + ' mm'
             self.statusLabel.setText(self.statusBarMessage)
             self.statusbar.update()
-        except:
 
-            return
 
-    def keyPressEvent(self, QKeyEvent):
-        if (QKeyEvent.key() == QtCore.Qt.Key_Control):
-            self.scanViewer.changeDragMode()
 
     def enableOnlyPipeParameters(self,bool):
         bool = not bool

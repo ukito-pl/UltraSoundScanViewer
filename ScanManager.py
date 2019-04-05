@@ -99,7 +99,7 @@ class ScanManager(QObject):
         y = new_range*y/y_range
         minutes = int((y - int(y))*60)
         hours = int(y)
-        depth = self.c * self.thicknessScanRearranged[int(indy), int(indx), 0] + self.d
+        depth = self.c * self.thicknessScanRearranged[int(indy), int(indx)] + self.d
         return [x,[hours,minutes],depth]
 
     def loadScan(self,milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth, nominal_dist, bd0,bd1,bt0,bt1,frame_length):
