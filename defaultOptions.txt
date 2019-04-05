@@ -1,4 +1,4 @@
-/home/ukito/Magisterka/dane/F0000000.800
+/home/ukito/Magisterka/UltraSoundScan/F0000000.800
 2.0
 12.0
 0.2

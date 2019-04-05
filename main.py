@@ -14,6 +14,7 @@ from options import OptionsDialog
 from evaluate import EvaluationDialog
 from ScanManager import ScanManager
 from generate3d import Generate3dDialog
+from raport import ReportDialog
 from Miscellaneous import ToolModes
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -36,10 +37,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.evaluationDialog = EvaluationDialog()
         self.scanManager = ScanManager()
         self.generate3dDialog = Generate3dDialog()
+        self.reportDialog = ReportDialog()
 
         self.connect(self.pushButton_move,SIGNAL('released()'),self.moveButtonClicked)
         self.connect(self.pushButton_corrosions, SIGNAL('released()'), self.corosionButtonClicked)
-        self.connect(self.pushButton_raport, SIGNAL('released()'), self.raportButtonClicked)
+        self.connect(self.pushButton_raport, SIGNAL('released()'), self.reportButtonClicked)
         self.connect(self.pushButton_auto_detect, SIGNAL('released()'), self.autoDetectButtonClicked)
 
         self.connect(self.pushButton_thickness,SIGNAL('clicked()'),self.thicknessButtonClicked)
@@ -71,6 +73,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
 
+
     def tempDragModeEnable(self):
         self.pushButton_move.setChecked(True)
         self.pushButton_corrosions.setChecked(False)
@@ -86,8 +89,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def corosionButtonClicked(self):
         self.setToolMode(ToolModes.CorrosionMode)
 
-    def raportButtonClicked(self):
-        self.setToolMode(ToolModes.RaportMode)
+    def reportButtonClicked(self):
+        self.setToolMode(ToolModes.ReportMode)
+        self.reportDialog.show()
 
     def autoDetectButtonClicked(self):
         self.setToolMode(ToolModes.AutoDetectMode)
@@ -106,7 +110,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.toolMode = mode
             self.pushButton_corrosions.setChecked(True)
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        elif mode == ToolModes.RaportMode:
+        elif mode == ToolModes.ReportMode:
             self.toolMode = mode
             self.pushButton_raport.setChecked(True)
         elif mode == ToolModes.AutoDetectMode:

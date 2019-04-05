@@ -13,6 +13,14 @@ class OptionsDialog(QtGui.QDialog, OptionsWindow.Ui_Dialog):
 
         self.connect(self.buttonBox, SIGNAL('accepted()'), self.setOptions)
         self.connect(self.buttonBox, SIGNAL('rejected()'), self.updateOptions)
+        self.connect(self.toolButton,SIGNAL('clicked()'),self.getDir)
+
+    def getDir(self):
+        dir = QtGui.QFileDialog.getOpenFileName()
+        if dir:
+            self.dataDir = dir
+            self.updateOptions()
+            self.setOptions()
 
     def setOptions(self):
         self.dataDir = self.textEdit_url.toPlainText().replace('\n', "").replace('\r', "").replace('file://', "")

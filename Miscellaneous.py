@@ -6,6 +6,6 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
 class ToolModes(Enum):
     MoveMode = 1
     CorrosionMode = 2
-    RaportMode = 3
+    ReportMode = 3
     AutoDetectMode = 4
     RefSelectionMode = 5
