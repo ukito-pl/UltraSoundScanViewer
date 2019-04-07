@@ -22,8 +22,9 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.setupUi(self)
         self.connect(self.pushButton_open_report, SIGNAL('clicked()'), self.getFile)
         self.connect(self.pushButton_new_report, SIGNAL('clicked()'), self.newFile)
-        #self.connect(self.comboBox_type,SIGNAL('currentIndexChanged(PyQt_PyObject)'),self.setElementType)
+        self.connect(self.pushButton_add_change, SIGNAL('clicked()'), self.addElementToReport)
         self.comboBox_type.currentIndexChanged.connect(self.setElementType)
+        self.setElementType(self.comboBox_type.currentIndex())
         self.reportDir = -1
 
     def getFile(self):
@@ -37,9 +38,41 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         if dir:
             self.reportDir = dir
             self.label_file_dir.setText(dir)
+            report = open(dir, 'w')
+            for i in range(0,self.comboBox_type.count()):
+                header1 = "\nRodzaj:," + self.comboBox_type.itemText(i).__str__().encode('utf-8')+ ",RodzajID:," + i.__str__() + "\n"
+                header2 = ",".join(self.getTableItemsNamesList(i)) + "\n"
+                report.writelines(header1)
+                report.writelines(header2)
+            report.close()
+
+    def addElementToReport(self):
+        lineData = ""
+        for i in range(0,self.tableWidget.rowCount()):
+            lineData = lineData + self.tableWidget.item(i,0).text() + ","
+        lineData = lineData + "\n"
+        id = self.comboBox_type.currentIndex()
+        report = open(self.reportDir,"r")
+        found = False
+        j = -1
+        i = 0
+        report_content = report.readlines()
+        for line in report_content:
+            line = line.replace("\n","").split(',')
+            if len(line) >= 3 and line[3]==id.__str__():
+                found = True
+            if found and line[0] == '':
+                j = i
+                found = False
+            i = i+1
+        report.close()
+        if j != -1:
+            report_content.insert(j,lineData)
+        report = open(self.reportDir, "w")
+        report.writelines(report_content)
+        report.close()
 
     def setElementType(self,id):
-        print id
         list = self.getTableItemsNamesList(id)
         self.setTableItems(list)
 
@@ -48,15 +81,17 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         i = 0
         for line in file:
             if i == id:
-                print line
-                return line.split(", ")
+                file.close()
+                return line.replace("\n","").split(", ")
             i = i+1
+        file.close
         return []
 
     def setTableItems(self,item_names_list):
         i = 0
         self.tableWidget.setRowCount(len(item_names_list))
         for name in item_names_list:
-            item = self.tableWidget.verticalHeaderItem(i)
+            item = QtGui.QTableWidgetItem()
             item.setText(_translate("Dialog", name, None))
+            self.tableWidget.setVerticalHeaderItem(i, item)
             i = i + 1

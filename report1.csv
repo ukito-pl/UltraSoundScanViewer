@@ -1,0 +1,16 @@
+
+Rodzaj:,Korozja,RodzajID:,0
+Id,Lokalizacja,Długość,Szerokość,dmax,Lmax,Opis
+1,2,3,4,5,6,67,
+a,b,c,d,e,f,g,
+q,w,e,r,t,y,u,
+
+Rodzaj:,Laminacja,RodzajID:,1
+Id,Lokalizacja,Długość,Szerokość,Opis
+
+Rodzaj:,Spoina poprzeczna,RodzajID:,2
+Id,Lokalizacja,Długość,Szerokość,Opis
+5,4,3,2,1,
+
+Rodzaj:,Spoina wzdłużna,RodzajID:,3
+Id,Lokalizacja,Długość,Szerokość,Opis
