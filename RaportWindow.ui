@@ -44,7 +44,24 @@
       </widget>
      </item>
      <item>
-      <widget class="QTreeView" name="treeView"/>
+      <widget class="QTreeWidget" name="treeWidget">
+       <attribute name="headerDefaultSectionSize">
+        <number>200</number>
+       </attribute>
+       <attribute name="headerMinimumSectionSize">
+        <number>60</number>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Nazwa</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Identyfikator</string>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </item>

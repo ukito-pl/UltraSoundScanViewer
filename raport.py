@@ -23,15 +23,40 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.connect(self.pushButton_open_report, SIGNAL('clicked()'), self.getFile)
         self.connect(self.pushButton_new_report, SIGNAL('clicked()'), self.newFile)
         self.connect(self.pushButton_add_change, SIGNAL('clicked()'), self.addElementToReport)
+        self.connect(self.pushButton_delete, SIGNAL('clicked()'), self.deleteCurrentElementFromReport)
         self.comboBox_type.currentIndexChanged.connect(self.setElementType)
         self.setElementType(self.comboBox_type.currentIndex())
         self.reportDir = -1
+
+    def setTreeView(self):
+        self.treeWidget.clear()
+        self.treeWidget.header().resizeSection(0,200)
+        parent_item = self.treeWidget
+        report = open(self.reportDir, 'r')
+        line = report.readline()
+        while line:
+            line = line.replace("\n", "").split(',')
+            if len(line) > 3 and line[0] == "Rodzaj:":
+                item = QtGui.QTreeWidgetItem(self.treeWidget)
+                item.setText(0, _translate("Dialog", line[1].__str__(), None))
+                parent_item = item
+                line = report.readline()
+                line = report.readline()
+            elif len(line) > 1:
+                child_item = QtGui.QTreeWidgetItem(parent_item)
+                child_item.setText(0, _translate("Dialog", line[1].__str__(), None))
+                child_item.setText(1, _translate("Dialog", line[0].__str__(), None))
+                line = report.readline()
+            else:
+                line = report.readline()
 
     def getFile(self):
         dir = QtGui.QFileDialog.getOpenFileName(filter="CSV files (*.csv)")
         if dir:
             self.reportDir = dir
             self.label_file_dir.setText(dir)
+            self.setTreeView()
+
 
     def newFile(self):
         dir = QtGui.QFileDialog.getSaveFileName(directory="*.csv", filter="CSV files (*.csv)")
@@ -45,6 +70,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
                 report.writelines(header1)
                 report.writelines(header2)
             report.close()
+            self.setTreeView()
 
     def addElementToReport(self):
         lineData = ""
@@ -68,6 +94,28 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         report.close()
         if j != -1:
             report_content.insert(j,lineData)
+        report = open(self.reportDir, "w")
+        report.writelines(report_content)
+        report.close()
+
+    def deleteCurrentElementFromReport(self):
+        id = self.tableWidget.item(0,0).text()
+        self.deleteElementFromReport(id)
+
+    def deleteElementFromReport(self,elem_id):
+        report = open(self.reportDir, "r")
+        j = -1
+        i = 0
+        report_content = report.readlines()
+        for line in report_content:
+            line = line.replace("\n", "").split(',')
+            if line[0] == elem_id.__str__():
+                j = i
+            i = i + 1
+        report.close()
+        if j != -1:
+            report_content.__delitem__(j)
+        print
         report = open(self.reportDir, "w")
         report.writelines(report_content)
         report.close()

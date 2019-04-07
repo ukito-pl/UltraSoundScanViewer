@@ -1,6 +1,6 @@
-Id, Lokalizacja, Długość, Szerokość, dmax, Lmax, Opis
-Id, Lokalizacja, Długość, Szerokość, Opis
-Id, Lokalizacja, Długość, Szerokość, Opis
-Id, Lokalizacja, Długość, Szerokość, Opis
+Id, Nazwa, Lokalizacja, Długość, Szerokość, dmax, Lmax, Opis
+Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
+Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
+Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
 
 
