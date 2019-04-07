@@ -1,10 +1,14 @@
 
 Rodzaj:,Korozja,RodzajID:,0
 Id,Nazwa,Lokalizacja,Długość,Szerokość,dmax,Lmax,Opis
-K1,Korozja#1,1,2,3,4,45,5,
+K1,Korozja#1,2,1,4,s,1,45,
 
 Rodzaj:,Laminacja,RodzajID:,1
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
+L1,Laminacja#1,q,w,e,r,
+L3,Laminacja#3,q,,e,r,
+L4,Laminacja#4,p,a,d,f,
+L2,Laminacja#2,w,�,j,t,
 
 Rodzaj:,Spoina poprzeczna,RodzajID:,2
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
