@@ -1,6 +1,6 @@
-Id, Nazwa, Lokalizacja, Długość, Szerokość, dmax, Lmax, Opis
-Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
-Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
-Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
+Korozja, 0, K: Id, Nazwa, Lokalizacja, Długość, Szerokość, dmax, Lmax, Opis
+Laminacja, 1, L: Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
+Spoina poprzeczna, 2, SP: Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
+Spoina wzdłużna, 3, SW: Id, Nazwa, Lokalizacja, Długość, Szerokość, Opis
 
 

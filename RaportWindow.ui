@@ -80,28 +80,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_type">
-         <item>
-          <property name="text">
-           <string>Korozja</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Laminacja</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Spoina poprzeczna</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Spoina wzdłużna</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="QComboBox" name="comboBox_type"/>
        </item>
        <item>
         <spacer name="horizontalSpacer">

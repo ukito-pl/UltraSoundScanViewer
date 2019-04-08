@@ -91,7 +91,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
     def reportButtonClicked(self):
         self.setToolMode(ToolModes.ReportMode)
-        self.reportDialog.show()
+        #self.reportDialog.show()
 
     def autoDetectButtonClicked(self):
         self.setToolMode(ToolModes.AutoDetectMode)
@@ -113,6 +113,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif mode == ToolModes.ReportMode:
             self.toolMode = mode
             self.pushButton_raport.setChecked(True)
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.AutoDetectMode:
             self.toolMode = mode
             self.pushButton_auto_detect.setChecked(True)
@@ -135,7 +136,6 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setRefSelectionMode(False)
 
     def setRefSelectionMode(self,bool):
-
         if bool:
             self.toolMode = ToolModes.RefSelectionMode
         else:
@@ -208,6 +208,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.setEvalDialogParams()
             self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio)
             self.evaluationDialog.activateWindow()
+        elif self.toolMode == ToolModes.ReportMode:
+            self.reportDialog.show()
+            self.reportDialog.activateWindow()
+            self.reportDialog.setCurrentElement(1,[x.__str__() + ", "+ y.__str__(),w.__str__(),h.__str__(),"opisik"])
+
 
     def mousePositionChanged(self, QMouseEvent):
         if self.scans2dLoaded:
