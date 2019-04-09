@@ -9,3 +9,9 @@ class ToolModes(Enum):
     ReportMode = 3
     AutoDetectMode = 4
     RefSelectionMode = 5
+
+class ReportTools(Enum):
+    K = 0
+    L = 1
+    SP = 2
+    SW = 3

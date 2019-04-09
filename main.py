@@ -15,7 +15,7 @@ from evaluate import EvaluationDialog
 from ScanManager import ScanManager
 from generate3d import Generate3dDialog
 from raport import ReportDialog
-from Miscellaneous import ToolModes
+from Miscellaneous import ToolModes,ReportTools
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self):
@@ -28,6 +28,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.refSelectionMode = False
         self.toolMode = -1
         self.setToolMode(ToolModes.MoveMode)
+        self.reportTool = -1
+        self.setReportTool(ReportTools.L)
         self.thicknessButtonClicked()
         self.statusBarMessage = ""
         self.statusLabel = QtGui.QLabel()
@@ -41,15 +43,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.toolBar.actionTriggered.connect(self.processAction)
 
-        self.connect(self.pushButton_move,SIGNAL('released()'),self.moveButtonClicked)
-        self.connect(self.pushButton_corrosions, SIGNAL('released()'), self.corosionButtonClicked)
-        self.connect(self.pushButton_raport, SIGNAL('released()'), self.reportButtonClicked)
-        self.connect(self.pushButton_auto_detect, SIGNAL('released()'), self.autoDetectButtonClicked)
-
         self.connect(self.pushButton_thickness,SIGNAL('clicked()'),self.thicknessButtonClicked)
         self.connect(self.pushButton_distance, SIGNAL('clicked()'), self.distanceButtonClicked)
 
-        self.connect(self.pushButton_options, SIGNAL('clicked()'), self.openOptions)
         self.connect(self.pushButton_3d,SIGNAL('clicked()'),self.openGenerete3dDialog)
         self.connect(self.pushButton_go, SIGNAL('clicked()'), self.loadScan)
 
@@ -88,65 +84,68 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.reportDialog.show()
         elif q_action == self.actionAutoDetect:
             self.setToolMode(ToolModes.AutoDetectMode)
+        elif q_action == self.actionL:
+            self.setReportTool(ReportTools.L)
+        elif q_action == self.actionSW:
+            self.setReportTool(ReportTools.SW)
+        elif q_action == self.actionSP:
+            self.setReportTool(ReportTools.SP)
 
     def tempDragModeEnable(self):
         self.actionMove.setChecked(True)
         self.actionCorrosions.setChecked(False)
         self.actionReportAdd.setChecked(False)
         self.actionAutoDetect.setChecked(False)
-        self.pushButton_move.setChecked(True)
-        self.pushButton_corrosions.setChecked(False)
-        self.pushButton_raport.setChecked(False)
-        self.pushButton_auto_detect.setChecked(False)
+
 
     def tempDragModeDisable(self):
         self.setToolMode(self.toolMode)
 
-    def moveButtonClicked(self):
-        self.setToolMode(ToolModes.MoveMode)
-
-    def corosionButtonClicked(self):
-        self.setToolMode(ToolModes.CorrosionMode)
-
-    def reportButtonClicked(self):
-        self.setToolMode(ToolModes.ReportMode)
-        #self.reportDialog.show()
-
-    def autoDetectButtonClicked(self):
-        self.setToolMode(ToolModes.AutoDetectMode)
 
     def setToolMode(self, mode):
         self.actionMove.setChecked(False)
         self.actionCorrosions.setChecked(False)
         self.actionReportAdd.setChecked(False)
         self.actionAutoDetect.setChecked(False)
-        self.pushButton_move.setChecked(False)
-        self.pushButton_corrosions.setChecked(False)
-        self.pushButton_raport.setChecked(False)
-        self.pushButton_auto_detect.setChecked(False)
-
         if mode == ToolModes.MoveMode:
-
             self.scanViewer.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self.toolMode = mode
-            self.pushButton_move.setChecked(True)
             self.actionMove.setChecked(True)
+            self.expandReportTools(False)
         elif mode == ToolModes.CorrosionMode:
             self.toolMode = mode
-            self.pushButton_corrosions.setChecked(True)
             self.actionCorrosions.setChecked(True)
+            self.expandReportTools(False)
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.ReportMode:
             self.toolMode = mode
-            self.pushButton_raport.setChecked(True)
             self.actionReportAdd.setChecked(True)
+            self.expandReportTools(True)
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.AutoDetectMode:
             self.toolMode = mode
-            self.pushButton_auto_detect.setChecked(True)
             self.actionAutoDetect.setChecked(True)
+            self.expandReportTools(False)
         elif mode == ToolModes.RefSelectionMode:
             self.toolMode = mode
+            self.expandReportTools(False)
+
+    def expandReportTools(self,expand):
+        self.actionSP.setVisible(expand)
+        self.actionSW.setVisible(expand)
+        self.actionL.setVisible(expand)
+
+    def setReportTool(self,tool):
+        self.reportTool = tool
+        self.actionL.setChecked(False)
+        self.actionSP.setChecked(False)
+        self.actionSW.setChecked(False)
+        if tool == ReportTools.L:
+            self.actionL.setChecked(True)
+        elif tool == ReportTools.SP:
+            self.actionSP.setChecked(True)
+        elif tool == ReportTools.SW:
+            self.actionSW.setChecked(True)
 
     def setScans2dLoaded(self):
         self.scans2dLoaded = True
@@ -171,15 +170,19 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.thicknessButtonClicked()
         self.pushButton_3d.setEnabled(not bool)
         self.pushButton_go.setEnabled(not bool)
-        self.pushButton_options.setEnabled(not bool)
         self.textEdit_km.setEnabled(not bool)
         self.textEdit_km_range.setEnabled(not bool)
         self.pushButton_distance.setEnabled(not bool)
         self.comboBox_3.setEnabled(not bool)
-        self.pushButton_raport.setEnabled(not bool)
-        self.pushButton_auto_detect.setEnabled(not bool)
-        self.pushButton_corrosions.setEnabled(not bool)
-        self.pushButton_move.setEnabled(not bool)
+        self.actionOptions.setEnabled(not bool)
+        self.actionMove.setEnabled(not bool)
+        self.actionAutoDetect.setEnabled(not bool)
+        self.actionReport.setEnabled(not bool)
+        self.actionCorrosions.setEnabled(not bool)
+        self.actionReportAdd.setEnabled(not bool)
+        self.actionL.setEnabled(not bool)
+        self.actionSP.setEnabled(not bool)
+        self.actionSW.setEnabled(not bool)
 
     def thicknessButtonClicked(self):
         self.pushButton_thickness.setChecked(True)
@@ -239,8 +242,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif self.toolMode == ToolModes.ReportMode:
             self.reportDialog.show()
             self.reportDialog.activateWindow()
-            self.reportDialog.setCurrentElement(1,[x.__str__() + ", "+ y.__str__(),w.__str__(),h.__str__(),"opisik"])
-
+            if self.reportTool == ReportTools.L:
+                self.reportDialog.setCurrentElement(ReportTools.L.value,[x.__str__() + ", "+ y.__str__(), w.__str__(), h.__str__(), "opisik laminacji"])
+            elif self.reportTool == ReportTools.SP:
+                self.reportDialog.setCurrentElement(ReportTools.SP.value,[x.__str__(), w.__str__(), h.__str__(), "opisik spoiny poprzecznej"])
+            elif self.reportTool == ReportTools.SW:
+                self.reportDialog.setCurrentElement(ReportTools.SW.value,[x.__str__() + ", " + y.__str__(), w.__str__(), h.__str__(), "opisik spoiny wzdluznej"])
 
     def mousePositionChanged(self, QMouseEvent):
         if self.scans2dLoaded:

@@ -58,6 +58,7 @@ class Ui_Dialog(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
         self.comboBox_type = QtGui.QComboBox(Dialog)
+        self.comboBox_type.setEnabled(False)
         self.comboBox_type.setObjectName(_fromUtf8("comboBox_type"))
         self.horizontalLayout.addWidget(self.comboBox_type)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
