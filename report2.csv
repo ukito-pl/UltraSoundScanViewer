@@ -3,12 +3,8 @@ Id,Nazwa,Lokalizacja,Długość,Szerokość,dmax,Lmax,Opis
 
 Rodzaj:,Laminacja,RodzajID:,1
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
-L1,Laminacja#1,"4958, 20",151,47,opisik
-L4,Laminacja#4,"5003, 29",201,37,hihi helo ws
-L6,Laminacja#6,"4972, 25",136,31,opisik
-L0,Laminacja#0,"4915, 25",121,24,opisik
-L5,Laminacja#5,"4927, 33",111,39,opisik
-L2,Laminacja#2,"4936, 17",135,50,opisik
+L0,Laminacja#0,"4973, 25",164,59,opisik
+L1,Laminacja#1,"4988, 43",47,7,opisik
 
 Rodzaj:,Spoina poprzeczna,RodzajID:,2
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis

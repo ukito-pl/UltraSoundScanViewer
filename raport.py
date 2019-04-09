@@ -2,7 +2,7 @@
 from PyQt4 import QtGui # Import the PyQt4 module we'll need
 from PyQt4 import QtCore
 from PyQt4.QtCore import  SIGNAL
-
+import csv
 
 import RaportWindow # This file holds our MainWindow and all design related things
               # it also keeps events etc that we defined in Qt Designer
@@ -29,7 +29,9 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.connect(self.pushButton_delete, SIGNAL('clicked()'), self.deleteCurrentElementFromReport)
         self.treeWidget.currentItemChanged.connect(self.treeItemSelected)
         self.comboBox_type.currentIndexChanged.connect(self.setElementType)
-
+        self.modesList = ["NormalMode","AddMode","ChangeMode"]
+        self.mode = -1
+        self.setMode("NormalMode")
         self.elementNames = []
         self.elementTypeIdBases = []
         self.setElementTypes()
@@ -37,43 +39,52 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.reportDir = -1
         self.pushButton_delete.setEnabled(False)
 
+    def setMode(self,mode):
+        self.mode = mode
+        if mode == "NormalMode":
+            self.pushButton_delete.setEnabled(False)
+            self.pushButton_add_change.setEnabled(False)
+            self.tableWidget.clearContents()
+        elif mode == "AddMode":
+            self.pushButton_delete.setEnabled(False)
+            self.pushButton_add_change.setEnabled(True)
+            self.pushButton_add_change.setText("Dodaj")
+        elif mode == "ChangeMode":
+            self.pushButton_delete.setEnabled(True)
+            self.pushButton_add_change.setEnabled(True)
+            self.pushButton_add_change.setText(_translate("Dialog", "Zmień".__str__(), None))
+
     def treeItemSelected(self,item, item_prev):
         if item:
             if item.parent():
                 element_data = self.getElementData(item.text(1))
-                print element_data
                 element_type_id = item.parent().data(1,QtCore.Qt.UserRole).toInt()
                 if element_type_id:
                     element_type_id = element_type_id[0]
                     self.setElementType(element_type_id)
                 self.setTableItems(element_data)
-                self.pushButton_delete.setEnabled(True)
-                self.pushButton_add_change.setText(_translate("Dialog", "Zmień".__str__(), None))
+                self.setMode("ChangeMode")
             else:
-                self.pushButton_delete.setEnabled(False)
+                self.setMode("NormalMode")
 
     def setTreeWidget(self):
         self.treeWidget.clear()
         self.treeWidget.header().resizeSection(0,200)
         parent_item = self.treeWidget
         report = open(self.reportDir, 'r')
-        line = report.readline()
-        while line:
-            line = line.replace("\n", "").split(',')
+        read_report = csv.reader(report)
+        for line in read_report:
             if len(line) > 3 and line[0] == "Rodzaj:":
                 item = QtGui.QTreeWidgetItem(self.treeWidget)
                 item.setText(0, _translate("Dialog", line[1].__str__(), None))
                 item.setData(1, QtCore.Qt.UserRole, _translate("Dialog", line[3].__str__(), None))
                 parent_item = item
-                line = report.readline()
-                line = report.readline()
-            elif len(line) > 1:
+            elif len(line) > 1 and line[0] != "Id":
                 child_item = QtGui.QTreeWidgetItem(parent_item)
                 child_item.setText(0, _translate("Dialog", line[1].__str__(), None))
                 child_item.setText(1, _translate("Dialog", line[0].__str__(), None))
-                line = report.readline()
-            else:
-                line = report.readline()
+
+
         report.close()
 
     def getFile(self):
@@ -83,11 +94,14 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             self.label_file_dir.setText(dir)
             self.setTreeWidget()
             if not self.isEnabled():
+                self.reportLoadDialog.close()
+                self.setEnabled(True)
+            if self.mode == "AddMode":
                 id, nb = self.generateId(self.comboBox_type.currentIndex())
                 name = self.elementNames[self.comboBox_type.currentIndex()] + "#" + nb.__str__()
-                self.setTableItems([id,name])
-            self.reportLoadDialog.close()
-            self.setEnabled(True)
+                self.setTableItems([id, name])
+            elif self.mode == "ChangeMode":
+                self.setMode("NormalMode")
 
 
     def newFile(self):
@@ -96,29 +110,34 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             self.reportDir = dir
             self.label_file_dir.setText(dir)
             report = open(dir, 'w')
+            report_writer = csv.writer(report)
             for i in range(0,self.comboBox_type.count()):
-                header1 = "\nRodzaj:," + self.comboBox_type.itemText(i).__str__().encode('utf-8')+ ",RodzajID:," + i.__str__() + "\n"
-                header2 = ",".join([('"' + x + '"') for x in self.getTableItemsNamesList(i)]) + "\n"
-                report.writelines(header1)
-                report.writelines(header2)
+                header1 = ["Rodzaj:", self.comboBox_type.itemText(i).__str__().encode('utf-8'), "RodzajID:", i.__str__() ]
+                header2 = self.getTableItemsNamesList(i)
+                report_writer.writerow(header1)
+                report_writer.writerow(header2)
+                report_writer.writerow([])
             report.close()
             self.setTreeWidget()
             if not self.isEnabled():
+                self.reportLoadDialog.close()
+                self.setEnabled(True)
+            if self.mode == "AddMode":
                 id, nb = self.generateId(self.comboBox_type.currentIndex())
                 name = self.elementNames[self.comboBox_type.currentIndex()] + "#" + nb.__str__()
-                self.setTableItems([id,name])
-            self.reportLoadDialog.close()
-            self.setEnabled(True)
+                self.setTableItems([id, name])
+            elif self.mode == "ChangeMode":
+                self.setMode("NormalMode")
+
 
 
     def setCurrentElement(self,element_type_id, property_list):
-        #property_list = [('"' + x + '"') for x in property_list]
+        self.setMode("AddMode")
         id = ''
         name = ''
         if self.reportDir != -1:
             id, nb = self.generateId(element_type_id)
             name = self.elementNames[element_type_id] + "#" + nb.__str__()
-            self.setTreeWidget()
         else:
             self.setEnabled(False)
             self.reportLoadDialog.show()
@@ -130,10 +149,11 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.setTableItems(property_list)
 
     def addCurrentElementToReport(self):
-        lineData = ""
+        lineData = []
+
         for i in range(0,self.tableWidget.rowCount()):
-            lineData = lineData + '"'+self.tableWidget.item(i,0).text() + '"' + ","
-        lineData = lineData + "\n"
+            lineData.append(self.tableWidget.item(i,0).text().__str__().encode('utf-8'))
+
         type_id = self.comboBox_type.currentIndex()
         element_id = self.tableWidget.item(0,0).text()
         report = open(self.reportDir,"r")
@@ -141,13 +161,14 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         new = False
         j = -1
         i = 0
-        report_content = report.readlines()
-        for line in report_content:
-            line = line.replace("\n","").split(',')
+        report_reader = csv.reader(report)
+        report_content = []
+        for line in report_reader:
+            report_content.append(line)
             if len(line) >= 3 and line[2] == "RodzajID:" and line[3]==type_id.__str__():
 
                 found = True
-            if found and line[0] == '':
+            if found and len(line) == 0:
                 j = i
                 found = False
                 new = True
@@ -162,26 +183,32 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             else:
                 report_content[j] = lineData
         report = open(self.reportDir, "w")
-        report.writelines(report_content)
+        report_writer = csv.writer(report)
+        report_writer.writerows(report_content)
         report.close()
         for i in range(0,self.treeWidget.topLevelItemCount()):
             top_level_item = self.treeWidget.topLevelItem(i)
             element_type_id = top_level_item.data(1, QtCore.Qt.UserRole).toString()
             if type_id.__str__() == element_type_id:
-                name = lineData.split(",")[1]
-                id = lineData.split(",")[0]
-                child_item = QtGui.QTreeWidgetItem()
-                child_item.setText(0, _translate("Dialog", name, None))
-                child_item.setText(1, _translate("Dialog", id, None))
-                top_level_item.addChild(child_item)
+                name = lineData[1]
+                id = lineData[0]
+                if new:
+                    child_item = QtGui.QTreeWidgetItem()
+                    child_item.setText(0, _translate("Dialog", name, None))
+                    child_item.setText(1, _translate("Dialog", id, None))
+                    top_level_item.addChild(child_item)
+                else:
+                    for j in range(0,top_level_item.childCount()):
+                        child = top_level_item.child(j)
+                        if child.text(1) == id:
+                            child_item = child
+                            child_item.setText(0, _translate("Dialog", name, None))
                 self.treeWidget.setCurrentItem(child_item,0)
-        #self.setTreeWidget()
 
     def getElementData(self,id):
         report = open(self.reportDir,'r')
-        for line in report:
-            line = line.replace("\n", "").split('","')
-            print line[0], id.__str__()
+        report_reader = csv.reader(report)
+        for line in report_reader:
             if len(line) > 1 and line[0] == id.__str__():
                 return line
         report.close()
@@ -193,6 +220,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.deleteElementFromReport(id)
         parent.takeChild(parent.indexOfChild(current_item))
         self.pushButton_delete.setEnabled(False)
+        self.pushButton_add_change.setEnabled(False)
         self.tableWidget.clearContents()
 
     def deleteElementFromReport(self,elem_id):
@@ -254,8 +282,10 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         for item_val in item_list:
             try:
                 item = QtGui.QTableWidgetItem()
+                if i ==0:
+                    item.setFlags(QtCore.Qt.ItemIsSelectable)
                 self.tableWidget.setItem(i,0,item)
-                self.tableWidget.item(i, 0).setText(item_val)
+                self.tableWidget.item(i, 0).setText(item_val.decode('utf-8'))
             except:
                 pass
             i = i + 1
@@ -271,19 +301,26 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
 
     def generateId(self,element_type_id):
         id_base = self.elementTypeIdBases[element_type_id]
-        nb_of_elem = 0
+        new_id = 0
+        ids = []
         report = open(self.reportDir,'r')
         found_type = False
-        line = report.readline()
-        while line:
-            line = line.replace("\n", "").split(',')
+        report_reader = csv.reader(report)
+
+        for line in report_reader:
             if len(line) >= 3 and line[2] == "RodzajID:" and line[3]==element_type_id.__str__():
                 found_type = True
-                line = report.readline()
-            elif found_type and line[0] == '':
-                generated_id = id_base + (nb_of_elem+1).__str__(), (nb_of_elem+1)
-                return generated_id
-            elif found_type:
-                nb_of_elem = nb_of_elem + 1
-            line = report.readline()
-        return id_base + (nb_of_elem+1).__str__(),(nb_of_elem+1)
+            elif found_type and len(line) == 0:
+                if len(ids) != 0:
+                    ids.sort()
+                    for id in ids:
+                        if new_id == id:
+                            new_id = id +1
+                        else:
+                            return id_base + (new_id).__str__(), (new_id)
+                return id_base + (new_id).__str__(), (new_id)
+            elif found_type and len(line) != 0  and line[0] != "Id":
+                ids.append(int(line[0].replace(id_base,'')))
+
+
+        return id_base + (new_id).__str__(),(new_id)

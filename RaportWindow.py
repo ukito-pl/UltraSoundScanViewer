@@ -103,6 +103,7 @@ class Ui_Dialog(object):
         self.pushButton_new_report.setText(_translate("Dialog", "Utwórz nowy raport", None))
         self.pushButton_open_report.setText(_translate("Dialog", "Wybierz istniejący raport", None))
         self.label_file_dir.setText(_translate("Dialog", "-", None))
+        self.treeWidget.setSortingEnabled(True)
         self.treeWidget.headerItem().setText(0, _translate("Dialog", "Nazwa", None))
         self.treeWidget.headerItem().setText(1, _translate("Dialog", "Identyfikator", None))
         self.label.setText(_translate("Dialog", "Rodzaj wady/elementu:", None))
