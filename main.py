@@ -11,7 +11,7 @@ import pyqtgraph.opengl as gl
 import MainWindow # This file holds our MainWindow and all design related things
               # it also keeps events etc that we defined in Qt Designer
 from options import OptionsDialog
-from evaluate import EvaluationDialog
+from EvaluationDialog import EvaluationDialog
 from ScanManager import ScanManager
 from generate3d import Generate3dDialog
 from raport import ReportDialog
@@ -64,6 +64,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.evaluationDialog, SIGNAL('changeParams(PyQt_PyObject)'), self.openOptions)
         self.connect(self.evaluationDialog, SIGNAL('activateRefSelection()'), self.activateRefSelectionMode)
         self.connect(self.evaluationDialog, SIGNAL('deactivateRefSelection()'), self.deactivateRefSelectionMode)
+        self.connect(self.evaluationDialog, SIGNAL('corrosionReportSignal(PyQt_PyObject)'),self.addCorrosionReport)
 
         self.connect(self.generate3dDialog,SIGNAL('generate3d(PyQt_PyObject)'),self.generate3d)
 
@@ -146,6 +147,18 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.actionSP.setChecked(True)
         elif tool == ReportTools.SW:
             self.actionSW.setChecked(True)
+
+    def addCorrosionReport(self,data):
+        x = data[0][0]
+        y = data[0][1]
+        w = data[0][2]
+        h = data[0][3]
+        [x, y, d] = self.scanManager.getXYD((x + w) / 2, (y + h) / 2)
+        data[0] = 'X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__()
+        self.reportDialog.show()
+        self.reportDialog.activateWindow()
+        print "Wysłano raport", data
+        self.reportDialog.setCurrentElement(ReportTools.K.value,data)
 
     def setScans2dLoaded(self):
         self.scans2dLoaded = True
@@ -237,17 +250,18 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif self.toolMode == ToolModes.CorrosionMode:
             self.evaluationDialog.show()
             self.setEvalDialogParams()
-            self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio)
+            self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio, x, y, w, h)
             self.evaluationDialog.activateWindow()
         elif self.toolMode == ToolModes.ReportMode:
             self.reportDialog.show()
             self.reportDialog.activateWindow()
+            [x, y, d] = self.scanManager.getXYD((x + w) / 2, (y + h) /2)
             if self.reportTool == ReportTools.L:
-                self.reportDialog.setCurrentElement(ReportTools.L.value,[x.__str__() + ", "+ y.__str__(), w.__str__(), h.__str__(), "opisik laminacji"])
+                self.reportDialog.setCurrentElement(ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji"])
             elif self.reportTool == ReportTools.SP:
-                self.reportDialog.setCurrentElement(ReportTools.SP.value,[x.__str__(), w.__str__(), h.__str__(), "opisik spoiny poprzecznej"])
+                self.reportDialog.setCurrentElement(ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej"])
             elif self.reportTool == ReportTools.SW:
-                self.reportDialog.setCurrentElement(ReportTools.SW.value,[x.__str__() + ", " + y.__str__(), w.__str__(), h.__str__(), "opisik spoiny wzdluznej"])
+                self.reportDialog.setCurrentElement(ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej"])
 
     def mousePositionChanged(self, QMouseEvent):
         if self.scans2dLoaded:

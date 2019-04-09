@@ -44,14 +44,17 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         if mode == "NormalMode":
             self.pushButton_delete.setEnabled(False)
             self.pushButton_add_change.setEnabled(False)
+            self.treeWidget.setEnabled(True)
             self.tableWidget.clearContents()
         elif mode == "AddMode":
             self.pushButton_delete.setEnabled(False)
             self.pushButton_add_change.setEnabled(True)
+            self.treeWidget.setEnabled(False)
             self.pushButton_add_change.setText("Dodaj")
         elif mode == "ChangeMode":
             self.pushButton_delete.setEnabled(True)
             self.pushButton_add_change.setEnabled(True)
+            self.treeWidget.setEnabled(True)
             self.pushButton_add_change.setText(_translate("Dialog", "Zmień".__str__(), None))
 
     def treeItemSelected(self,item, item_prev):

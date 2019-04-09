@@ -30,7 +30,7 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.corrosionsParams = []
         self.selectedCorrosionIndex = -1
         self.evaluatorMOAP = EvaulatorMAOP()
-        self.resultsWindow = ResultsDialog()
+        self.resultsDialog = ResultsDialog()
         self.referenceDialog = ReferenceSelectionDialog()
 
         self.connect(self.pushButton_params,SIGNAL("clicked()"), self.changeParams)
@@ -40,6 +40,7 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.connect(self.pushButton_choose_ref_plane,SIGNAL('clicked()'),self.activateRefSelection)
         self.connect(self.referenceDialog,SIGNAL('rejected()'), self.enable)
         self.connect(self.referenceDialog, SIGNAL('setNominalThickness(PyQt_PyObject)'), self.setNominalThickness)
+        self.connect(self.resultsDialog.pushButton_report, SIGNAL('clicked()'), self.sendReportSignal)
 
         self.diameter = 0
         self.deltaX = 0
@@ -55,6 +56,14 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.pressureUnitsDividers = [10000.0, 100.0, 1.0, 14.5038, 0.987] #convertion array to bars
         self.thicknessDataAray = 0
         self.aspectRatio = 1
+        self.reportData = []
+        self.x = 0
+        self.y = 0
+        self.w = 0
+        self.h = 0
+
+    def sendReportSignal(self):
+        self.emit(SIGNAL('corrosionReportSignal(PyQt_PyObject)'), self.reportData)
 
     def setNominalThickness(self,t):
         self.enable()
@@ -77,8 +86,15 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.referenceDialog.activateWindow()
 
     def evaluateMAOP(self):
-        self.resultsWindow.clearResults()
+        self.resultsDialog.clearResults()
         index = self.selectedCorrosionIndex
+        description = "-"
+        Lm = "-"
+        Lmax = "-"
+        t = "-"
+        d = "-"
+        P = "-"
+        Pprim = "-"
         if index >= 0:
             d = self.corrosionsParams[index][0] #depth of corrsion
             Lm = self.corrosionsParams[index][1]  # measured length of corrosion
@@ -93,8 +109,8 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
                 Lmax = self.evaluatorMOAP.evaluateL(D, t, d)
                 A = 0.893 * (Lm / sqrt(d * t))
                 P = max(MAOP, 2 * S * t * F * T / D) # in bars
-                self.resultsWindow.label_P.setText("{:.3F}".format(P*self.pressureUnitsDividers[self.pressureUnitMAOP]) + self.pressureUnitsList[self.pressureUnitMAOP])
-                self.resultsWindow.label_Lmax.setText("{:.3F}".format(Lmax)+ " mm")
+                self.resultsDialog.label_P.setText("{:.3F}".format(P * self.pressureUnitsDividers[self.pressureUnitMAOP]) + self.pressureUnitsList[self.pressureUnitMAOP])
+                self.resultsDialog.label_Lmax.setText("{:.3F}".format(Lmax) + " mm")
                 if Lm > Lmax:
                     if A > 4:
                         Pprim = 1.1*P*(1 - d/t)
@@ -103,44 +119,47 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
                         Pprim = 1.1*P*skl
                     Pprim = Pprim * self.pressureUnitsDividers[self.pressureUnitMAOP] #convert to original unit
                     MAOP = MAOP * self.pressureUnitsDividers[self.pressureUnitMAOP] #convert to original unit
-                    self.resultsWindow.label_Pprim.setText("{:.3F}".format(Pprim) + self.pressureUnitsList[self.pressureUnitMAOP])
-                    self.resultsWindow.label_A.setText("{:.3F}".format(A))
+                    self.resultsDialog.label_Pprim.setText("{:.3F}".format(Pprim) + self.pressureUnitsList[self.pressureUnitMAOP])
+                    self.resultsDialog.label_A.setText("{:.3F}".format(A))
                     print Pprim, MAOP
                     if Pprim > MAOP:
-                        self.resultsWindow.label_results.setText(_translate("Dialog",
-                                                                            " Rurociąg może być dalej bezpiecznie eksploatowany przy ciśnieniu roboczym: " + "{:.3F}".format(MAOP) + " " +
-                                                                            self.pressureUnitsList[
-                                                                                self.pressureUnitMAOP],
-                                                                            None))
+                        description = " Rurociąg może być dalej bezpiecznie eksploatowany przy ciśnieniu roboczym: " + "{:.3F}".format(
+                            MAOP) + " " + self.pressureUnitsList[self.pressureUnitMAOP]
                     elif Pprim < MAOP:
-                        self.resultsWindow.label_results.setText(_translate("Dialog",
-                                                   "Należy zredukować ciśnienie robocze do: " + "{:.3F}".format(Pprim) + " " +
-                                                                            self.pressureUnitsList[self.pressureUnitMAOP]
-                                                                            +",\n aby rurociąg mógł być bezpiecznie eksploatowany",
-                                                   None))
+                        description = "Należy zredukować ciśnienie robocze do: " + "{:.3F}".format(Pprim) + " " + \
+                                      self.pressureUnitsList[
+                                          self.pressureUnitMAOP] + ",\n aby rurociąg mógł być bezpiecznie eksploatowany"
                 else:
                     MAOP = MAOP * self.pressureUnitsDividers[self.pressureUnitMAOP]  # convert to original unit
-                    self.resultsWindow.label_results.setText(_translate("Dialog",
-                                                   "Długość korozji: " + "{:.3F}".format(Lm) + " mm" + " mniejsza niż Lmax: "+ "{:.3F}".format(Lmax)+" mm"+
-                                                                        "\n Rurociąg może być bezpiecznie eksploatowany przy ciśnieniu roboczym: " + "{:.3F}".format(MAOP) + " " +
-                                                                            self.pressureUnitsList[
-                                                                                self.pressureUnitMAOP],
-                                                   None))
+                    description = "Długość korozji: " + "{:.3F}".format(
+                        Lm) + " mm" + " mniejsza niż Lmax: " + "{:.3F}".format(
+                        Lmax) + " mm" + "\n Rurociąg może być bezpiecznie eksploatowany przy ciśnieniu roboczym: " + "{:.3F}".format(
+                        MAOP) + " " + self.pressureUnitsList[self.pressureUnitMAOP]
+
             elif d / t < 0.1:
-                self.resultsWindow.label_results.setText(_translate("Dialog",
-                                               "Minimalna grubość ścianki mniejsza niż 10% nominalnej grubości\n Rurociąg należy naprawić",
-                                               None))
+                description = "Minimalna grubość ścianki mniejsza niż 10% nominalnej grubości\n Rurociąg należy naprawić"
+
             elif d / t > 0.8:
-                self.resultsWindow.label_results.setText(
-                    _translate("Dialog",
-                               "Minimalna grubość ścianki większa niż 80% nominalnej grubości\n Rurociąg może być bezpiecznie eksploatowany",
-                               None))
+                description = "Minimalna grubość ścianki większa niż 80% nominalnej grubości\n Rurociąg może być bezpiecznie eksploatowany"
         else:
-            self.resultsWindow.label_results.setText(_translate("Dialog", "Błąd: Nie wybrano żadnego obszaru korozji", None))
+            description = "Błąd: Nie wybrano żadnego obszaru korozji"
 
-
-
-        self.resultsWindow.show()
+        self.resultsDialog.label_results.setText(
+            _translate("Dialog", description, None))
+        if Lm != "-":
+            Lm = "{:.3F}".format(Lm) + " mm"
+        if Lmax != "-":
+            Lmax = "{:.3F}".format(Lmax) + " mm"
+        if t != "-":
+            t = "{:.3F}".format(t) + " mm"
+        if d != "-":
+            d = "{:.3F}".format(d) + " mm"
+        if P != "-":
+            P = "{:.3F}".format(P * self.pressureUnitsDividers[self.pressureUnitMAOP]) + self.pressureUnitsList[self.pressureUnitMAOP]
+        if Pprim != "-":
+            Pprim = "{:.3F}".format(Pprim) + self.pressureUnitsList[self.pressureUnitMAOP]
+        self.reportData = [[self.x, self.y, self.w, self.h], Lm, Lmax, t, d, P, Pprim, description]
+        self.resultsDialog.show()
 
     def mouseSelect(self, QMouseEvent):
         for i in range(len(self.selectionPixItems)):
@@ -211,7 +230,11 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.label_params.setText(_translate("Dialog", text, None))
 
 
-    def setData(self, thickness_data_array, img_to_show, aspect_ratio):
+    def setData(self, thickness_data_array, img_to_show, aspect_ratio, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
         self.pushButton_maop.setEnabled(False)
         self.selectionPixItems = []
         self.corrosions = []
