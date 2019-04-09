@@ -452,6 +452,9 @@ QPushButton:checked{
      </widget>
     </item>
    </layout>
+   <zorder>pushButton_3d</zorder>
+   <zorder>graphicsView</zorder>
+   <zorder>pushButton_move</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -472,9 +475,105 @@ QPushButton:checked{
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
+   <addaction name="actionOptions"/>
+   <addaction name="separator"/>
+   <addaction name="actionMove"/>
+   <addaction name="actionCorrosions"/>
+   <addaction name="actionAutoDetect"/>
+   <addaction name="separator"/>
+   <addaction name="actionReport"/>
+   <addaction name="actionReportAdd"/>
+   <addaction name="actionL"/>
+   <addaction name="actionSW"/>
+   <addaction name="actionSP"/>
   </widget>
+  <action name="actionOptions">
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/options.png</normaloff>:/icons/options.png</iconset>
+   </property>
+   <property name="text">
+    <string>Opcje</string>
+   </property>
+  </action>
+  <action name="actionMove">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>M</string>
+   </property>
+  </action>
+  <action name="actionCorrosions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionReportAdd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>R+</string>
+   </property>
+  </action>
+  <action name="actionAutoDetect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>A</string>
+   </property>
+  </action>
+  <action name="actionSW">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>SW</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionSP">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SP</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionL">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>L</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionReport">
+   <property name="text">
+    <string>R</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -488,6 +587,8 @@ QPushButton:checked{
    <header>pyqtgraph.opengl</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource_file.qrc"/>
+ </resources>
  <connections/>
 </ui>

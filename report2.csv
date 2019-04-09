@@ -3,7 +3,6 @@ Id,Nazwa,Lokalizacja,Długość,Szerokość,dmax,Lmax,Opis
 
 Rodzaj:,Laminacja,RodzajID:,1
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
-L0,Laminacja#0,"4973, 25",164,59,opisik
 L1,Laminacja#1,"4988, 43",47,7,opisik
 
 Rodzaj:,Spoina poprzeczna,RodzajID:,2

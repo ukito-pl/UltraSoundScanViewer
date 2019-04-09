@@ -39,6 +39,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.generate3dDialog = Generate3dDialog()
         self.reportDialog = ReportDialog()
 
+        self.toolBar.actionTriggered.connect(self.processAction)
+
         self.connect(self.pushButton_move,SIGNAL('released()'),self.moveButtonClicked)
         self.connect(self.pushButton_corrosions, SIGNAL('released()'), self.corosionButtonClicked)
         self.connect(self.pushButton_raport, SIGNAL('released()'), self.reportButtonClicked)
@@ -73,8 +75,25 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.graphicsView.setBackgroundColor([128,128,128,255])
 
+    def processAction(self,q_action):
+        if q_action == self.actionOptions:
+            self.openOptions()
+        elif q_action == self.actionMove:
+            self.setToolMode(ToolModes.MoveMode)
+        elif q_action == self.actionCorrosions:
+            self.setToolMode(ToolModes.CorrosionMode)
+        elif q_action == self.actionReportAdd:
+            self.setToolMode(ToolModes.ReportMode)
+        elif q_action == self.actionReport:
+            self.reportDialog.show()
+        elif q_action == self.actionAutoDetect:
+            self.setToolMode(ToolModes.AutoDetectMode)
 
     def tempDragModeEnable(self):
+        self.actionMove.setChecked(True)
+        self.actionCorrosions.setChecked(False)
+        self.actionReportAdd.setChecked(False)
+        self.actionAutoDetect.setChecked(False)
         self.pushButton_move.setChecked(True)
         self.pushButton_corrosions.setChecked(False)
         self.pushButton_raport.setChecked(False)
@@ -97,26 +116,35 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setToolMode(ToolModes.AutoDetectMode)
 
     def setToolMode(self, mode):
+        self.actionMove.setChecked(False)
+        self.actionCorrosions.setChecked(False)
+        self.actionReportAdd.setChecked(False)
+        self.actionAutoDetect.setChecked(False)
         self.pushButton_move.setChecked(False)
         self.pushButton_corrosions.setChecked(False)
         self.pushButton_raport.setChecked(False)
         self.pushButton_auto_detect.setChecked(False)
+
         if mode == ToolModes.MoveMode:
 
-            self.scanViewer.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)####to psuje, pewnie dlatego że te zmienione eventy moje są
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self.toolMode = mode
             self.pushButton_move.setChecked(True)
+            self.actionMove.setChecked(True)
         elif mode == ToolModes.CorrosionMode:
             self.toolMode = mode
             self.pushButton_corrosions.setChecked(True)
+            self.actionCorrosions.setChecked(True)
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.ReportMode:
             self.toolMode = mode
             self.pushButton_raport.setChecked(True)
+            self.actionReportAdd.setChecked(True)
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.AutoDetectMode:
             self.toolMode = mode
             self.pushButton_auto_detect.setChecked(True)
+            self.actionAutoDetect.setChecked(True)
         elif mode == ToolModes.RefSelectionMode:
             self.toolMode = mode
 
