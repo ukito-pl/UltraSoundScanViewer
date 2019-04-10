@@ -371,9 +371,6 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
    </layout>
-   <zorder>pushButton_3d</zorder>
-   <zorder>graphicsView</zorder>
-   <zorder>pushButton_move</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -394,7 +391,7 @@ p, li { white-space: pre-wrap; }
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionOptions"/>
    <addaction name="separator"/>
@@ -421,6 +418,10 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_move.png</normaloff>:/icons/icon_move.png</iconset>
+   </property>
    <property name="text">
     <string>M</string>
    </property>
@@ -428,6 +429,10 @@ p, li { white-space: pre-wrap; }
   <action name="actionCorrosions">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_corrosion.png</normaloff>:/icons/icon_corrosion.png</iconset>
    </property>
    <property name="text">
     <string>C</string>
@@ -437,6 +442,10 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_report_add.png</normaloff>:/icons/icon_report_add.png</iconset>
+   </property>
    <property name="text">
     <string>R+</string>
    </property>
@@ -444,6 +453,10 @@ p, li { white-space: pre-wrap; }
   <action name="actionAutoDetect">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_autodetect.png</normaloff>:/icons/icon_autodetect.png</iconset>
    </property>
    <property name="text">
     <string>A</string>
@@ -455,6 +468,10 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="checked">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_SW.png</normaloff>:/icons/icon_SW.png</iconset>
    </property>
    <property name="text">
     <string>SW</string>
@@ -470,6 +487,10 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_SP.png</normaloff>:/icons/icon_SP.png</iconset>
+   </property>
    <property name="text">
     <string>SP</string>
    </property>
@@ -481,6 +502,10 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_lamination.png</normaloff>:/icons/icon_lamination.png</iconset>
+   </property>
    <property name="text">
     <string>L</string>
    </property>
@@ -489,6 +514,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionReport">
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_report.png</normaloff>:/icons/icon_report.png</iconset>
+   </property>
    <property name="text">
     <string>R</string>
    </property>
