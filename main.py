@@ -15,6 +15,7 @@ from EvaluationDialog import EvaluationDialog
 from ScanManager import ScanManager
 from generate3d import Generate3dDialog
 from raport import ReportDialog
+from TestDialog import TestDialog
 from Miscellaneous import ToolModes,ReportTools
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -40,6 +41,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanManager = ScanManager()
         self.generate3dDialog = Generate3dDialog()
         self.reportDialog = ReportDialog()
+        self.testDialog = TestDialog()
 
         self.toolBar.actionTriggered.connect(self.processAction)
 
@@ -125,6 +127,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.AutoDetectMode:
             self.toolMode = mode
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
             self.actionAutoDetect.setChecked(True)
             self.expandReportTools(False)
         elif mode == ToolModes.RefSelectionMode:
@@ -262,6 +265,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
                 self.reportDialog.setCurrentElement(ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej"])
             elif self.reportTool == ReportTools.SW:
                 self.reportDialog.setCurrentElement(ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej"])
+        elif self.toolMode == ToolModes.AutoDetectMode:
+            self.testDialog.show()
+            self.testDialog.setData(self.scanManager.thicknessScanRearranged[y:y + h, x:x + w], self.scanViewer.aspect_ratio)
+
+
+
 
     def mousePositionChanged(self, QMouseEvent):
         if self.scans2dLoaded:

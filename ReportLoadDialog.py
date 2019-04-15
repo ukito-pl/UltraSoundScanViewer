@@ -20,5 +20,3 @@ class ReportLoadDialog(QtGui.QDialog, RaportLoadWindow.Ui_Dialog):
     def __init__(self):
         super(self.__class__, self).__init__(flags = QtCore.Qt.WindowStaysOnTopHint)
         self.setupUi(self)
-        #self.connect(self.pushButton_open, SIGNAL('clicked()'), self.getFile)
-        #self.connect(self.pushButton_new, SIGNAL('clicked()'), self.newFile)
