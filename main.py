@@ -16,6 +16,7 @@ from ScanManager import ScanManager
 from generate3d import Generate3dDialog
 from raport import ReportDialog
 from TestDialog import TestDialog
+from AutoDetectDialog import AutoDetectDialog
 from Miscellaneous import ToolModes,ReportTools
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -42,6 +43,10 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.generate3dDialog = Generate3dDialog()
         self.reportDialog = ReportDialog()
         self.testDialog = TestDialog()
+        self.autoDetectDialog = AutoDetectDialog(self.optionsDialog)
+
+        self.connect(self.autoDetectDialog,SIGNAL('showElement(PyQt_PyObject)'),self.loadElement)
+        self.reportDialog.connect(self.autoDetectDialog,SIGNAL('reportElement(PyQt_PyObject)'),self.reportDialog.setCurrentElement)
 
         self.toolBar.actionTriggered.connect(self.processAction)
 
@@ -86,6 +91,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif q_action == self.actionReport:
             self.reportDialog.show()
         elif q_action == self.actionAutoDetect:
+            self.autoDetectDialog.show()
             self.setToolMode(ToolModes.AutoDetectMode)
         elif q_action == self.actionL:
             self.setReportTool(ReportTools.L)
@@ -161,7 +167,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.reportDialog.show()
         self.reportDialog.activateWindow()
         print "Wysłano raport", data
-        self.reportDialog.setCurrentElement(ReportTools.K.value,data)
+        self.reportDialog.setCurrentElement([ReportTools.K.value,data])
 
     def setScans2dLoaded(self):
         self.scans2dLoaded = True
@@ -260,11 +266,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.reportDialog.activateWindow()
             [x, y, d] = self.scanManager.getXYD((x + w) / 2, (y + h) /2)
             if self.reportTool == ReportTools.L:
-                self.reportDialog.setCurrentElement(ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji"])
+                self.reportDialog.setCurrentElement([ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji"]])
             elif self.reportTool == ReportTools.SP:
-                self.reportDialog.setCurrentElement(ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej"])
+                self.reportDialog.setCurrentElement([ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej"]])
             elif self.reportTool == ReportTools.SW:
-                self.reportDialog.setCurrentElement(ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej"])
+                self.reportDialog.setCurrentElement([ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej"]])
         elif self.toolMode == ToolModes.AutoDetectMode:
             self.testDialog.show()
             self.testDialog.setData(self.scanManager.thicknessScanRearranged[y:y + h, x:x + w], self.scanViewer.aspect_ratio)
@@ -362,19 +368,27 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanManager.rearrangeScan(val_ratio)
         self.update2dScan()
 
-    def loadScan(self):
+    def loadElement(self,data):
+        milimiters_start = data[0]
+        milimiters_end = data[1]
+        self.loadScan(milimiters_start, milimiters_end)
+
+    def loadScan(self, milimiters_start = -1, milimiters_end = -1):
         self.scans2dLoaded = False
         self.scans3dLoaded = False
         self.generate3dDialog.textEdit.clear()
         self.generate3dDialog.textEdit_2.clear()
-        if self.comboBox_3.currentIndex() == 0:
-            multiplier = 1
-        elif self.comboBox_3.currentIndex() == 1:
-            multiplier = 1000
-        elif self.comboBox_3.currentIndex() == 2:
-            multiplier = 1000000
-        milimeters = float(self.textEdit_km.toPlainText().replace(",",".")) * multiplier
-        milimeters_range = float(self.textEdit_km_range.toPlainText().replace(",",".")) * 1000
+        if milimiters_start == -1 and milimiters_end == -1:
+            if self.comboBox_3.currentIndex() == 0:
+                multiplier = 1
+            elif self.comboBox_3.currentIndex() == 1:
+                multiplier = 1000
+            elif self.comboBox_3.currentIndex() == 2:
+                multiplier = 1000000
+            milimeters = float(self.textEdit_km.toPlainText().replace(",",".")) * multiplier
+            milimeters_range = float(self.textEdit_km_range.toPlainText().replace(",",".")) * 1000
+            milimiters_start = milimeters - milimeters_range
+            milimiters_end = milimeters + milimeters_range
         scan_dir = unicode(self.optionsDialog.dataDir)
         a = self.optionsDialog.CoefficientA
         b = self.optionsDialog.CoefficientB
@@ -389,30 +403,32 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         bt0 = self.optionsDialog.thicknessStartByte
         bt1 = self.optionsDialog.thicknessEndByte
         frame_length = self.optionsDialog.frameLength
-        self.scanManager.loadScan(milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter,
-                                  nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
+        print milimiters_start, milimiters_end
+        self.scanManager.loadScan(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
+                                  delta_x, diameter, nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
 
     def show2dScan(self):
         if self.scans2dLoaded:
+            self.activateWindow()
             if self.viewDataType == "thickness":
                 image = self.scanManager.getThicknessImageScan()
             elif self.viewDataType == "distance":
                 image = self.scanManager.getDistanceImageScan()
             self.scanViewer.clearScene()
             self.scanViewer.resetViewScale()
+            self.scale_spacing = 0.1
             self.scanViewer.aspect_ratio = self.scanManager.resolutionRatio
             self.scanViewer.setScanImage(image)
 
             self.addScaleBar(7)
 
-            frame_range = (self.scanManager.endFrame - self.scanManager.startFrame).__float__()
-            px = ((self.scanManager.currentFrame - self.scanManager.startFrame) / frame_range)
-            self.scanViewer.goTo(px)
+            self.scanViewer.goTo(0.5)
             self.scanViewer.moveScaleBar()
             self.scanViewer.moveScaleBar()
             self.colorLegend()
 
             self.pushButton_3d.setEnabled(True)
+
 
     def update2dScan(self):
         if self.viewDataType == "thickness":

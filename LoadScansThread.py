@@ -12,17 +12,46 @@ class LoadScansThread(QThread):
         self.start_byte = bt0           #
         self.start_byte_dist = bd0
         #scan variables
-        self.start_frame = start_frame
-        self.end_frame = end_frame
-
         f = open(self.base_file_dir, "rb")
         f.seek(0, 2)
         size = f.tell()
         self.frames_in_file = size / self.data_frame_length
-        #print "frames: ", self.frames_in_file
         f.close()
+        if start_frame < 0:
+            self.start_frame = 0
+        else:
+            self.start_frame = start_frame
+
+        if end_frame < 0 or end_frame > self.maxEndFrame():
+            self.end_frame = self.maxEndFrame()
+        else:
+            self.end_frame = end_frame
+
+
     def __del__(self):
         self.wait()
+
+    def maxEndFrame(self):
+        end_frame = 0
+        i = 0
+        file_exists = True
+        while file_exists:
+            dir = self.base_file_dir.split('.')
+            file_dir = dir[0][0:len(dir[0]) - 7] + i.__str__().zfill((7)) + '.' + dir[1]
+            try:
+                f = open(file_dir, "rb")
+            except:
+                file_exists = False
+            if file_exists:
+                f.seek(0, 2)
+                size = f.tell()
+                frames_in_file = size / self.data_frame_length
+                end_frame = end_frame + frames_in_file
+                f.close()
+            else:
+                end_frame = end_frame - 1
+            i = i + 1
+        return end_frame
 
     def run(self):
         #print "run thread"
@@ -41,13 +70,12 @@ class LoadScansThread(QThread):
 
             dir = self.base_file_dir.split('.')
             file_dir = dir[0][0:len(dir[0]) - 7] + i.__str__().zfill((7)) + '.' + dir[1]
-            #print file_dir
 
             f = open(file_dir, "rb")
 
             if (end_file_index==start_file_index):
                 count = self.end_frame - self.start_frame + 1
-                f.seek((self.start_frame ) * self.data_frame_length, 0)
+                f.seek((self.start_frame - i*self.frames_in_file) * self.data_frame_length, 0)
             elif (i == start_file_index):
                 f.seek((self.start_frame - start_file_index*self.frames_in_file) * self.data_frame_length, 0)
                 count = start_file_frames_to_get
@@ -55,7 +83,7 @@ class LoadScansThread(QThread):
                 count = start_file_frames_to_get + (it2-1)*self.frames_in_file + end_file_frames_to_get
             elif (i > start_file_index and i < end_file_index):
                 count = start_file_frames_to_get + (it2) * self.frames_in_file
-            #print count
+            #print it, count
             while ( it < count):
                 f.seek(self.start_byte_dist, 1)
                 f1 = f.read(self.data_length)
@@ -68,9 +96,10 @@ class LoadScansThread(QThread):
                 img[:,it] = b
 
                 it = it + 1
+                #print "it:", it, "thick: ", b[0]
             f.close()
 
             it2 = it2 + 1
 
-
+        #print img, img.shape
         self.emit(SIGNAL('scansLoaded(PyQt_PyObject)'), [img,dist])

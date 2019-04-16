@@ -102,7 +102,7 @@ class ScanManager(QObject):
         depth = self.c * self.thicknessScanRearranged[int(indy), int(indx)] + self.d
         return [x,[hours,minutes],depth]
 
-    def loadScan(self,milimeters, milimeters_range, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth, nominal_dist, bd0,bd1,bt0,bt1,frame_length):
+    def loadScan(self,milimeters_start, milimeters_end, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth, nominal_dist, bd0,bd1,bt0,bt1,frame_length):
         self.dataPerFrame = bt1 - bt0 +1
         self.a = a
         self.b = b
@@ -116,12 +116,12 @@ class ScanManager(QObject):
         self.nominalDistanceVal = (self.nominalDistance - self.b) / self.a
         self.nominalThickness = nominal_depth
         self.nominalThicknessVal = (self.nominalThickness - self.d) / self.c
-        self.currentFrame = ( milimeters / self.deltaX).__int__()
-        self.frameRange = (milimeters_range / self.deltaX).__int__()
-        self.startFrame = (self.currentFrame - self.frameRange).__int__()
+        # self.currentFrame = ( milimeters / self.deltaX).__int__()
+        # self.frameRange = (milimeters_range / self.deltaX).__int__()
+        self.startFrame = (milimeters_start/ self.deltaX).__int__()
         if self.startFrame < 0:
-            self.startFrame = 0;
-        self.endFrame = (self.currentFrame + self.frameRange).__int__()
+            self.startFrame = 0
+        self.endFrame = (milimeters_end/ self.deltaX).__int__()
         self.scanDir = scan_dir
         self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame,bd0,bd1,bt0,bt1,frame_length)
         self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.set2dScans)
@@ -330,6 +330,12 @@ class ScanManager(QObject):
         image_thick = QtGui.QImage(self.thicknessScanColoredRearranged, self.thicknessScanColoredRearranged.shape[1],
                                    self.thicknessScanColoredRearranged.shape[0], self.thicknessScanColoredRearranged.shape[1] * 3,
                                    QtGui.QImage.Format_RGB888)
+        # print self.thicknessScan,self.thicknessScan.shape
+        # test_image = 125*np.ones(self.thicknessScan.shape, dtype=np.uint8)
+        # image_thick = QtGui.QImage(test_image, self.thicknessScan.shape[1],
+        #                            self.thicknessScan.shape[0],
+        #                            self.thicknessScan.shape[1],
+        #                            QtGui.QImage.Format_Indexed8)
         return image_thick
 
     def getDistanceImageScan(self):

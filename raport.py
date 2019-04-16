@@ -47,12 +47,14 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             self.treeWidget.setEnabled(True)
             self.tableWidget.clearContents()
         elif mode == "AddMode":
-            self.pushButton_delete.setEnabled(False)
+            self.pushButton_delete.setEnabled(True)
+            self.pushButton_delete.setText("Anuluj")
             self.pushButton_add_change.setEnabled(True)
             self.treeWidget.setEnabled(False)
             self.pushButton_add_change.setText("Dodaj")
         elif mode == "ChangeMode":
             self.pushButton_delete.setEnabled(True)
+            self.pushButton_delete.setText(_translate("Dialog", "Usuń".__str__(), None))
             self.pushButton_add_change.setEnabled(True)
             self.treeWidget.setEnabled(True)
             self.pushButton_add_change.setText(_translate("Dialog", "Zmień".__str__(), None))
@@ -134,7 +136,11 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
 
 
 
-    def setCurrentElement(self,element_type_id, property_list):
+    def setCurrentElement(self,data):
+        element_type_id = data[0]
+        property_list = data[1]
+        self.show()
+        self.activateWindow()
         self.setMode("AddMode")
         id = ''
         name = ''
@@ -217,14 +223,18 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         report.close()
 
     def deleteCurrentElementFromReport(self):
-        current_item = self.treeWidget.currentItem()
-        parent = current_item.parent()
-        id = current_item.text(1)
-        self.deleteElementFromReport(id)
-        parent.takeChild(parent.indexOfChild(current_item))
-        self.pushButton_delete.setEnabled(False)
-        self.pushButton_add_change.setEnabled(False)
-        self.tableWidget.clearContents()
+        if self.mode == "AddMode":
+            self.tableWidget.clearContents()
+            self.setMode("NormalMode")
+        elif self.mode == "ChangeMode":
+            current_item = self.treeWidget.currentItem()
+            parent = current_item.parent()
+            id = current_item.text(1)
+            self.deleteElementFromReport(id)
+            parent.takeChild(parent.indexOfChild(current_item))
+            self.pushButton_delete.setEnabled(False)
+            self.pushButton_add_change.setEnabled(False)
+            self.tableWidget.clearContents()
 
     def deleteElementFromReport(self,elem_id):
         report = open(self.reportDir, "r")

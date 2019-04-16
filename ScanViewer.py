@@ -70,6 +70,7 @@ class ScanViewer(QtGui.QGraphicsView):
             self.view_scale = self.view_scale * self.zoom_out_factor
             pos = pos * self.zoom_out_factor
         self.clearScene()
+        self.scanScene.addItem(self.scanPixItem)
         self.scanPixItem.setScale(self.view_scale)
         self.emit(SIGNAL('changeScale()'))
         self.setScene(self.scanScene)
@@ -84,6 +85,8 @@ class ScanViewer(QtGui.QGraphicsView):
     def setScanImage(self, scan_image):
         scanPixMap = QtGui.QPixmap(scan_image)
         scanPixMap = scanPixMap.scaled(scanPixMap.width(), int(scanPixMap.height() * self.aspect_ratio))
+        self.scanPixItem = QtGui.QGraphicsPixmapItem()
+        self.scanScene.addItem(self.scanPixItem)
         self.scanPixItem.setPixmap(scanPixMap)
         self.scanPixItem.setScale(self.view_scale)
         self.setScene(self.scanScene)
@@ -107,14 +110,13 @@ class ScanViewer(QtGui.QGraphicsView):
 
 
     def clearScene(self):
-        #deletes all items in the scanScene except scanPixItem and creates new scanScene with scanPixItem added
+        #deletes all items in the scanScene except scanPixItem and creates new scanScene
         self.scanScene.removeItem(self.scanPixItem)  # remove item from the scene
         self.scanScene.clear()
         self.sceneItems = []
         self.pos = []
         self.lockPos = []
         self.scanScene = QtGui.QGraphicsScene()
-        self.scanScene.addItem(self.scanPixItem)
 
     def moveScaleBar(self):
         #moves the scale bar so it will always be on top of the graphicView

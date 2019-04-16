@@ -31,6 +31,15 @@ class TestDialog(QtGui.QDialog, TestWindow.Ui_Dialog):
         self.aspectRatio = aspect_ratio
         self.showData(self.thicknessRawData)
 
+    def showImage(self,qimage):
+        self.scene = QtGui.QGraphicsScene()
+        pix1 = QtGui.QPixmap(qimage)
+        self.pixItem = QtGui.QGraphicsPixmapItem(pix1)
+        self.pixItem.scale(1, self.aspectRatio)
+        self.scene.addItem(self.pixItem)
+        self.graphicsView.setScene(self.scene)
+        self.graphicsView.fitInView(self.pixItem, QtCore.Qt.KeepAspectRatio)
+
     def showData(self,data):
         img = np.array(data,dtype=np.uint8)
         image = QtGui.QImage(img, img.shape[1], img.shape[0], img.shape[1], QtGui.QImage.Format_Indexed8)
