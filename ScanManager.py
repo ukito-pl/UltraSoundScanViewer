@@ -46,7 +46,7 @@ class ScanManager(QObject):
         self.colorMapping.addScale("ironfire")
         self.colorMapping.setColorAt("ironfire", 255, QtGui.QColor(0, 191, 255))
         self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal * 1.5, QtGui.QColor(0, 191, 255))
-        self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal * 1.2, QtGui.QColor(0, 128, 255))
+        self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal * 1.4, QtGui.QColor(0, 128, 255))
         self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal * 1.1, QtGui.QColor(0, 128, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal, QtGui.QColor(0, 255, 0))
         self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal * 0.9, QtGui.QColor(255, 255, 0))
@@ -260,12 +260,15 @@ class ScanManager(QObject):
         scale_values = np.array([0,0.25,0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.2, 1.35, 1.5]) * ndval
         scale_values = [int(x) for x in scale_values]
         step = legend_height / (max_dval - min_dval + 1)
+        # legend_array = np.zeros((legend_height, 21, 4), dtype=np.uint8)
+        # legend_array[:,0:21,3] = 255
         legend_array = np.zeros((legend_height, 20, 4), dtype=np.uint8)
-        legend_array[:,0:15,3] = 255
+        legend_array[:, 0:15, 3] = 255
         j = 0
         for val in range(int(min_dval), int(max_dval + 1)):
             color = self.colorMapping.lookUpTables[scale_name][val]
             legend_array[int((-j - 1) * step - 1 -1 ):int((-j) * step - 1), 1:15, 0:3] = list(reversed(color))
+            #legend_array[int((-j - 1) * step - 1 - 1):int((-j) * step - 1), 1:20, 0:3] = list(reversed(color))
 
             if val in scale_values:
                 mid = int(((-j - 1) * step - 1 - 1 + (-j) * step - 1) / 2)
@@ -297,6 +300,11 @@ class ScanManager(QObject):
         legend_array[:, 15, :] = [0, 0, 0, 255]
         legend_array[0, 0:15, :] = [0, 0, 0, 255]
         legend_array[-1, 0:15, :] = [0, 0, 0, 255]
+
+        # legend_array[:, 0, :] = [0, 0, 0, 255]
+        # legend_array[:, 20, :] = [0, 0, 0, 255]
+        # legend_array[0, 0:20, :] = [0, 0, 0, 255]
+        # legend_array[-1, 0:20, :] = [0, 0, 0, 255]
 
         image = QtGui.QImage(legend_array, legend_array.shape[1], legend_array.shape[0], legend_array.shape[1] * 4,
                              QtGui.QImage.Format_ARGB32)

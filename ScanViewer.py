@@ -85,11 +85,14 @@ class ScanViewer(QtGui.QGraphicsView):
     def setScanImage(self, scan_image):
         scanPixMap = QtGui.QPixmap(scan_image)
         scanPixMap = scanPixMap.scaled(scanPixMap.width(), int(scanPixMap.height() * self.aspect_ratio))
+        self.scanScene.removeItem(self.scanPixItem)
         self.scanPixItem = QtGui.QGraphicsPixmapItem()
-        self.scanScene.addItem(self.scanPixItem)
         self.scanPixItem.setPixmap(scanPixMap)
         self.scanPixItem.setScale(self.view_scale)
+        self.scanScene.addItem(self.scanPixItem)
         self.setScene(self.scanScene)
+        self.scanScene.update()
+        self.update()
 
 
 

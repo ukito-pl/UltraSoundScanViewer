@@ -214,6 +214,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.rearrangeScan()
             self.colorLegend()
         except:
+            #print "blad tickness button clicked"
             return
 
     def distanceButtonClicked(self):
@@ -224,6 +225,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.rearrangeScan()
             self.colorLegend()
         except:
+            #print "blad diustance button clicked"
             return
 
     def optionsAccepted(self):
@@ -274,7 +276,6 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif self.toolMode == ToolModes.AutoDetectMode:
             self.testDialog.show()
             self.testDialog.setData(self.scanManager.thicknessScanRearranged[y:y + h, x:x + w], self.scanViewer.aspect_ratio)
-
 
 
 
@@ -403,7 +404,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         bt0 = self.optionsDialog.thicknessStartByte
         bt1 = self.optionsDialog.thicknessEndByte
         frame_length = self.optionsDialog.frameLength
-        print milimiters_start, milimiters_end
+        #print milimiters_start, milimiters_end
         self.scanManager.loadScan(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
                                   delta_x, diameter, nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
 
@@ -448,6 +449,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         scene = QtGui.QGraphicsScene()
         items = self.scanManager.getColorLegendItems(400,self.viewDataType)
         for item in items:
+
             scene.addItem(item)
         self.graphicsView_2.setScene(scene)
         self.graphicsView_2.setMinimumHeight(scene.sceneRect().height())

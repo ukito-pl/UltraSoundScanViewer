@@ -69,7 +69,8 @@ class TestDialog(QtGui.QDialog, TestWindow.Ui_Dialog):
 
     def process(self):
         data = np.array(self.thicknessRawData)
-        #self.histogram(data)
+        self.showData(data)
+        self.histogram(data)
         for i in range(0,data.shape[0]):
             for j in range(0,data.shape[1]):
                 if data[i,j] < 54:
@@ -78,28 +79,28 @@ class TestDialog(QtGui.QDialog, TestWindow.Ui_Dialog):
                     data[i,j] = int(255/21*(data[i,j] - 54))
                 else:
                     data[i, j] = 255
-        #self.histogram(data)
-        self.showData(data)
+        self.histogram(data)
+        # self.showData(data)
         gradient = self.evalGradient(data)
 
-        N = 0
-        sum = 0
-        for m in range(1, gradient.shape[0] - 1):
-            for n in range(1, gradient.shape[1] - 1):
-                sum = sum + gradient[m, n]
-                N = N + 1
-        avg = sum / N
-
-        for i in range(0,gradient.shape[0]-1):
-            for j in range(0,gradient.shape[1]-1):
-                if gradient[i, j] > (0.4*avg):
-                        gradient[i,j] = 255
-                else:
-                        gradient[i,j] = 0
-
-        edge_map = gradient
-        segments = self.findSegments(edge_map)
-        self.showData2(gradient)
+        # N = 0
+        # sum = 0
+        # for m in range(1, gradient.shape[0] - 1):
+        #     for n in range(1, gradient.shape[1] - 1):
+        #         sum = sum + gradient[m, n]
+        #         N = N + 1
+        # avg = sum / N
+        #
+        # for i in range(0,gradient.shape[0]-1):
+        #     for j in range(0,gradient.shape[1]-1):
+        #         if gradient[i, j] > (0.4*avg):
+        #                 gradient[i,j] = 255
+        #         else:
+        #                 gradient[i,j] = 0
+        #
+        # edge_map = gradient
+        # segments = self.findSegments(edge_map)
+        self.showData2(data)
 
     def histogram(self,data):
 
