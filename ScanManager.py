@@ -3,12 +3,15 @@ from PyQt4.QtCore import SIGNAL
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 
+import pyqtgraph.opengl as gl
+
 from LoadScansThread import LoadScansThread
 from Create3dScanThread import Create3dScanThread
 from ColorMapping import ColorMapping
+from ScanViewer import ScanViewer
 
 class ScanManager(QObject):
-    def __init__(self):
+    def __init__(self, scan_viewer = -1, view_3d = -1):
         super(self.__class__,self).__init__()
         self.distanceScan = -1
         self.distanceScanRearranged = -1
@@ -40,6 +43,11 @@ class ScanManager(QObject):
         self.nominalThicknessVal = 0
         self.dataPerFrame = 0
         self.resolutionRatio = 1 #transverse resolution / longitudinal resolution
+        self.viewDataType = "thickness"
+        self.scale_spacing = 0.1  # in meters
+
+        self.scanViewer = scan_viewer
+        self.graphicsView3D = view_3d
 
 
     def createDefaultColorScale(self):
@@ -143,6 +151,26 @@ class ScanManager(QObject):
         self.rearrangeScan(self.offsetRatio)
         self.emit(SIGNAL('scans2dLoaded()'))
 
+        ###tutaj zmieniaj
+        if self.viewDataType == "thickness":
+            image = self.getThicknessImageScan()
+        elif self.viewDataType == "distance":
+            image = self.getDistanceImageScan()
+        self.scanViewer.clearScene()
+        self.scanViewer.resetViewScale()
+        self.scale_spacing = 0.1
+        self.scanViewer.aspect_ratio = self.resolutionRatio
+        self.scanViewer.setScanImage(image)
+
+        self.addScaleBar(7)
+
+        self.scanViewer.goTo(0.5)
+        self.scanViewer.moveScaleBar()
+        self.scanViewer.moveScaleBar()
+
+
+
+
 
     def colorScan(self, scan, color_scale_name):
         colored_scan = np.zeros((scan.shape[0],scan.shape[1],3), dtype=np.uint8)
@@ -175,6 +203,13 @@ class ScanManager(QObject):
         rearranged_array[first_row:rows, :, :] = self.distanceScanColored[0:rows - first_row, :, :]
         self.distanceScanColoredRearranged = rearranged_array
 
+        self.update2dScan()
+
+    def addScaleBar(self, scale_line_height):
+        # scale_line_height - in pixels
+        items = self.getScaleBarItems(self.scale_spacing, scale_line_height, self.scanViewer.view_scale, self.deltaX)
+        for i in range(0,len(items)):
+            self.scanViewer.addItem(items[i][0],items[i][1],items[i][2])
 
     def getScaleBarItems(self,spacing, scale_line_height, scale, deltaX):
         items = []
@@ -247,12 +282,21 @@ class ScanManager(QObject):
 
         return items
 
-    def getColorLegendItems(self, legend_height,data_type):
+    def changeScale(self):
+        spacing_px_org = self.scale_spacing / self.deltaX * 1000
+        spacing_px = float(spacing_px_org * self.scanViewer.view_scale)
+        if spacing_px > 130:
+            self.scale_spacing = self.scale_spacing / 2
+        elif spacing_px < 40:
+            self.scale_spacing = self.scale_spacing * 2
+        self.addScaleBar(7)
+
+    def getColorLegendItems(self, legend_height):
         items = []
-        if data_type == "thickness":
+        if self.viewDataType == "thickness":
             ndval = self.nominalThicknessVal
             scale_name = "ironfire"
-        elif data_type == "distance":
+        elif self.viewDataType == "distance":
             ndval = self.nominalDistanceVal
             scale_name = "ironfire2"
         max_dval = ndval * 1.5
@@ -273,9 +317,9 @@ class ScanManager(QObject):
             if val in scale_values:
                 mid = int(((-j - 1) * step - 1 - 1 + (-j) * step - 1) / 2)
                 legend_array[mid, 10:20, :] = [0, 0, 0, 255]
-                if data_type == "thickness":
+                if self.viewDataType == "thickness":
                     real_val = self.c * val + self.d
-                elif data_type == "distance":
+                elif self.viewDataType == "distance":
                     real_val = self.a * val + self.b
                 textItem = QtGui.QGraphicsTextItem(real_val.__str__())
                 font = QtGui.QFont()
@@ -314,14 +358,27 @@ class ScanManager(QObject):
 
         return items
 
-    def load3dScan(self,x_start,x_end, smooth, shaded):
+    def create3dScan(self, x_start, x_end, smooth, shaded):
         self.create3dScanThread = Create3dScanThread(self.dataPerFrame, self.deltaX, self.diameter, self.nominalDistance,  self.startFrame, self.a, self.b, self.distanceScan, self.thicknessScanColored, x_start, x_end, smooth, shaded)
         self.connect(self.create3dScanThread, SIGNAL('3dScanCreated(PyQt_PyObject)'), self.set3dScan)
         self.create3dScanThread.start()
 
     def set3dScan(self,items):
         self.scan3dItems = items
+        if self.graphicsView3D.items.__len__() > 0:
+            for i in range(0, self.graphicsView.items.__len__()):
+                self.graphicsView3D.items.__delitem__(0)
+        g = gl.GLGridItem()
+        g.scale(2, 2, 1)
+        g.setDepthValue(10)
+        self.graphicsView3D.addItem(g)
+
+        for item in self.scan3dItems:
+            self.graphicsView3D.addItem(item)
         self.emit(SIGNAL('scans3dLoaded()'))
+
+
+
 
     def getThicknessData(self,i1,i2,j1,j2):
         data = np.zeros((i2-i1,j2-j1))
@@ -352,5 +409,9 @@ class ScanManager(QObject):
                                   QtGui.QImage.Format_RGB888)
         return image_dist
 
-    def get3dScanItems(self):
-        return self.scan3dItems
+    def update2dScan(self):
+        if self.viewDataType == "thickness":
+            image = self.getThicknessImageScan()
+        elif self.viewDataType == "distance":
+            image = self.getDistanceImageScan()
+        self.scanViewer.setScanImage(image)

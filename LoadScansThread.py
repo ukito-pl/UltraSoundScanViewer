@@ -37,11 +37,12 @@ class LoadScansThread(QThread):
         file_exists = True
         while file_exists:
             dir = self.base_file_dir.split('.')
-            file_dir = dir[0][0:len(dir[0]) - 7] + i.__str__().zfill((7)) + '.' + dir[1]
+            file_dir = dir[0][0:len(dir[0]) - 5] + i.__str__().zfill((5)) + '.' + dir[1]
             try:
                 f = open(file_dir, "rb")
             except:
                 file_exists = False
+                print "cannot open file", file_dir
             if file_exists:
                 f.seek(0, 2)
                 size = f.tell()
@@ -55,7 +56,7 @@ class LoadScansThread(QThread):
 
     def run(self):
         #print "run thread"
-        #print self.start_frame, self.end_frame
+        print self.start_frame, self.end_frame
         img = np.ones((self.data_length, self.end_frame - self.start_frame + 1), dtype=np.uint8)
         dist = np.ones((self.data_length, self.end_frame - self.start_frame + 1), dtype=np.uint8)
         end_file_index = (self.end_frame/self.frames_in_file).__int__()
@@ -69,7 +70,7 @@ class LoadScansThread(QThread):
         for i in range(start_file_index,end_file_index+1):
 
             dir = self.base_file_dir.split('.')
-            file_dir = dir[0][0:len(dir[0]) - 7] + i.__str__().zfill((7)) + '.' + dir[1]
+            file_dir = dir[0][0:len(dir[0]) - 5] + i.__str__().zfill((5)) + '.' + dir[1]
 
             f = open(file_dir, "rb")
 

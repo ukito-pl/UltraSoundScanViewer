@@ -16,6 +16,7 @@ L2,Laminacja#2,"4936, 17",135,50,opisik
 L7,Laminacja#7,"X: 6.460 m, Y:  0 h 55 min ",166.000 mm,17.000 mm,opisik laminacji
 L8,Laminacja#8,"X: 6.464 m, Y:  0 h 56 min ",210.000 mm,26.000 mm,opisik laminacji
 L3,Laminacja#3,"X: 6.460 m, Y:  0 h 57 min ",193.000 mm,30.000 mm,opisik laminacji
+L9,Laminacja#9,"X: 15.404 m, Y:  1 h 53 min ",302.000 mm,58.000 mm,opisik laminacji
 
 Rodzaj:,Spoina poprzeczna,RodzajID:,2
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
@@ -24,9 +25,13 @@ SP1,Spoina poprzeczna#1,4673,160,237,opisik spoiny poprzecznej
 SP2,Spoina poprzeczna#2,X: 6.439 m,177.000 mm,227.000 mm,opisik spoiny poprzecznej
 SP3,Spoina poprzeczna#3,X: 6.737 m,216.000 mm,227.000 mm,opisik spoiny poprzecznej
 SP4,Spoina poprzeczna#4,X: 8.748 m,-,-,-
+SP5,Spoina poprzeczna#5,X: 15.902 m,212.000 mm,506.000 mm,opisik spoiny poprzecznej
+SP6,Spoina poprzeczna#6,X: 17.2745 m,-,-,-
 
 Rodzaj:,Spoina wzdłużna,RodzajID:,3
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
 SW0,Spoina wzdłużna#0,"5462, 159",740,52,opisik spoiny wzdluznej
 SW1,Spoina wzdłużna#1,"X: 7.083 m, Y:  0 h 56 min ",556.000 mm,32.000 mm,opisik spoiny wzdluznej
+SW2,Spoina wzdłużna#2,"X: 16.842 m, Y:  1 h 53 min ",1962.000 mm,58.000 mm,opisik spoiny wzdluznej
+SW3,Spoina wzdłużna#3,"X: 6.206 m, Y:  0 h 48 min ",1444.000 mm,108.000 mm,opisik spoiny wzdluznej
 

@@ -32,14 +32,13 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.setToolMode(ToolModes.MoveMode)
         self.reportTool = -1
         self.setReportTool(ReportTools.L)
-        self.thicknessButtonClicked()
         self.statusBarMessage = ""
         self.statusLabel = QtGui.QLabel()
         self.statusLabel.setText(self.statusBarMessage)
         self.statusbar.addWidget(self.statusLabel)
         self.optionsDialog = OptionsDialog()
         self.evaluationDialog = EvaluationDialog()
-        self.scanManager = ScanManager()
+        self.scanManager = ScanManager(self.scanViewer,self.graphicsView)
         self.generate3dDialog = Generate3dDialog()
         self.reportDialog = ReportDialog()
         self.testDialog = TestDialog()
@@ -61,9 +60,9 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.connect(self.scanViewer, SIGNAL('mousePositionChanged(PyQt_PyObject)'), self.mousePositionChanged)
         self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.areaSelected)
-        self.connect(self.scanViewer, SIGNAL('changeScale()'), self.changeScale)
         self.connect(self.scanViewer, SIGNAL('tempDragModeActivated()'), self.tempDragModeEnable)
         self.connect(self.scanViewer, SIGNAL('tempDragModeDeactivated()'), self.tempDragModeDisable)
+        self.scanManager.connect(self.scanViewer, SIGNAL('changeScale()'), self.scanManager.changeScale)
 
         self.connect(self.scanManager, SIGNAL('scans2dLoaded()'), self.setScans2dLoaded)
         self.connect(self.scanManager, SIGNAL('scans3dLoaded()'), self.setScans3dLoaded)
@@ -77,7 +76,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
 
-        self.graphicsView.setBackgroundColor([128,128,128,255])
+        self.graphicsView.setBackgroundColor([255,255,255,255])
+        self.thicknessButtonClicked()
 
     def processAction(self,q_action):
         if q_action == self.actionOptions:
@@ -171,11 +171,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
     def setScans2dLoaded(self):
         self.scans2dLoaded = True
-        self.show2dScan()
+        self.pushButton_3d.setEnabled(True)
+        self.colorLegend()
 
     def setScans3dLoaded(self):
         self.scans3dLoaded = True
-        self.show3dScan()
+        self.pushButton_3d.setEnabled(True)
 
     def activateRefSelectionMode(self):
         self.setRefSelectionMode(True)
@@ -209,7 +210,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def thicknessButtonClicked(self):
         self.pushButton_thickness.setChecked(True)
         self.pushButton_distance.setChecked(False)
-        self.viewDataType = "thickness"
+        self.scanManager.viewDataType = "thickness"
         try:
             self.rearrangeScan()
             self.colorLegend()
@@ -220,7 +221,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def distanceButtonClicked(self):
         self.pushButton_distance.setChecked(True)
         self.pushButton_thickness.setChecked(False)
-        self.viewDataType = "distance"
+        self.scanManager.viewDataType = "distance"
         try:
             self.rearrangeScan()
             self.colorLegend()
@@ -335,31 +336,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         x2 = data[1]
         smooth = data[2]
         shaded = data[3]
-        self.scanManager.load3dScan(x1,x2,smooth,shaded)
+        self.scanManager.create3dScan(x1, x2, smooth, shaded)
 
-    def show3dScan(self):
-        if self.scans3dLoaded:
-            if self.graphicsView.items.__len__() > 0:
-                for i in range(0, self.graphicsView.items.__len__()):
-                    self.graphicsView.items.__delitem__(0)
-            g = gl.GLGridItem()
-            g.scale(2, 2, 1)
-            g.setDepthValue(10)
-            self.graphicsView.addItem(g)
 
-            items = self.scanManager.get3dScanItems()
-            for item in items:
-                self.graphicsView.addItem(item)
-            self.pushButton_3d.setEnabled(True)
 
-    def changeScale(self):
-        spacing_px_org = self.scale_spacing / self.optionsDialog.DeltaX * 1000
-        spacing_px = float(spacing_px_org * self.scanViewer.view_scale)
-        if spacing_px > 130:
-            self.scale_spacing = self.scale_spacing / 2
-        elif spacing_px < 40:
-            self.scale_spacing = self.scale_spacing * 2
-        self.addScaleBar(7)
+
 
     def rearrangeScan(self):
         val = float(self.verticalSlider.value())
@@ -367,7 +348,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         max = float(self.verticalSlider.maximum())
         val_ratio = float(val / (max - min))
         self.scanManager.rearrangeScan(val_ratio)
-        self.update2dScan()
+
 
     def loadElement(self,data):
         milimiters_start = data[0]
@@ -408,53 +389,16 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scanManager.loadScan(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
                                   delta_x, diameter, nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
 
-    def show2dScan(self):
-        if self.scans2dLoaded:
-            self.activateWindow()
-            if self.viewDataType == "thickness":
-                image = self.scanManager.getThicknessImageScan()
-            elif self.viewDataType == "distance":
-                image = self.scanManager.getDistanceImageScan()
-            self.scanViewer.clearScene()
-            self.scanViewer.resetViewScale()
-            self.scale_spacing = 0.1
-            self.scanViewer.aspect_ratio = self.scanManager.resolutionRatio
-            self.scanViewer.setScanImage(image)
 
-            self.addScaleBar(7)
-
-            self.scanViewer.goTo(0.5)
-            self.scanViewer.moveScaleBar()
-            self.scanViewer.moveScaleBar()
-            self.colorLegend()
-
-            self.pushButton_3d.setEnabled(True)
-
-
-    def update2dScan(self):
-        if self.viewDataType == "thickness":
-            image = self.scanManager.getThicknessImageScan()
-        elif self.viewDataType == "distance":
-            image = self.scanManager.getDistanceImageScan()
-        self.scanViewer.setScanImage(image)
-
-    def addScaleBar(self, scale_line_height):
-        # scale_line_height - in pixels
-        items = self.scanManager.getScaleBarItems(self.scale_spacing, scale_line_height, self.scanViewer.view_scale, self.optionsDialog.DeltaX)
-        for i in range(0,len(items)):
-            self.scanViewer.addItem(items[i][0],items[i][1],items[i][2])
 
 
     def colorLegend(self):
         scene = QtGui.QGraphicsScene()
-        items = self.scanManager.getColorLegendItems(400,self.viewDataType)
+        items = self.scanManager.getColorLegendItems(400)
         for item in items:
-
             scene.addItem(item)
         self.graphicsView_2.setScene(scene)
         self.graphicsView_2.setMinimumHeight(scene.sceneRect().height())
-
-
 
 
 
