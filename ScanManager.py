@@ -23,9 +23,16 @@ class ScanManager(QObject):
         self.thicknessScanColoredRearranged = -1
         self.scan3dItems = -1
         self.scanDir = ""
+        self.milimeters_start = 0
+        self.milimeters_end = 0
         self.currentFrame = -1
         self.frameRange = 5000
+        self.frame_length = 0
         self.colorMapping = ColorMapping()
+        self.bd0 = 0
+        self.bd1 = 0
+        self.bt0 = 0
+        self.bt1 = 0
         self.startFrame = 0
         self.endFrame = 0
         self.a = 0
@@ -45,6 +52,7 @@ class ScanManager(QObject):
         self.resolutionRatio = 1 #transverse resolution / longitudinal resolution
         self.viewDataType = "thickness"
         self.scale_spacing = 0.1  # in meters
+        self.goTo = 0.5
 
         self.scanViewer = scan_viewer
         self.graphicsView3D = view_3d
@@ -111,6 +119,13 @@ class ScanManager(QObject):
         return [x,[hours,minutes],depth]
 
     def loadScan(self,milimeters_start, milimeters_end, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth, nominal_dist, bd0,bd1,bt0,bt1,frame_length):
+        self.frame_length = frame_length
+        self.milimeters_start = milimeters_start
+        self.milimeters_end = milimeters_end
+        self.bd0 = bd0
+        self.bd1 = bd1
+        self.bt0 = bt0
+        self.bt1 = bt1
         self.dataPerFrame = bt1 - bt0 +1
         self.a = a
         self.b = b
@@ -125,7 +140,7 @@ class ScanManager(QObject):
         self.nominalThickness = nominal_depth
         self.nominalThicknessVal = (self.nominalThickness - self.d) / self.c
         # self.currentFrame = ( milimeters / self.deltaX).__int__()
-        # self.frameRange = (milimeters_range / self.deltaX).__int__()
+        self.frameRange = ((milimeters_start - milimeters_end) / self.deltaX).__int__()
         self.startFrame = (milimeters_start/ self.deltaX).__int__()
         if self.startFrame < 0:
             self.startFrame = 0
@@ -135,6 +150,33 @@ class ScanManager(QObject):
         self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.set2dScans)
         self.loadScansThread.start()
         self.createDefaultColorScale()
+        self.goTo = 0.5
+
+    def changeScanRangeAndLoad(self,milimeters_start, milimeters_end):
+
+        print milimeters_start,milimeters_end
+        # self.currentFrame = ( milimeters / self.deltaX).__int__()
+        # self.frameRange = (milimeters_range / self.deltaX).__int__()
+        self.startFrame = (milimeters_start / self.deltaX).__int__()
+        if self.startFrame < 0:
+            self.startFrame = 0
+        self.endFrame = (milimeters_end / self.deltaX).__int__()
+        page_step = self.scanViewer.horizontalScrollBar().pageStep()
+        max = self.scanViewer.horizontalScrollBar().maximum() + page_step
+        min = self.scanViewer.horizontalScrollBar().minimum()
+        scroll_bar_range = max - min
+        if milimeters_start > self.milimeters_start:
+            self.goTo = 0.5 - float(page_step/float(scroll_bar_range))/2
+        elif milimeters_start < self.milimeters_start:
+            self.goTo = 0.5 + float(page_step / float(scroll_bar_range)) / 2
+
+        self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame, self.bd0, self.bd1, self.bt0, self.bt1,
+                                               self.frame_length)
+        self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.set2dScans)
+        self.loadScansThread.start()
+        self.createDefaultColorScale()
+        self.milimeters_start = milimeters_start
+        self.milimeters_end = milimeters_end
 
 
     def set2dScans(self,data):
@@ -151,25 +193,19 @@ class ScanManager(QObject):
         self.rearrangeScan(self.offsetRatio)
         self.emit(SIGNAL('scans2dLoaded()'))
 
-        ###tutaj zmieniaj
         if self.viewDataType == "thickness":
             image = self.getThicknessImageScan()
         elif self.viewDataType == "distance":
             image = self.getDistanceImageScan()
         self.scanViewer.clearScene()
-        self.scanViewer.resetViewScale()
-        self.scale_spacing = 0.1
         self.scanViewer.aspect_ratio = self.resolutionRatio
         self.scanViewer.setScanImage(image)
 
+        print self.goTo
+
         self.addScaleBar(7)
-
-        self.scanViewer.goTo(0.5)
+        self.scanViewer.goTo(self.goTo)
         self.scanViewer.moveScaleBar()
-        self.scanViewer.moveScaleBar()
-
-
-
 
 
     def colorScan(self, scan, color_scale_name):
@@ -207,6 +243,7 @@ class ScanManager(QObject):
 
     def addScaleBar(self, scale_line_height):
         # scale_line_height - in pixels
+        print "scale added",self.scanViewer.view_scale,self.scale_spacing
         items = self.getScaleBarItems(self.scale_spacing, scale_line_height, self.scanViewer.view_scale, self.deltaX)
         for i in range(0,len(items)):
             self.scanViewer.addItem(items[i][0],items[i][1],items[i][2])
@@ -395,12 +432,6 @@ class ScanManager(QObject):
         image_thick = QtGui.QImage(self.thicknessScanColoredRearranged, self.thicknessScanColoredRearranged.shape[1],
                                    self.thicknessScanColoredRearranged.shape[0], self.thicknessScanColoredRearranged.shape[1] * 3,
                                    QtGui.QImage.Format_RGB888)
-        # print self.thicknessScan,self.thicknessScan.shape
-        # test_image = 125*np.ones(self.thicknessScan.shape, dtype=np.uint8)
-        # image_thick = QtGui.QImage(test_image, self.thicknessScan.shape[1],
-        #                            self.thicknessScan.shape[0],
-        #                            self.thicknessScan.shape[1],
-        #                            QtGui.QImage.Format_Indexed8)
         return image_thick
 
     def getDistanceImageScan(self):
@@ -415,3 +446,15 @@ class ScanManager(QObject):
         elif self.viewDataType == "distance":
             image = self.getDistanceImageScan()
         self.scanViewer.setScanImage(image)
+
+    def checkIfScanLimitsReached(self):
+        max = self.scanViewer.horizontalScrollBar().maximum()
+        min = self.scanViewer.horizontalScrollBar().minimum()
+        scroll_bar_range = max - min
+        val = self.scanViewer.horizontalScrollBar().value()
+        milimeters_range =  self.milimeters_end - self.milimeters_start
+        #print val
+        if val == max:
+            self.changeScanRangeAndLoad(self.milimeters_start + milimeters_range/2, self.milimeters_end + milimeters_range/2 )
+        if val == min:
+            self.changeScanRangeAndLoad(self.milimeters_start - milimeters_range/2, self.milimeters_end - milimeters_range/2 )

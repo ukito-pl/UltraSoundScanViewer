@@ -75,6 +75,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.generate3dDialog,SIGNAL('generate3d(PyQt_PyObject)'),self.generate3d)
 
         self.verticalSlider.valueChanged.connect(self.rearrangeScan)
+        self.scanViewer.horizontalScrollBar().sliderReleased.connect(self.scanManager.checkIfScanLimitsReached)
+        self.scanManager.connect(self.scanViewer, SIGNAL('checkIfScanLimitsReached()'), self.scanManager.checkIfScanLimitsReached)
 
         self.graphicsView.setBackgroundColor([255,255,255,255])
         self.thicknessButtonClicked()

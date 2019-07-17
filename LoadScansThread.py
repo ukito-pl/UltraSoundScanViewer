@@ -42,7 +42,7 @@ class LoadScansThread(QThread):
                 f = open(file_dir, "rb")
             except:
                 file_exists = False
-                print "cannot open file", file_dir
+                #print "cannot open file", file_dir
             if file_exists:
                 f.seek(0, 2)
                 size = f.tell()
