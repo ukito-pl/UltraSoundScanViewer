@@ -2,6 +2,7 @@ import numpy as np
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 
 import pyqtgraph.opengl as gl
 
@@ -9,9 +10,11 @@ from LoadScansThread import LoadScansThread
 from Create3dScanThread import Create3dScanThread
 from ColorMapping import ColorMapping
 from ScanViewer import ScanViewer
-
+from PIL import Image
+from Miscellaneous import qt_image_to_array
+import copy
 class ScanManager(QObject):
-    def __init__(self, scan_viewer = -1, view_3d = -1):
+    def __init__(self, scan_viewer = -1, view_3d = -1, legend_view = -1):
         super(self.__class__,self).__init__()
         self.distanceScan = -1
         self.distanceScanRearranged = -1
@@ -56,6 +59,7 @@ class ScanManager(QObject):
 
         self.scanViewer = scan_viewer
         self.graphicsView3D = view_3d
+        self.colorLegendView = legend_view
 
 
     def createDefaultColorScale(self):
@@ -71,9 +75,10 @@ class ScanManager(QObject):
         self.colorMapping.setColorAt("ironfire", self.nominalThicknessVal * 0.2, QtGui.QColor(255, 0, 0))
         self.colorMapping.setColorAt("ironfire", 0, QtGui.QColor(0, 0, 0))
 
+        print self.nominalDistanceVal
         self.colorMapping.addScale("ironfire2")
         self.colorMapping.setColorAt("ironfire2", 255, QtGui.QColor(0, 191, 255))
-        self.colorMapping.setColorAt("ironfire2", self.nominalDistanceVal * 1.5, QtGui.QColor(0, 191, 255))
+        self.colorMapping.setColorAt("ironfire2", self.nominalDistanceVal * 1.25, QtGui.QColor(0, 191, 255))
         self.colorMapping.setColorAt("ironfire2", self.nominalDistanceVal * 1.2, QtGui.QColor(0, 128, 255))
         self.colorMapping.setColorAt("ironfire2", self.nominalDistanceVal * 1.1, QtGui.QColor(0, 128, 0))
         self.colorMapping.setColorAt("ironfire2", self.nominalDistanceVal, QtGui.QColor(0, 255, 0))
@@ -151,6 +156,40 @@ class ScanManager(QObject):
         self.loadScansThread.start()
         self.createDefaultColorScale()
         self.goTo = 0.5
+
+    def loadScan(self,milimeters, scan_dir, a, b, c, d, delta_x, diameter, nominal_depth, nominal_dist, bd0,bd1,bt0,bt1,frame_length):
+        self.frame_length = frame_length
+        self.bd0 = bd0
+        self.bd1 = bd1
+        self.bt0 = bt0
+        self.bt1 = bt1
+        self.dataPerFrame = bt1 - bt0 +1
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+        self.deltaX = delta_x
+        self.diameter = diameter
+        self.deltaY = 3.14 * self.diameter / self.dataPerFrame
+        self.resolutionRatio = self.deltaY/self.deltaX
+        self.nominalDistance = nominal_dist
+        self.nominalDistanceVal = (self.nominalDistance - self.b) / self.a
+        self.nominalThickness = nominal_depth
+        self.nominalThicknessVal = (self.nominalThickness - self.d) / self.c
+        # self.currentFrame = ( milimeters / self.deltaX).__int__()
+        self.frameRange = 32000
+        self.startFrame = (milimeters/ self.deltaX).__int__() - self.frameRange/2
+        if self.startFrame < 0:
+            self.startFrame = 0
+        self.endFrame = (milimeters/ self.deltaX).__int__() + self.frameRange/2
+        self.milimeters_start = self.startFrame*self.deltaX
+        self.milimeters_end =  self.endFrame*self.deltaX
+        self.scanDir = scan_dir
+        self.loadScansThread = LoadScansThread(self.scanDir, self.startFrame, self.endFrame,bd0,bd1,bt0,bt1,frame_length)
+        self.connect(self.loadScansThread, SIGNAL('scansLoaded(PyQt_PyObject)'), self.set2dScans)
+        self.loadScansThread.start()
+        self.createDefaultColorScale()
+        self.goTo = (milimeters/ self.deltaX - self.startFrame)/(self.endFrame - self.startFrame)
 
     def changeScanRangeAndLoad(self,milimeters_start, milimeters_end):
 
@@ -395,15 +434,15 @@ class ScanManager(QObject):
 
         return items
 
-    def create3dScan(self, x_start, x_end, smooth, shaded):
-        self.create3dScanThread = Create3dScanThread(self.dataPerFrame, self.deltaX, self.diameter, self.nominalDistance,  self.startFrame, self.a, self.b, self.distanceScan, self.thicknessScanColored, x_start, x_end, smooth, shaded)
+    def create3dScan(self, x_start, x_end, smooth, shaded,w):
+        self.create3dScanThread = Create3dScanThread(self.dataPerFrame, self.deltaX, self.diameter, self.nominalDistance,  self.startFrame, self.a, self.b, self.distanceScan, self.thicknessScanColored, x_start, x_end, smooth, shaded,w)
         self.connect(self.create3dScanThread, SIGNAL('3dScanCreated(PyQt_PyObject)'), self.set3dScan)
         self.create3dScanThread.start()
 
     def set3dScan(self,items):
         self.scan3dItems = items
         if self.graphicsView3D.items.__len__() > 0:
-            for i in range(0, self.graphicsView.items.__len__()):
+            for i in range(0, self.graphicsView3D.items.__len__()):
                 self.graphicsView3D.items.__delitem__(0)
         g = gl.GLGridItem()
         g.scale(2, 2, 1)
@@ -458,3 +497,63 @@ class ScanManager(QObject):
             self.changeScanRangeAndLoad(self.milimeters_start + milimeters_range/2, self.milimeters_end + milimeters_range/2 )
         if val == min:
             self.changeScanRangeAndLoad(self.milimeters_start - milimeters_range/2, self.milimeters_end - milimeters_range/2 )
+
+    def get2DImageToSave(self, x,y,w,h):
+        arrayToSave = []
+        if self.viewDataType == "thickness":
+            arrayToSave = self.thicknessScanColoredRearranged[y:y + h, x:x + w, :]
+        elif self.viewDataType == "distance":
+            arrayToSave = self.distanceScanColoredRearranged[y:y + h, x:x + w, :]
+        image2d = Image.fromarray(arrayToSave)
+        image2d = image2d.resize((w, int(h * self.scanViewer.aspect_ratio)))
+        legendImg = self.getLegendImage()
+        images = [image2d, legendImg]
+        imageToSave = self.stackImageHorizontally(images)
+        return imageToSave
+
+
+    def get3DImageToSave(self):
+        image3d = self.convertQImageToPILImage(self.graphicsView3D.grabFrameBuffer())
+        legendImg = self.getLegendImage()
+        images = [image3d, legendImg]
+        imageToSave = self.stackImageHorizontally(images)
+        return imageToSave
+
+
+    def convertQImageToPILImage(self, qimage):
+        s = qimage.bits().asstring(qimage.width() * qimage.height() * 4)
+        arr = np.fromstring(s, dtype=np.uint8).reshape((qimage.height(), qimage.width(), 4))
+        rgb_arr = copy.deepcopy(arr)
+        rgb_arr[:, :, 2] = arr[:, :, 0]
+        rgb_arr[:, :, 0] = arr[:, :, 2]
+        PILImage = Image.fromarray(rgb_arr)
+        return PILImage
+
+    def getLegendImage(self):
+        # convert legendview to PIL Image
+        rect = self.colorLegendView.viewport().rect()
+        pixmap = QtGui.QPixmap(rect.size())
+        pixmap.fill(color=QtGui.QColor(255, 255, 255))
+        painter = QtGui.QPainter(pixmap)
+        self.colorLegendView.render(painter, QtCore.QRectF(pixmap.rect()), rect)
+        painter.end()
+        legend_Qimage = pixmap.toImage()
+        legendImg = self.convertQImageToPILImage(legend_Qimage)
+        return legendImg
+
+    def stackImageHorizontally(self, PILimages):
+        widths, heights = zip(*(i.size for i in PILimages))
+        max_height = max(heights)
+        resized_images = []
+        for image in PILimages:
+            ratio = float(max_height / float(image.size[1]))
+            resized_images.append(image.resize((int(image.size[0] * ratio), int(image.size[1] * ratio))))
+        widths, heights = zip(*(i.size for i in resized_images))
+        total_width = sum(widths)
+        max_height = max(heights)
+        stacked_image = Image.new('RGB', (total_width, max_height))
+        x_offset = 0
+        for im in resized_images:
+            stacked_image.paste(im, (x_offset, 0))
+            x_offset += im.size[0]
+        return stacked_image

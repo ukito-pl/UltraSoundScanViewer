@@ -3,7 +3,10 @@ from PyQt4 import QtGui # Import the PyQt4 module we'll need
 from PyQt4 import QtCore
 from PyQt4.QtCore import  SIGNAL
 import csv
-
+from PIL import Image
+import os
+import copy
+import numpy as np
 import RaportWindow # This file holds our MainWindow and all design related things
               # it also keeps events etc that we defined in Qt Designer
 from ReportLoadDialog import ReportLoadDialog
@@ -29,6 +32,8 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.connect(self.pushButton_delete, SIGNAL('clicked()'), self.deleteCurrentElementFromReport)
         self.treeWidget.currentItemChanged.connect(self.treeItemSelected)
         self.comboBox_type.currentIndexChanged.connect(self.setElementType)
+        self.connect(self.pushButton_next, SIGNAL('clicked()'),self.nextImage)
+        self.connect(self.pushButton_prev, SIGNAL('clicked()'), self.prevImage)
         self.modesList = ["NormalMode","AddMode","ChangeMode"]
         self.mode = -1
         self.setMode("NormalMode")
@@ -38,6 +43,10 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.setElementType(self.comboBox_type.currentIndex())
         self.reportDir = -1
         self.pushButton_delete.setEnabled(False)
+        self.PILImageList = []
+        self.currentImageIndex = -1
+        self.currentPILImage = Image.Image()
+
 
     def setMode(self,mode):
         self.mode = mode
@@ -46,6 +55,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             self.pushButton_add_change.setEnabled(False)
             self.treeWidget.setEnabled(True)
             self.tableWidget.clearContents()
+            self.clearImages()
         elif mode == "AddMode":
             self.pushButton_delete.setEnabled(True)
             self.pushButton_delete.setText("Anuluj")
@@ -67,6 +77,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
                 if element_type_id:
                     element_type_id = element_type_id[0]
                     self.setElementType(element_type_id)
+                self.clearImages()
                 self.setTableItems(element_data)
                 self.setMode("ChangeMode")
             else:
@@ -104,7 +115,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             if self.mode == "AddMode":
                 id, nb = self.generateId(self.comboBox_type.currentIndex())
                 name = self.elementNames[self.comboBox_type.currentIndex()] + "#" + nb.__str__()
-                self.setTableItems([id, name])
+                self.setTableItems([id, name], clear=False)
             elif self.mode == "ChangeMode":
                 self.setMode("NormalMode")
 
@@ -130,13 +141,13 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             if self.mode == "AddMode":
                 id, nb = self.generateId(self.comboBox_type.currentIndex())
                 name = self.elementNames[self.comboBox_type.currentIndex()] + "#" + nb.__str__()
-                self.setTableItems([id, name])
+                self.setTableItems([id, name], clear=False)
             elif self.mode == "ChangeMode":
                 self.setMode("NormalMode")
 
 
 
-    def setCurrentElement(self,data):
+    def setCurrentElement(self,data, image =-1):
         element_type_id = data[0]
         property_list = data[1]
         self.show()
@@ -155,13 +166,32 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.setElementType(element_type_id)
         property_list.insert(0, name)
         property_list.insert(0, id)
+        if image != -1:
+            for i in range(0,property_list.__len__()):
+                if property_list[i] == "imgPath":
+                    property_list[i] = "generateImgPath"
+            self.clearImages()
+            self.PILImageList.append(image)
+            self.currentImageIndex = 0
         self.setTableItems(property_list)
 
     def addCurrentElementToReport(self):
         lineData = []
-
         for i in range(0,self.tableWidget.rowCount()):
             lineData.append(self.tableWidget.item(i,0).text().__str__().encode('utf-8'))
+            if self.tableWidget.verticalHeaderItem(i).text() == "Zdjęcia".decode('utf-8'):
+                paths = self.tableWidget.item(i,0).text().__str__().encode('utf-8')
+                if "," in paths:
+                    paths = paths.split(",")
+                else:
+                    paths = [paths]
+                print paths
+                base_dir = self.reportDir.__str__().rsplit("/", 1)[0]
+                for j in range(0,paths.__len__()):
+                    if not os.path.exists(base_dir + "/" + paths[j]) and j < self.PILImageList.__len__():
+                        print base_dir + "/" + paths[j]
+                        self.PILImageList[j].save(base_dir + "/" + paths[j])
+        self.setTableItems(lineData)
 
         type_id = self.comboBox_type.currentIndex()
         element_id = self.tableWidget.item(0,0).text()
@@ -225,6 +255,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
     def deleteCurrentElementFromReport(self):
         if self.mode == "AddMode":
             self.tableWidget.clearContents()
+            self.clearImages()
             self.setMode("NormalMode")
         elif self.mode == "ChangeMode":
             current_item = self.treeWidget.currentItem()
@@ -235,6 +266,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
             self.pushButton_delete.setEnabled(False)
             self.pushButton_add_change.setEnabled(False)
             self.tableWidget.clearContents()
+            self.clearImages()
 
     def deleteElementFromReport(self,elem_id):
         report = open(self.reportDir, "r")
@@ -290,18 +322,38 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         file.close()
         return []
 
-    def setTableItems(self,item_list):
+    def setTableItems(self,item_list, clear=True):
+        if clear:
+            self.tableWidget.clearContents()
         i = 0
         for item_val in item_list:
-            try:
-                item = QtGui.QTableWidgetItem()
-                if i ==0:
-                    item.setFlags(QtCore.Qt.ItemIsSelectable)
-                self.tableWidget.setItem(i,0,item)
-                self.tableWidget.item(i, 0).setText(item_val.decode('utf-8'))
-            except:
-                pass
+            item = QtGui.QTableWidgetItem()
+            if i == 0:
+                item.setFlags(QtCore.Qt.ItemIsSelectable)
+            self.tableWidget.setItem(i, 0, item)
+            self.tableWidget.item(i, 0).setText(item_val.decode('utf-8'))
+            if self.tableWidget.verticalHeaderItem(i).text() == "Zdjęcia".decode('utf-8'):
+                if (item_val.decode('utf-8')) == "generateImgPath":
+                    self.tableWidget.item(i,0).setText(item_list[0] + ".png")
+                else:
+                    self.clearImages()
+                    self.loadImages((item_val.decode('utf-8')).split(","))
+                self.currentImageIndex = 0
+                if self.PILImageList.__len__() > 1:
+                    self.pushButton_next.setEnabled(True)
+                    self.pushButton_prev.setEnabled(True)
+                else:
+                    self.pushButton_next.setEnabled(False)
+                    self.pushButton_prev.setEnabled(False)
+                self.showCurrentImage()
+            else:
+                self.pushButton_next.setEnabled(False)
+                self.pushButton_prev.setEnabled(False)
             i = i + 1
+        for i in range(0,self.tableWidget.rowCount()):
+            if self.tableWidget.verticalHeaderItem(i).text() == "Zdjęcia".decode('utf-8'):
+                if self.tableWidget.item(i, 0) and (self.tableWidget.item(i, 0).text().__str__().decode('utf-8')) == ".png":
+                    self.tableWidget.item(i, 0).setText(item_list[0] + ".png")
 
     def setTableHeaderItems(self, item_names_list):
         i = 0
@@ -337,3 +389,51 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
 
 
         return id_base + (new_id).__str__(),(new_id)
+
+    def showCurrentImage(self):
+        self.showImage(self.currentImageIndex)
+
+    def showImage(self, index):
+        array = np.array(self.PILImageList[index])
+        image = QtGui.QImage(array, array.shape[1], array.shape[0], array.shape[1] * 3, QtGui.QImage.Format_RGB888)
+        pixmap = QtGui.QPixmap(image)
+        pixitem = QtGui.QGraphicsPixmapItem(pixmap)
+        scene = QtGui.QGraphicsScene()
+        scene.addItem(pixitem)
+        self.graphicsView.setScene(scene)
+        self.graphicsView.fitInView(pixitem,QtCore.Qt.KeepAspectRatio)
+        self.setImageCountLabel()
+
+    def clearImages(self):
+        print "clear"
+        self.PILImageList = []
+        self.currentImageIndex = -1
+        if self.graphicsView.scene():
+            self.graphicsView.scene().clear()
+        self.graphicsView.update()
+        self.setImageCountLabel()
+
+    def setImageCountLabel(self):
+        if self.PILImageList.__len__() > 0:
+            text = (self.currentImageIndex + 1).__str__() + "/" + (self.PILImageList.__len__()).__str__()
+            self.label_img.setText(text)
+        else:
+            self.label_img.setText("0/0")
+
+    def nextImage(self):
+        self.currentImageIndex = (self.currentImageIndex + 1).__mod__(self.PILImageList.__len__())
+        self.showCurrentImage()
+
+    def prevImage(self):
+        self.currentImageIndex = (self.currentImageIndex - 1).__mod__(self.PILImageList.__len__())
+        self.showCurrentImage()
+
+    def loadImages(self, image_names_list):
+        base_dir = self.reportDir.__str__().rsplit("/", 1)[0]
+        for image_name in image_names_list:
+            self.currentPILImage = Image.open(base_dir + "/" + image_name)
+            img = copy.deepcopy(self.currentPILImage)
+            self.PILImageList.append(img)
+
+
+

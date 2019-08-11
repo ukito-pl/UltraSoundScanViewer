@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>265</width>
-    <height>192</height>
+    <width>316</width>
+    <height>227</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>265</width>
-    <height>192</height>
+    <width>316</width>
+    <height>227</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -116,6 +116,24 @@
          <width>150</width>
          <height>27</height>
         </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Współczynnik wyolbrzymienia w:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="doubleSpinBox">
+       <property name="minimum">
+        <double>1.000000000000000</double>
        </property>
       </widget>
      </item>

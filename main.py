@@ -17,6 +17,7 @@ from generate3d import Generate3dDialog
 from raport import ReportDialog
 from TestDialog import TestDialog
 from AutoDetectDialog import AutoDetectDialog
+from SavePictureDialog import SavePictureDialog
 from Miscellaneous import ToolModes,ReportTools
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -38,11 +39,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.statusbar.addWidget(self.statusLabel)
         self.optionsDialog = OptionsDialog()
         self.evaluationDialog = EvaluationDialog()
-        self.scanManager = ScanManager(self.scanViewer,self.graphicsView)
+        self.scanManager = ScanManager(self.scanViewer,self.graphicsView, self.graphicsView_2)
         self.generate3dDialog = Generate3dDialog()
         self.reportDialog = ReportDialog()
         self.testDialog = TestDialog()
         self.autoDetectDialog = AutoDetectDialog(self.optionsDialog)
+        self.savePictureDialog = SavePictureDialog()
 
         self.connect(self.autoDetectDialog,SIGNAL('showElement(PyQt_PyObject)'),self.loadElement)
         self.reportDialog.connect(self.autoDetectDialog,SIGNAL('reportElement(PyQt_PyObject)'),self.reportDialog.setCurrentElement)
@@ -95,6 +97,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif q_action == self.actionAutoDetect:
             self.autoDetectDialog.show()
             self.setToolMode(ToolModes.AutoDetectMode)
+        elif q_action == self.screenShoot2D:
+            self.setToolMode(ToolModes.ScreenShot2DMode)
+        elif q_action == self.screenShoot3D:
+            image3DToSave = self.scanManager.get3DImageToSave()
+            self.savePictureDialog.saveImg(image3DToSave)
+            self.setToolMode(ToolModes.ScreenShot3DMode)
         elif q_action == self.actionL:
             self.setReportTool(ReportTools.L)
         elif q_action == self.actionSW:
@@ -107,6 +115,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.actionCorrosions.setChecked(False)
         self.actionReportAdd.setChecked(False)
         self.actionAutoDetect.setChecked(False)
+        self.screenShoot3D.setChecked(False)
+        self.screenShoot2D.setChecked(False)
 
 
     def tempDragModeDisable(self):
@@ -118,6 +128,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.actionCorrosions.setChecked(False)
         self.actionReportAdd.setChecked(False)
         self.actionAutoDetect.setChecked(False)
+        self.screenShoot3D.setChecked(False)
+        self.screenShoot2D.setChecked(False)
         if mode == ToolModes.MoveMode:
             self.scanViewer.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self.toolMode = mode
@@ -140,6 +152,15 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.expandReportTools(False)
         elif mode == ToolModes.RefSelectionMode:
             self.toolMode = mode
+            self.expandReportTools(False)
+        elif mode == ToolModes.ScreenShot2DMode:
+            self.toolMode = mode
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+            self.screenShoot2D.setChecked(True)
+            self.expandReportTools(False)
+        elif mode == ToolModes.ScreenShot3DMode:
+            self.toolMode = mode
+            self.screenShoot3D.setChecked(True)
             self.expandReportTools(False)
 
     def expandReportTools(self,expand):
@@ -205,6 +226,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.actionReport.setEnabled(not bool)
         self.actionCorrosions.setEnabled(not bool)
         self.actionReportAdd.setEnabled(not bool)
+        self.screenShoot3D.setEnabled(not bool)
+        self.screenShoot2D.setEnabled(not bool)
         self.actionL.setEnabled(not bool)
         self.actionSP.setEnabled(not bool)
         self.actionSW.setEnabled(not bool)
@@ -269,16 +292,20 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         elif self.toolMode == ToolModes.ReportMode:
             self.reportDialog.show()
             self.reportDialog.activateWindow()
+            image2DToSave = self.scanManager.get2DImageToSave(x, y, w, h)
             [x, y, d] = self.scanManager.getXYD((x + w) / 2, (y + h) /2)
             if self.reportTool == ReportTools.L:
-                self.reportDialog.setCurrentElement([ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji"]])
+                self.reportDialog.setCurrentElement([ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji", "imgPath"]],image2DToSave)
             elif self.reportTool == ReportTools.SP:
-                self.reportDialog.setCurrentElement([ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej"]])
+                self.reportDialog.setCurrentElement([ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej", "imgPath"]],image2DToSave)
             elif self.reportTool == ReportTools.SW:
-                self.reportDialog.setCurrentElement([ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej"]])
+                self.reportDialog.setCurrentElement([ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej", "imgPath"]],image2DToSave)
         elif self.toolMode == ToolModes.AutoDetectMode:
             self.testDialog.show()
             self.testDialog.setData(self.scanManager.thicknessScanRearranged[y:y + h, x:x + w], self.scanViewer.aspect_ratio)
+        elif self.toolMode == ToolModes.ScreenShot2DMode:
+            image2DToSave = self.scanManager.get2DImageToSave(x,y,w,h)
+            self.savePictureDialog.saveImg(image2DToSave)
 
 
 
@@ -338,7 +365,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         x2 = data[1]
         smooth = data[2]
         shaded = data[3]
-        self.scanManager.create3dScan(x1, x2, smooth, shaded)
+        w = data[4]
+        self.scanManager.create3dScan(x1, x2, smooth, shaded,w)
 
 
 
@@ -362,17 +390,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.scans3dLoaded = False
         self.generate3dDialog.textEdit.clear()
         self.generate3dDialog.textEdit_2.clear()
-        if milimiters_start == -1 and milimiters_end == -1:
-            if self.comboBox_3.currentIndex() == 0:
-                multiplier = 1
-            elif self.comboBox_3.currentIndex() == 1:
-                multiplier = 1000
-            elif self.comboBox_3.currentIndex() == 2:
-                multiplier = 1000000
-            milimeters = float(self.textEdit_km.toPlainText().replace(",",".")) * multiplier
-            milimeters_range = float(self.textEdit_km_range.toPlainText().replace(",",".")) * 1000
-            milimiters_start = milimeters - milimeters_range
-            milimiters_end = milimeters + milimeters_range
+
         scan_dir = unicode(self.optionsDialog.dataDir)
         a = self.optionsDialog.CoefficientA
         b = self.optionsDialog.CoefficientB
@@ -388,8 +406,20 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         bt1 = self.optionsDialog.thicknessEndByte
         frame_length = self.optionsDialog.frameLength
         #print milimiters_start, milimiters_end
-        self.scanManager.loadScan(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
-                                  delta_x, diameter, nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
+        if milimiters_start == -1 and milimiters_end == -1:
+            if self.comboBox_3.currentIndex() == 0:
+                multiplier = 1
+            elif self.comboBox_3.currentIndex() == 1:
+                multiplier = 1000
+            elif self.comboBox_3.currentIndex() == 2:
+                multiplier = 1000000
+            milimeters = float(self.textEdit_km.toPlainText().replace(",",".")) * multiplier
+            self.scanManager.loadScan(milimeters , scan_dir, a, b, c, d,
+                                      delta_x, diameter, nominal_thickness, nominal_distance, bd0, bd1, bt0, bt1,
+                                      frame_length)
+        else:
+            self.scanManager.loadScan(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
+                                      delta_x, diameter, nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
 
 
 

@@ -1,16 +1,27 @@
 from PyQt4.QtCore import QThread,SIGNAL
 import numpy as np
+import string
 
 class LoadScansThread(QThread):
 
     def __init__(self, file_dir, start_frame, end_frame, bd0,bd1,bt0,bt1,frame_length):
         QThread.__init__(self)
         self.base_file_dir = file_dir        #directory of a base file i.e. F0000000.800
+        self.nb_of_digits = 0
+        filename = self.base_file_dir.split("/")[-1].split(".")[0]
+        for i in range(0,filename.__len__()):
+            if string.digits.__contains__(filename[-i-1]):
+                self.nb_of_digits = self.nb_of_digits + 1
+            elif string.letters.__contains__((filename[-i-1])):
+                break
+        print self.nb_of_digits
         #frame variables
         self.data_frame_length = frame_length    #in bytes
         self.data_length = bt1-bt0 + 1          #
-        self.start_byte = bt0           #
+        self.start_byte_thick = bt0           #
+        self.end_byte_thick = bt1
         self.start_byte_dist = bd0
+        self.end_byte_dist = bd1
         #scan variables
         f = open(self.base_file_dir, "rb")
         f.seek(0, 2)
@@ -37,7 +48,7 @@ class LoadScansThread(QThread):
         file_exists = True
         while file_exists:
             dir = self.base_file_dir.split('.')
-            file_dir = dir[0][0:len(dir[0]) - 5] + i.__str__().zfill((5)) + '.' + dir[1]
+            file_dir = dir[0][0:len(dir[0]) - self.nb_of_digits] + i.__str__().zfill((self.nb_of_digits)) + '.' + dir[1]
             try:
                 f = open(file_dir, "rb")
             except:
@@ -70,7 +81,7 @@ class LoadScansThread(QThread):
         for i in range(start_file_index,end_file_index+1):
 
             dir = self.base_file_dir.split('.')
-            file_dir = dir[0][0:len(dir[0]) - 5] + i.__str__().zfill((5)) + '.' + dir[1]
+            file_dir = dir[0][0:len(dir[0]) - self.nb_of_digits] + i.__str__().zfill((self.nb_of_digits)) + '.' + dir[1]
 
             f = open(file_dir, "rb")
 
@@ -87,16 +98,19 @@ class LoadScansThread(QThread):
             #print it, count
             while ( it < count):
                 f.seek(self.start_byte_dist, 1)
+                #print f.tell()
                 f1 = f.read(self.data_length)
                 b = bytearray()
                 b.extend(f1)
                 dist[:, it] = b
+
                 f1 = f.read(self.data_length)
                 b = bytearray()
                 b.extend(f1)
                 img[:,it] = b
 
                 it = it + 1
+                f.seek(self.data_frame_length-self.end_byte_thick-1,1)
                 #print "it:", it, "thick: ", b[0]
             f.close()
 

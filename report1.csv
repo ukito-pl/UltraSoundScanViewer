@@ -27,11 +27,15 @@ SP3,Spoina poprzeczna#3,X: 6.737 m,216.000 mm,227.000 mm,opisik spoiny poprzeczn
 SP4,Spoina poprzeczna#4,X: 8.748 m,-,-,-
 SP5,Spoina poprzeczna#5,X: 15.902 m,212.000 mm,506.000 mm,opisik spoiny poprzecznej
 SP6,Spoina poprzeczna#6,X: 17.2745 m,-,-,-
+SP7,Spoina poprzeczna#7,X: 7.300 m,315.000 mm,355.000 mm,opisik spoiny poprzecznej,SP7.png
+SP8,Spoina poprzeczna#8,X: 7.825 m,605.000 mm,780.000 mm,opisik spoiny poprzecznej,SP8.png
+SP9,Spoina poprzeczna#9,X: 7.715 m,420.000 mm,690.000 mm,opisik spoiny poprzecznej,SP9.png
 
 Rodzaj:,Spoina wzdłużna,RodzajID:,3
 Id,Nazwa,Lokalizacja,Długość,Szerokość,Opis
-SW0,Spoina wzdłużna#0,"5462, 159",740,52,opisik spoiny wzdluznej
+SW0,Spoina wzdłużna#0,"5462, 159",740,52,opisik spoiny wzdluznej,"SW0_2D.png,SW0_3D.png,SW0_2D_2.png"
 SW1,Spoina wzdłużna#1,"X: 7.083 m, Y:  0 h 56 min ",556.000 mm,32.000 mm,opisik spoiny wzdluznej
 SW2,Spoina wzdłużna#2,"X: 16.842 m, Y:  1 h 53 min ",1962.000 mm,58.000 mm,opisik spoiny wzdluznej
 SW3,Spoina wzdłużna#3,"X: 6.206 m, Y:  0 h 48 min ",1444.000 mm,108.000 mm,opisik spoiny wzdluznej
+SW4,Spoina wzdłużna#4,"X: 8.810 m, Y:  1 h 14 min ",1580.000 mm,410.000 mm,opisik spoiny wzdluznej,SW4.png
 

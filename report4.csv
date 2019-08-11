@@ -1,0 +1,14 @@
+Rodzaj:,Korozja,RodzajID:,0
+Id,Nazwa,Lokalizacja,Długość korozji Lm,Maks. dop. dł. korozji Lmax,Nomin. grub. ścianki t,Maks. głęb. korozji d,Ciśnienie projektowe P,Bezpieczne ciśnienie P',Opis,Zdjęcia
+
+Rodzaj:,Laminacja,RodzajID:,1
+Id,Nazwa,Lokalizacja,Długość,Wysokość,Opis,Zdjęcia
+
+Rodzaj:,Spoina poprzeczna,RodzajID:,2
+Id,Nazwa,Lokalizacja,Długość,Wysokość,Opis,Zdjęcia
+SP0,Spoina poprzeczna#0,X: 7.735 m,370.000 mm,795.000 mm,opisik spoiny poprzecznej,SP0.png
+
+Rodzaj:,Spoina wzdłużna,RodzajID:,3
+Id,Nazwa,Lokalizacja,Długość,Wysokość,Opis,Zdjęcia
+SW0,Spoina wzdłużna#0,"X: 8.315 m, Y:  1 h  7 min ",1415.000 mm,255.000 mm,opisik spoiny wzdluznej,SW0.png
+

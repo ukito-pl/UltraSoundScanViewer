@@ -19,4 +19,5 @@ class Generate3dDialog(QtGui.QDialog, Generate3dDialog.Ui_Dialog):
         x2 = float(self.textEdit_2.toPlainText().replace(",", "."))
         shaded = self.checkBox.checkState()
         smooth = self.checkBox_2.checkState()
-        self.emit(SIGNAL('generate3d(PyQt_PyObject)'), [x1, x2, smooth, shaded])
+        w = self.doubleSpinBox.value()
+        self.emit(SIGNAL('generate3d(PyQt_PyObject)'), [x1, x2, smooth, shaded,w])
