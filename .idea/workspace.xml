@@ -2,25 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="710e25e5-8c9d-400c-a9f5-050efc556a7c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/SavePictureDialog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create3dScanThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create3dScanThread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Generate3dDialog.py" beforeDir="false" afterPath="$PROJECT_DIR$/Generate3dDialog.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Generate3dDialog.ui" beforeDir="false" afterPath="$PROJECT_DIR$/Generate3dDialog.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoadScansThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/LoadScansThread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainWindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Miscellaneous.py" beforeDir="false" afterPath="$PROJECT_DIR$/Miscellaneous.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RaportWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/RaportWindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RaportWindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/RaportWindow.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ScanManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/ScanManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/defaultOptions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/defaultOptions.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate3d.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate3d.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raport.py" beforeDir="false" afterPath="$PROJECT_DIR$/raport.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/report1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/report1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource_file.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/resource_file.qrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tableNamesList.txt" beforeDir="false" afterPath="$PROJECT_DIR$/tableNamesList.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
