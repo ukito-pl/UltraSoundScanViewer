@@ -126,7 +126,7 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Współczynnik wyolbrzymienia w:</string>
+        <string>Współczynnik uwidocznienia w:</string>
        </property>
       </widget>
      </item>

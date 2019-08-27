@@ -70,40 +70,62 @@ class TestDialog(QtGui.QDialog, TestWindow.Ui_Dialog):
     def process(self):
         data = np.array(self.thicknessRawData)
         self.showData(data)
-        self.histogram(data)
-        for i in range(0,data.shape[0]):
-            for j in range(0,data.shape[1]):
-                if data[i,j] < 54:
-                    data[i,j] = 0
-                elif data[i,j]> 54 and data[i,j] < 75:
-                    data[i,j] = int(255/21*(data[i,j] - 54))
-                else:
-                    data[i, j] = 255
-        self.histogram(data)
-        # self.showData(data)
+
+        map = self.evalMap2(data)
+        # segments = self.findSegments(edge_map)
+
+        self.showData2(map)
+
+    def evalMap2(self,data):
+        map = np.zeros(data.shape)
+        for i in range(0, data.shape[0]):
+            for j in range(0, data.shape[1]):
+                if data[i,j] == 255:
+                    map[i, j] = 255
+        return map
+
+
+    def evalMap1(self,data):
+        h = np.histogram(data, bins=256, range=(0, 255))
+        hist = h[0]
+        print hist.shape
+        cdf = np.zeros((256))
+        cdf_min = 0
+        for i in range(0, 256):
+
+            cdf[i] = float(np.sum(hist[1:i]) / float(np.sum(hist[1:254])))
+            if cdf[i] != 0 and cdf_min == 0:
+                cdf_min = cdf[i]
+                print cdf_min
+        print cdf
+        LUT = np.zeros((256))
+        for i in range(0, 256):
+            LUT[i] = (cdf[i] - cdf_min) / (1 - cdf_min) * 255
+        for i in range(0, data.shape[0]):
+            for j in range(0, data.shape[1]):
+                data[i, j] = LUT[data[i, j]]
+        self.showData(data)
         gradient = self.evalGradient(data)
 
-        # N = 0
-        # sum = 0
-        # for m in range(1, gradient.shape[0] - 1):
-        #     for n in range(1, gradient.shape[1] - 1):
-        #         sum = sum + gradient[m, n]
-        #         N = N + 1
-        # avg = sum / N
-        #
-        # for i in range(0,gradient.shape[0]-1):
-        #     for j in range(0,gradient.shape[1]-1):
-        #         if gradient[i, j] > (0.4*avg):
-        #                 gradient[i,j] = 255
-        #         else:
-        #                 gradient[i,j] = 0
-        #
-        # edge_map = gradient
-        # segments = self.findSegments(edge_map)
-        self.showData2(data)
+        N = 0
+        sum = 0
+        for m in range(1, gradient.shape[0] - 1):
+            for n in range(1, gradient.shape[1] - 1):
+                sum = sum + gradient[m, n]
+                N = N + 1
+        avg = sum / N
+
+        for i in range(0, gradient.shape[0] - 1):
+            for j in range(0, gradient.shape[1] - 1):
+                if gradient[i, j] > (2.0 * avg):
+                    gradient[i, j] = 255
+                else:
+                    gradient[i, j] = 0
+
+        edge_map = gradient
+        return edge_map
 
     def histogram(self,data):
-
         plt.hist(data)
         plt.show()
 

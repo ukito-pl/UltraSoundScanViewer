@@ -185,7 +185,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         y = data[0][1]
         w = data[0][2]
         h = data[0][3]
-        [x, y, d] = self.scanManager.getXYD((x + w) / 2, (y + h) / 2)
+        [x, y, d] = self.scanManager.getXYD(x + w/ 2, y + h / 2, no_ratio=True)
         data[0] = 'X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__()
         self.reportDialog.show()
         self.reportDialog.activateWindow()
@@ -293,7 +293,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.reportDialog.show()
             self.reportDialog.activateWindow()
             image2DToSave = self.scanManager.get2DImageToSave(x, y, w, h)
-            [x, y, d] = self.scanManager.getXYD((x + w) / 2, (y + h) /2)
+            [x, y, d] = self.scanManager.getXYD(x + w / 2, y + h /2, no_ratio=True)
             if self.reportTool == ReportTools.L:
                 self.reportDialog.setCurrentElement([ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji", "imgPath"]],image2DToSave)
             elif self.reportTool == ReportTools.SP:
@@ -418,7 +418,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
                                       delta_x, diameter, nominal_thickness, nominal_distance, bd0, bd1, bt0, bt1,
                                       frame_length)
         else:
-            self.scanManager.loadScan(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
+            self.scanManager.loadScanFromTo(milimiters_start, milimiters_end, scan_dir, a, b, c, d,
                                       delta_x, diameter, nominal_thickness, nominal_distance, bd0,bd1,bt0,bt1,frame_length)
 
 

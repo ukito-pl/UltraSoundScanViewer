@@ -96,7 +96,7 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "Do:", None))
         self.label_5.setText(_translate("Dialog", "m", None))
         self.label_4.setText(_translate("Dialog", "m", None))
-        self.label_6.setText(_translate("Dialog", "Współczynnik wyolbrzymienia w:", None))
+        self.label_6.setText(_translate("Dialog", "Współczynnik uwidocznienia w:", None))
         self.checkBox.setText(_translate("Dialog", "Włącz cieniowanie", None))
         self.checkBox_2.setText(_translate("Dialog", "Włącz wygładzanie", None))
 
