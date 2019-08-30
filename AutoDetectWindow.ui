@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>716</width>
-    <height>642</height>
+    <width>827</width>
+    <height>874</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,17 @@
       <widget class="QComboBox" name="comboBox_element">
        <item>
         <property name="text">
-         <string>Spoina obwodowa</string>
+         <string>Spoiny obwodowe</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Spoiny obwodowe i wzdłużne</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Korozje i laminacje</string>
         </property>
        </item>
       </widget>
@@ -39,6 +49,12 @@
      <property name="minimumSize">
       <size>
        <width>531</width>
+       <height>151</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
        <height>151</height>
       </size>
      </property>
@@ -233,6 +249,37 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>17</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Parametry wejściowe algorytmu:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>126</height>
+      </size>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string/>
+      </property>
+     </column>
     </widget>
    </item>
    <item>

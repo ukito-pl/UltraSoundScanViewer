@@ -1,1 +1,5 @@
 venv/
+*.pyc
+/*.png
+*.800
+*.csv

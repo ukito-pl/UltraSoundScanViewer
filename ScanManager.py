@@ -462,16 +462,20 @@ class ScanManager(QObject):
 
 
 
-    def getThicknessData(self,i1,i2,j1,j2):
-        data = np.zeros((i2-i1,j2-j1))
-        k = 0
-        for i in range(i1,i2):
-            l = 0
-            for j in range(j1,j2):
-                data[k,l] = self.c * self.thicknessScanRearranged[i, j] + self.d
-                l = l+1
-            k = k+1
-        return data
+    def getThicknessData(self,i1,i2,j1,j2, all=False):
+        if all:
+            data = self.c*self.thicknessScan + self.d
+            return data
+        else:
+            data = np.zeros((i2-i1,j2-j1))
+            k = 0
+            for i in range(i1,i2):
+                l = 0
+                for j in range(j1,j2):
+                    data[k,l] = self.c * self.thicknessScanRearranged[i, j] + self.d
+                    l = l+1
+                k = k+1
+            return data
 
     def getThicknessImageScan(self):
         image_thick = QtGui.QImage(self.thicknessScanColoredRearranged, self.thicknessScanColoredRearranged.shape[1],

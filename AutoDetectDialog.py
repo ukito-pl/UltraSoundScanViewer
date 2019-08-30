@@ -10,6 +10,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from ScanManager import ScanManager
 from WeldDetector import WeldDetector
+from CorrosionDetector import CorrosionDetector
 from Miscellaneous import ReportTools
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -30,15 +31,52 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
         self.connect(self.scanManager, SIGNAL('scans2dLoaded()'), self.startDetection)
         self.connect(self.pushButton_show,SIGNAL('clicked()'),self.showElementInMainWindow)
         self.connect(self.pushButton_report, SIGNAL('clicked()'), self.reportElement)
-        self.comboBox_element.currentIndexChanged.connect(self.setTreeWidgetHeader)
+        self.comboBox_element.currentIndexChanged.connect(self.setElementType)
         self.treeWidget.currentItemChanged.connect(self.treeItemSelected)
-        self.setTreeWidgetHeader(0)
+        self.setElementType(0)
         self.radioButton_select.setVisible(False)
         self.pushButton_select.setVisible(False)
         self.pushButton_report.setEnabled(False)
         self.pushButton_show.setEnabled(False)
         self.milimiters_from = 0
         self.milimiters_end = 0
+
+    def setElementType(self,index):
+        self.setTreeWidgetHeader(index)
+        self.tableWidget.clear()
+        if index == 0:
+            self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
+                                      "Szerokość okna poszukiwania spoiny obwodowej [mm]",
+                                      "Próg odnalezienia spoiny [%] "], [50,25,40])
+        elif index == 1:
+            self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
+                                      "Szerokość okna poszukiwania spoiny obwodowej [mm]",
+                                      "Próg odnalezienia spoiny obowodowej [%]",
+                                      "Szerokość okna poszukiwania spoiny wzdłużnej [mm]",
+                                      "Próg odnalezienia spoiny wzdłużnej [%]"], [50,25,40,25,40])
+        elif index == 2:
+            self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
+                                      "Szerokość okna poszukiwania spoiny obwodowej [mm]",
+                                      "Próg odnalezienia spoiny obowodowej [%]",
+                                      "Szerokość okna poszukiwania spoiny wzdłużnej [mm]",
+                                      "Próg odnalezienia spoiny wzdłużnej [%]"], [50,25,40,25,40])
+    def getAlgParameters(self):
+        params = []
+        for i in range(0,self.tableWidget.rowCount()):
+            params.append(self.tableWidget.item(i, 0).text())
+        return params
+    def setTableItems(self, item_names_list, val_list):
+        i = 0
+        self.tableWidget.setRowCount(len(item_names_list))
+        for name in item_names_list:
+            item = QtGui.QTableWidgetItem()
+            item.setText(_translate("Dialog", name, None))
+            self.tableWidget.setVerticalHeaderItem(i, item)
+            item = QtGui.QTableWidgetItem()
+            item.setText(val_list[i].__str__().decode('utf-8'))
+            self.tableWidget.setItem(i, 0, item)
+            self.tableWidget.item(i, 0)
+            i = i + 1
 
     def showElementInMainWindow(self):
         item = self.treeWidget.currentItem()
@@ -80,10 +118,43 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
     def startDetection(self):
         self.dataLoaded = True
         self.treeWidget.clear()
-        self.weldDetector = WeldDetector(self.scanManager.thicknessScan)
-        self.connect(self.weldDetector, SIGNAL('weldDetected(PyQt_PyObject)'), self.addToList)
-        self.connect(self.weldDetector, SIGNAL('finished()'), self.detectionFinished)
-        self.weldDetector.start()
+        id = self.comboBox_element.currentIndex()
+        if id == 0:
+            params = self.getAlgParameters()
+            spacing = int(float(params[0])/self.scanManager.deltaX)
+            weld_width_v = int(float(params[1])/self.scanManager.deltaX)
+            percentage_v = float(params[2])/100.0
+            self.weldDetector = WeldDetector(self.scanManager.thicknessScan, self.scanManager.getThicknessData(0,0,0,0,all=True),
+                                             0, spacing, weld_width_v, percentage_v)
+            self.connect(self.weldDetector, SIGNAL('weldDetected(PyQt_PyObject)'), self.addToList)
+            self.connect(self.weldDetector, SIGNAL('finished()'), self.detectionFinished)
+            self.weldDetector.start()
+        elif id == 1:
+            params = self.getAlgParameters()
+            spacing = int(float(params[0]) / self.scanManager.deltaX)
+            weld_width_v = int(float(params[1]) / self.scanManager.deltaX)
+            percentage_v = float(params[2]) / 100.0
+            weld_width_h = int(float(params[3]) / self.scanManager.deltaY)
+            percentage_h = float(params[4]) / 100.0
+            self.weldDetector = WeldDetector(self.scanManager.thicknessScan, self.scanManager.getThicknessData(0,0,0,0,all=True),
+                                             1, spacing, weld_width_v, percentage_v, weld_width_h, percentage_h)
+            self.connect(self.weldDetector, SIGNAL('weldDetected(PyQt_PyObject)'), self.addToList)
+            self.connect(self.weldDetector, SIGNAL('finished()'), self.detectionFinished)
+            self.weldDetector.start()
+        elif id == 2:
+            params = self.getAlgParameters()
+            spacing = int(float(params[0]) / self.scanManager.deltaX)
+            weld_width_v = int(float(params[1]) / self.scanManager.deltaX)
+            percentage_v = float(params[2]) / 100.0
+            weld_width_h = int(float(params[3]) / self.scanManager.deltaY)
+            percentage_h = float(params[4]) / 100.0
+            self.corrosionDetector = CorrosionDetector(self.scanManager.thicknessScan,self.scanManager.nominalThicknessVal,
+                                                       self.scanManager.getThicknessData(0,0,0,0,all=True),
+                                                       self.scanManager.nominalThickness, 0.85,self.scanManager.deltaX,self.scanManager.diameter,
+                                                       spacing, weld_width_v, percentage_v, weld_width_h, percentage_h)
+            self.connect(self.corrosionDetector, SIGNAL('corrosionDetected(PyQt_PyObject)'), self.addToList)
+            self.connect(self.corrosionDetector, SIGNAL('finished()'), self.detectionFinished)
+            self.corrosionDetector.start()
 
     def addToList(self,list):
         item = QtGui.QTreeWidgetItem(self.treeWidget)
@@ -102,7 +173,12 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
             item.setText(0, _translate("Dialog", name.__str__(), None))
             item.setText(1, _translate("Dialog", "X: " + x.__str__() + " m, " + "Y: " + y[0].__str__() + " h "+ y[1].__str__() + " min,"  + " Dlugość: " + width.__str__() + " m", None))
             item.setData(1, QtCore.Qt.UserRole, [ReportTools.SW.value, x,y,width])
-
+        elif id==ReportTools.K:
+            x, y, d = self.scanManager.getXYD(list[3], list[2], no_ratio=True)
+            item.setText(0, _translate("Dialog", name.__str__(), None))
+            item.setText(1, _translate("Dialog", "X: " + x.__str__() + " m, " + "Y: " + y[0].__str__() + " h " + y[
+                1].__str__() + " min,", None))
+            item.setData(1, QtCore.Qt.UserRole, [ReportTools.SW.value, x, y])
 
     def detectionFinished(self):
         self.dataLoaded = False
