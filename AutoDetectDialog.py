@@ -53,7 +53,7 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
                                       "Szerokość okna poszukiwania spoiny obwodowej [mm]",
                                       "Próg odnalezienia spoiny obowodowej [%]",
                                       "Szerokość okna poszukiwania spoiny wzdłużnej [mm]",
-                                      "Próg odnalezienia spoiny wzdłużnej [%]"], [50,25,40,25,40])
+                                      "Próg odnalezienia spoiny wzdłużnej [%]"], [50,25,40,2,40])
         elif index == 2:
             self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
                                       "Szerokość okna poszukiwania spoiny obwodowej [mm]",
