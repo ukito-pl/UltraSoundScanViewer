@@ -2,6 +2,8 @@ from PyQt4.QtCore import QThread,SIGNAL
 import numpy as np
 from Miscellaneous import ReportTools
 from math import pow
+import random
+import time
 class WeldDetector(QThread):
 
     def __init__(self, data_raw,data,  alg, spacing, weld_width_v, percentage_v, weld_width_h=-1, percentage_h=-1):
@@ -26,15 +28,18 @@ class WeldDetector(QThread):
             vwelds = self.findWeldsVertical(map, self.spacing, self.weldWidthV, self.percentageV)
             hwelds = self.findWeldsHorizontal(map, vwelds, self.weldWidthH, self.percentageH)
 
-    def findWeldsVertical(self, map, spacing, width, percentage_ref):
+    def findWeldsVertical(self, map, spacing, width, percentage_ref, emit=True):
         print width,spacing,percentage_ref
         welds = []
         max_percentage = 0
         max_percentage_j = 0
         weld_detected = False
         j = 0
+        start_time = time.time()
+        print start_time
         while j < map.shape[1]:
-            if map[-2, j] == 255:
+            i = int(random.random()*(map.shape[0]-1))
+            if map[i, j] == 255 or weld_detected:
                 # print "szuaknie:", j,edge_map.shape[1]
                 area = map[:, j:j+width]
                 count = 0
@@ -63,19 +68,19 @@ class WeldDetector(QThread):
                         if var > var_max:
                             var_max = var
                             j_var_max = max_percentage_j + m
-                    # print "znaleziono spojenie: ", weld_segment
                     name = "Spoina obwodowa#" + (len(welds)).__str__()
-                    self.emit(SIGNAL('weldDetected(PyQt_PyObject)'), [name, ReportTools.SP, j_var_max])
+                    if emit:
+                        self.emit(SIGNAL('weldDetected(PyQt_PyObject)'), [name, ReportTools.SP, j_var_max])
                     welds.append(j)
                     j = j + width + spacing
-
-
-
             j = j + 1
+        end_time = time.time()
+        print end_time
+        print "time elapsed: ", end_time - start_time
         return welds
 
-    def findWeldsHorizontal(self,map,vwelds, width, percentage_ref):
-        print width, percentage_ref
+    def findWeldsHorizontal(self,map,vwelds, width, percentage_ref, emit=True):
+        #print width, percentage_ref
         hwelds = []
 
         for j in range(0,len(vwelds)-1):
@@ -92,11 +97,7 @@ class WeldDetector(QThread):
 
                     area_size = area.shape[0] * area.shape[1]
                     percentage = float(count) / area_size
-                    #print "pr:", percentage, count, area_size
                     if percentage > percentage_ref:
-                        # print "znaleziono spojenie: ", weld_segment
-                        #name = "Spoina wzdluzna#" + (len(hwelds)).__str__()
-                        #self.emit(SIGNAL('weldDetected(PyQt_PyObject)'), [name, ReportTools.SW, i, vwelds[j], vwelds[j+1]-vwelds[j] ])
                         local_welds.append([i,percentage])
             if len(local_welds) > 0:
                 maxpr = 0
@@ -113,7 +114,8 @@ class WeldDetector(QThread):
                         i_var_max = i_max + n
                 hwelds.append(i_var_max)
                 name = "Spoina wzdluzna#" + (len(hwelds)).__str__()
-                self.emit(SIGNAL('weldDetected(PyQt_PyObject)'), [name, ReportTools.SW, i_var_max, vwelds[j], vwelds[j+1]-vwelds[j] ])
+                if emit:
+                    self.emit(SIGNAL('weldDetected(PyQt_PyObject)'), [name, ReportTools.SW, i_var_max, vwelds[j], vwelds[j+1]-vwelds[j] ])
 
         return hwelds
 

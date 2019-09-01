@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(827, 874)
+        Dialog.resize(705, 664)
         self.verticalLayout_2 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -108,7 +108,8 @@ class Ui_Dialog(object):
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout_2.addWidget(self.label_3)
         self.tableWidget = QtGui.QTableWidget(Dialog)
-        self.tableWidget.setMaximumSize(QtCore.QSize(16777215, 126))
+        self.tableWidget.setMinimumSize(QtCore.QSize(0, 0))
+        self.tableWidget.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
         self.tableWidget.setColumnCount(1)
         self.tableWidget.setRowCount(0)
@@ -120,6 +121,7 @@ class Ui_Dialog(object):
         self.pushButton_detect.setObjectName(_fromUtf8("pushButton_detect"))
         self.verticalLayout_2.addWidget(self.pushButton_detect)
         self.treeWidget = QtGui.QTreeWidget(Dialog)
+        self.treeWidget.setMinimumSize(QtCore.QSize(0, 0))
         self.treeWidget.setObjectName(_fromUtf8("treeWidget"))
         self.treeWidget.headerItem().setText(0, _fromUtf8("1"))
         self.verticalLayout_2.addWidget(self.treeWidget)
@@ -139,6 +141,7 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
+        self.comboBox_element.setCurrentIndex(-1)
         self.comboBox_m_unit_start.setCurrentIndex(1)
         self.comboBox_m_unit_end.setCurrentIndex(1)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)

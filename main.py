@@ -381,9 +381,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
 
 
     def loadElement(self,data):
-        milimiters_start = data[0]
-        milimiters_end = data[1]
-        self.loadScan(milimiters_start, milimiters_end)
+        milimiters = data[0]
+        self.loadScan(milimiters)
 
     def loadScan(self, milimiters_start = -1, milimiters_end = -1):
         self.scans2dLoaded = False
@@ -415,6 +414,11 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
                 multiplier = 1000000
             milimeters = float(self.textEdit_km.toPlainText().replace(",",".")) * multiplier
             self.scanManager.loadScan(milimeters , scan_dir, a, b, c, d,
+                                      delta_x, diameter, nominal_thickness, nominal_distance, bd0, bd1, bt0, bt1,
+                                      frame_length)
+        elif  milimiters_start != -1 and milimiters_end == -1:
+            milimeters = float(milimiters_start)
+            self.scanManager.loadScan(milimeters, scan_dir, a, b, c, d,
                                       delta_x, diameter, nominal_thickness, nominal_distance, bd0, bd1, bt0, bt1,
                                       frame_length)
         else:
