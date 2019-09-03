@@ -149,6 +149,7 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
             self.weldDetector = WeldDetector(self.scanManager.thicknessScan, self.scanManager.getThicknessData(0,0,0,0,all=True),
                                              0, spacing, weld_width_v, percentage_v)
             self.connect(self.weldDetector, SIGNAL('weldDetected(PyQt_PyObject)'), self.addToList)
+            self.connect(self.weldDetector, SIGNAL('reportProgress(PyQt_PyObject)'), self.setProgress)
             self.connect(self.weldDetector, SIGNAL('finished()'), self.detectionFinished)
             self.weldDetector.start()
         elif id == 1:
@@ -161,6 +162,7 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
             self.weldDetector = WeldDetector(self.scanManager.thicknessScan, self.scanManager.getThicknessData(0,0,0,0,all=True),
                                              1, spacing, weld_width_v, percentage_v, weld_width_h, percentage_h)
             self.connect(self.weldDetector, SIGNAL('weldDetected(PyQt_PyObject)'), self.addToList)
+            self.connect(self.weldDetector, SIGNAL('reportProgress(PyQt_PyObject)'), self.setProgress)
             self.connect(self.weldDetector, SIGNAL('finished()'), self.detectionFinished)
             self.weldDetector.start()
         elif id == 2:
@@ -176,8 +178,13 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
                                                        self.scanManager.nominalThickness, treshold,self.scanManager.deltaX,self.scanManager.diameter,
                                                        spacing, weld_width_v, percentage_v, weld_width_h, percentage_h)
             self.connect(self.corrosionDetector, SIGNAL('corrosionDetected(PyQt_PyObject)'), self.addToList)
+            self.connect(self.corrosionDetector, SIGNAL('reportProgress(PyQt_PyObject)'), self.setProgress)
             self.connect(self.corrosionDetector, SIGNAL('finished()'), self.detectionFinished)
             self.corrosionDetector.start()
+
+    def setProgress(self,percentage):
+        progress_bar_val = int(percentage*100)
+        self.progressBar.setValue(progress_bar_val)
 
     def addToList(self,list):
         item = QtGui.QTreeWidgetItem(self.treeWidget)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>664</height>
+    <width>729</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Korozje i laminacje</string>
+         <string>Korozje </string>
         </property>
        </item>
       </widget>
@@ -295,6 +295,19 @@ p, li { white-space: pre-wrap; }
     <widget class="QPushButton" name="pushButton_detect">
      <property name="text">
       <string>Wyszukaj</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="textVisible">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

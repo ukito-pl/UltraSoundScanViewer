@@ -26,61 +26,65 @@ class CorrosionDetector(QThread):
         self.wait()
 
     def run(self):
-        percentage_ref = 0.4
+        percentage_ref = 0.5
         filtered_corrosions = []
         nb = self.thicknessDataRaw.shape[0]*self.thicknessDataRaw.shape[1]
-
-        potential_corrosions = self.findCorrosions(self.thicknessDataRaw,self.treshold)
-        for corrosion in potential_corrosions:
-            count = 0
-            boundry = []
-            for pixel in corrosion:
-                i = pixel[0]
-                j = pixel[1]
-                for m in range(j - 1, j + 2):
-                    for n in range(i - 1, i + 2):
-                        if n > self.thicknessDataRaw.shape[0] - 1:
-                            n = self.thicknessDataRaw.shape[0] - 1
-                        if m > self.thicknessDataRaw.shape[1] - 1:
-                            m = self.thicknessDataRaw.shape[1] - 1
-                        if n < 0:
-                            n = 0
-                        if m < 0:
-                            m = 0
-                        if not [n,m] in corrosion and not [n,m] in boundry:
-                            if self.thicknessDataRaw[n,m] == 255:
-                                count = count +1
-                            boundry.append([n,m])
-            percentage = float(count)/len(boundry)
-            if percentage <= percentage_ref:
-                filtered_corrosions.append(corrosion)
-
-        #find surrounding welds
-        left_weld = -1
-        right_weld = -1
-        horizontal_weld = -1
         c = 0
-        for corrosion in filtered_corrosions:
-            [max_i, min_i, max_j, min_j] = self.checkBoundries(corrosion)
-            i = min_i + (max_i - min_i) / 2
-            j = min_j + (max_j - min_j) / 2
-            if not (left_weld <= i <= right_weld):
-                left_weld = -1
-                right_weld = -1
-                horizontal_weld = -1
-            if left_weld == -1 and right_weld == -1 and horizontal_weld == -1:
-                left_weld = self.findLeftVWeld(int(j))
-                right_weld = self.findRightVWeld(int(j))
-                if left_weld != None and right_weld != None:
+        j = 0
+        while j < self.thicknessDataRaw.shape[1] -1:
+            progress_perc = float(j)/(self.thicknessData.shape[1]-1)
+            self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), progress_perc )
+            filtered_corrosions = []
+
+            rw = self.findRightVWeld(j + self.weldWidthH)
+            if rw == None:
+                rw = self.thicknessDataRaw.shape[1]-1
+
+            print "lw: ", j, ", rw: ", rw
+            potential_corrosions = self.findCorrosions(self.thicknessDataRaw,j,rw,self.treshold)
+            for corrosion in potential_corrosions:
+                count = 0
+                boundry = []
+                for pixel in corrosion:
+                    i = pixel[0]
+                    j = pixel[1]
+                    for m in range(j - 1, j + 2):
+                        for n in range(i - 1, i + 2):
+                            if n > self.thicknessDataRaw.shape[0] - 1:
+                                n = self.thicknessDataRaw.shape[0] - 1
+                            if m > self.thicknessDataRaw.shape[1] - 1:
+                                m = self.thicknessDataRaw.shape[1] - 1
+                            if n < 0:
+                                n = 0
+                            if m < 0:
+                                m = 0
+                            if not [n,m] in corrosion and not [n,m] in boundry:
+                                if self.thicknessDataRaw[n,m] == 255:
+                                    count = count +1
+                                boundry.append([n,m])
+                percentage = float(count)/len(boundry)
+                if percentage <= percentage_ref:
+                    filtered_corrosions.append(corrosion)
+            #find surrounding welds
+
+            for corrosion in filtered_corrosions:
+                [max_i, min_i, max_j, min_j] = self.checkBoundries(corrosion)
+                i_s = min_i + (max_i - min_i) / 2
+                j_s = min_j + (max_j - min_j) / 2
+                left_weld = j
+                right_weld = rw
+                if left_weld is not None and right_weld is not None:
                     horizontal_weld = self.findHorizontalWeld(left_weld,right_weld)
                 else:
                     horizontal_weld = None
-            if not(min_i <= horizontal_weld <= max_i) and not(min_j < left_weld < max_j) and not(
-                    min_j < right_weld < max_j):
-                name = "Korozja#" + c.__str__()
-                self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i, j, percentage])
-                c = c + 1
+                if not(min_i <= horizontal_weld <= max_i) and not(min_j < left_weld < max_j) and not(
+                        min_j < right_weld < max_j):
+                    name = "Korozja#" + c.__str__()
+                    self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i_s, j_s, percentage])
+                    c = c + 1
 
+            j = rw + 1
+        self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), 1)
 
 
 
@@ -209,63 +213,44 @@ class CorrosionDetector(QThread):
                 min_j = element[1]
         return [max_i,min_i,max_j,min_j]
 
-    def findCorrosions(self, data, treshold_perc):
-        sum = 0
+    def findCorrosions(self, data, start, end, treshold_perc):
+        sum1 = 0
+        sum2 = 0
         nb = 0
         for n in range(0, data.shape[0] - 1):
-            for m in range(0, 200):
-                if n > data.shape[0] - 1:
-                    n = data.shape[0] - 1
-                if m > data.shape[1] - 1:
-                    m = data.shape[1] - 1
+            for m in range(start, end+1):
                 if data[n, m] != 0 and data[n, m] != 255:
-                    sum = sum + data[n, m]
+                    sum1 = sum1 + data[n, m]
+                    sum2 = sum2 + self.thicknessData[n, m]
                     nb = nb + 1
-        avg = float(sum) / nb
-        treshold_val = avg * treshold_perc
+        if nb == 0:
+            return []
+        avg_thicnkess = float(sum1) / nb
+        av_thicnkess_mm = float(sum2) / nb
+        treshold_val = avg_thicnkess * treshold_perc
+
         print treshold_val
 
+        #pydevd.settrace()
         corrosion_points = []
         false_corrosion_points = []
         corrosions = []
-        treshold_refresh = 200
-        treshold_refresh_cnt = 0
-        for j in range(data.shape[1]):
-            if treshold_refresh_cnt > treshold_refresh:
-                treshold_refresh_cnt = 0
-                sum = 0
-                nb = 0
-                for n in range(0,data.shape[0]-1):
-                    for m in range(0,200):
-                        m = j+ m
-                        if n > data.shape[0] - 1:
-                            n = data.shape[0] - 1
-                        if m > data.shape[1] - 1:
-                            m = data.shape[1] - 1
-                        if data[n,m] != 0 and data[n,m] != 255:
-                            sum = sum + data[n,m]
-                            nb = nb + 1
-                avg = float(sum) / nb
-                treshold_val = avg * treshold_perc
-                print treshold_val
-
+        for j in range(start,end+1):
             for i in range(data.shape[0]):
                 if not [i,j] in corrosion_points and not [i,j] in false_corrosion_points:
                     if data[i, j] <= treshold_val and data[i, j] > 0.0:
-                        area, is_corrosion = self.checkCorrosion(data,i,j,treshold_val)
+                        area, is_corrosion = self.checkCorrosion(data,start,end,i,j,treshold_val,av_thicnkess_mm)
                         if is_corrosion:
                             #print area
                             for point in area:
                                 corrosion_points.append(point)
                             corrosions.append(area)
-
                         else:
                             for point in area:
                                 false_corrosion_points.append(point)
-            treshold_refresh_cnt = treshold_refresh_cnt + 1
         return corrosions
 
-    def checkCorrosion(self,data, i, j,treshold_val):
+    def checkCorrosion(self,data,start,end, i, j,treshold_val, avg_thicnkess):
         corrosion = []
         open_list = []
         end = False
@@ -281,7 +266,7 @@ class CorrosionDetector(QThread):
                         n = 0
                     if m < 0:
                         m = 0
-                    if not [n,m] in corrosion and not [n,m] in open_list:
+                    if not [n,m] in corrosion and not [n,m] in open_list and start <= m <= end:
                         if data[n, m] <= treshold_val and data[n, m] > 0.0:
                             open_list.append([n,m])
             if len(open_list) > 0:
@@ -291,11 +276,16 @@ class CorrosionDetector(QThread):
             else:
                 end = True
             #print len(open_list), len(corrosion), data.shape[0]*data.shape[1], end
+        #pydevd.settrace()
         L_measured = self.measureL(corrosion,self.dx)
-        d = self.findDepthOfCorrosion(self.thicknessData,corrosion,self.nominalThickness)
-        L_eval = self.evaluateL(self.diameter,self.nominalThickness,d)
-        if L_measured > 0.7*L_eval:
-            return corrosion, True
+        d = self.findDepthOfCorrosion(self.thicknessData,corrosion,avg_thicnkess)
+        #print "sprawdzanie korozji:", i,j, "dlugosc: ", L_measured, "glebokosc: ", d
+        if 1.1*d/avg_thicnkess  > 0.15:
+            L_eval = self.evaluateL(self.diameter,avg_thicnkess,d)
+            if L_measured > 0.7*L_eval:
+                return corrosion, True
+            else:
+                return corrosion, False
         else:
             return corrosion, False
 
@@ -328,6 +318,7 @@ class CorrosionDetector(QThread):
         return float((xmax - xmin + 1)*dx)
 
     def findDepthOfCorrosion(self,data, corrosion_points, nominal_depth):
+
         dmin = nominal_depth
         for point in corrosion_points:
             i = point[0]

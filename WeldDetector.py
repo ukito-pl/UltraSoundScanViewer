@@ -29,7 +29,7 @@ class WeldDetector(QThread):
             hwelds = self.findWeldsHorizontal(map, vwelds, self.weldWidthH, self.percentageH)
 
     def findWeldsVertical(self, map, spacing, width, percentage_ref, emit=True):
-        print width,spacing,percentage_ref
+        #print width,spacing,percentage_ref
         welds = []
         max_percentage = 0
         max_percentage_j = 0
@@ -38,6 +38,11 @@ class WeldDetector(QThread):
         start_time = time.time()
         print start_time
         while j < map.shape[1]:
+            if self.alg ==0:
+                progress_perc = float(j) / (map.shape[1] - 1)
+            elif self.alg == 1:
+                progress_perc = 0.5*(float(j) / (map.shape[1] - 1))
+            self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), progress_perc)
             i = int(random.random()*(map.shape[0]-1))
             if map[i, j] == 255 or weld_detected:
                 # print "szuaknie:", j,edge_map.shape[1]
@@ -84,6 +89,8 @@ class WeldDetector(QThread):
         hwelds = []
 
         for j in range(0,len(vwelds)-1):
+            progress_perc = 0.5 + 0.5*(float(j) / (len(vwelds)-1))
+            self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), progress_perc)
             local_welds = []
             for i in range(int(width/2),map.shape[0] - int(width/2)):
                 if map[i,vwelds[j]] == 255:
