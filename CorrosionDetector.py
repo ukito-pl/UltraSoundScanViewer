@@ -8,7 +8,7 @@ from Miscellaneous import isclose
 class CorrosionDetector(QThread):
 
     def __init__(self, data_raw, nominal_thickness_raw, data, nominal_thickness, treshold,dx,diameter,
-                 spacing, weld_width_v, percentage_v, weld_width_h, percentage_h):
+                 spacing, weld_width_v, percentage_v, weld_width_h, percentage_h,lbmax, l_p):
         QThread.__init__(self)
         self.thicknessDataRaw = data_raw
         self.nominalThicknessRaw = nominal_thickness_raw
@@ -22,11 +22,14 @@ class CorrosionDetector(QThread):
         self.spacing = spacing
         self.percentageV = percentage_v
         self.percentageH = percentage_h
+        self.lbmax = lbmax
+        self.lp = l_p
+
     def __del__(self):
         self.wait()
 
     def run(self):
-        percentage_ref = 0.5
+        lbmax = self.lbmax
         filtered_corrosions = []
         nb = self.thicknessDataRaw.shape[0]*self.thicknessDataRaw.shape[1]
         c = 0
@@ -46,10 +49,10 @@ class CorrosionDetector(QThread):
                 count = 0
                 boundry = []
                 for pixel in corrosion:
-                    i = pixel[0]
-                    j = pixel[1]
-                    for m in range(j - 1, j + 2):
-                        for n in range(i - 1, i + 2):
+                    ii = pixel[0]
+                    jj = pixel[1]
+                    for m in range(jj - 1, jj + 2):
+                        for n in range(ii - 1, ii + 2):
                             if n > self.thicknessDataRaw.shape[0] - 1:
                                 n = self.thicknessDataRaw.shape[0] - 1
                             if m > self.thicknessDataRaw.shape[1] - 1:
@@ -63,7 +66,7 @@ class CorrosionDetector(QThread):
                                     count = count +1
                                 boundry.append([n,m])
                 percentage = float(count)/len(boundry)
-                if percentage <= percentage_ref:
+                if percentage <= lbmax:
                     filtered_corrosions.append(corrosion)
             #find surrounding welds
 
@@ -77,10 +80,17 @@ class CorrosionDetector(QThread):
                     horizontal_weld = self.findHorizontalWeld(left_weld,right_weld)
                 else:
                     horizontal_weld = None
-                if not(min_i <= horizontal_weld <= max_i) and not(min_j < left_weld < max_j) and not(
-                        min_j < right_weld < max_j):
+                if not((horizontal_weld - self.weldWidthH <= min_i and horizontal_weld + self.weldWidthH >= max_i) or
+                       (min_i <= horizontal_weld - self.weldWidthH <= max_i) or
+                       (min_i <= horizontal_weld + self.weldWidthH <= max_i)) and \
+                        not((left_weld - self.weldWidthV <= min_j and left_weld + self.weldWidthV >= max_j) or
+                       (min_j <= left_weld - self.weldWidthV <= max_j) or
+                       (min_j <= left_weld + self.weldWidthV <= max_j)) and \
+                        not((right_weld - self.weldWidthV <= min_j and right_weld + self.weldWidthV >= max_j) or
+                       (min_j <= right_weld - self.weldWidthV <= max_j) or
+                       (min_j <= right_weld + self.weldWidthV <= max_j)):
                     name = "Korozja#" + c.__str__()
-                    self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i_s, j_s, percentage])
+                    self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i_s, j_s])
                     c = c + 1
 
             j = rw + 1
@@ -93,19 +103,18 @@ class CorrosionDetector(QThread):
         percentage_ref = self.percentageH
         local_welds = []
         for i in range(int(width / 2), self.thicknessDataRaw.shape[0] - int(width / 2)):
-            if self.thicknessDataRaw[i, left_weld] == 255:
+            #if self.thicknessDataRaw[i, left_weld] == 255:
                 # print "szuaknie:", j,edge_map.shape[1]
-                area = self.thicknessDataRaw[int(i - width / 2):int(i + width / 2), left_weld:right_weld]
-                count = 0
-                for row in area:
-                    for element in row:
-                        if element == 255:
-                            count = count + 1
-
-                area_size = area.shape[0] * area.shape[1]
-                percentage = float(count) / area_size
-                if percentage > percentage_ref:
-                    local_welds.append([i, percentage])
+            area = self.thicknessDataRaw[int(i - width / 2):int(i + width / 2), left_weld:right_weld]
+            count = 0
+            for row in area:
+                for element in row:
+                    if element == 255:
+                        count = count + 1
+            area_size = area.shape[0] * area.shape[1]
+            percentage = float(count) / area_size
+            if percentage > percentage_ref:
+                local_welds.append([i, percentage])
         if len(local_welds) > 0:
             maxpr = 0
             for weld in local_welds:
@@ -229,7 +238,7 @@ class CorrosionDetector(QThread):
         av_thicnkess_mm = float(sum2) / nb
         treshold_val = avg_thicnkess * treshold_perc
 
-        print treshold_val
+        print avg_thicnkess, treshold_val
 
         #pydevd.settrace()
         corrosion_points = []
@@ -253,8 +262,8 @@ class CorrosionDetector(QThread):
     def checkCorrosion(self,data,start,end, i, j,treshold_val, avg_thicnkess):
         corrosion = []
         open_list = []
-        end = False
-        while not end:
+        ended = False
+        while not ended:
             corrosion.append([i,j])
             for m in range(j - 1, j + 2):
                 for n in range(i - 1, i + 2):
@@ -274,15 +283,16 @@ class CorrosionDetector(QThread):
                 i = point[0]
                 j = point[1]
             else:
-                end = True
-            #print len(open_list), len(corrosion), data.shape[0]*data.shape[1], end
+                ended = True
+            #print len(open_list), len(corrosion), data.shape[0]*data.shape[1], ended
         #pydevd.settrace()
         L_measured = self.measureL(corrosion,self.dx)
         d = self.findDepthOfCorrosion(self.thicknessData,corrosion,avg_thicnkess)
         #print "sprawdzanie korozji:", i,j, "dlugosc: ", L_measured, "glebokosc: ", d
+        #print self.checkBoundries(corrosion)
         if 1.1*d/avg_thicnkess  > 0.15:
             L_eval = self.evaluateL(self.diameter,avg_thicnkess,d)
-            if L_measured > 0.7*L_eval:
+            if L_measured > self.lp*L_eval:
                 return corrosion, True
             else:
                 return corrosion, False

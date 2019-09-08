@@ -48,22 +48,24 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
         self.setTreeWidgetHeader(index)
         self.tableWidget.clear()
         if index == 0:
-            self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
-                                      "Szerokość okna poszukiwania spoiny obwodowej [mm]",
-                                      "Próg odnalezienia spoiny [%] "], [50,25,40])
+            self.setTableItems(["Minimalna odległość między spoinami obwodowymi l [mm]",
+                                      "Wysokość okna poszukiwania spoiny obwodowej W [mm]",
+                                      "Próg odnalezienia spoiny d_o [%] "], [50,25,50])
         elif index == 1:
-            self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
-                                      "Szerokość okna poszukiwania spoiny obwodowej [mm]",
-                                      "Próg odnalezienia spoiny obowodowej [%]",
-                                      "Szerokość okna poszukiwania spoiny wzdłużnej [mm]",
-                                      "Próg odnalezienia spoiny wzdłużnej [%]"], [50,25,40,25,40])
+            self.setTableItems(["Minimalna odległość między spoinami obwodowymi l [mm]",
+                                      "Szerokość okna poszukiwania spoiny obwodowej W [mm]",
+                                      "Próg odnalezienia spoiny obowodowej d_o [%]",
+                                      "Wysokość okna poszukiwania spoiny wzdłużnej H [mm]",
+                                      "Próg odnalezienia spoiny wzdłużnej d_w [%]"], [50,25,50,25,40])
         elif index == 2:
-            self.setTableItems(["Minimalna odległość między spoinami obwodowymi [mm]",
-                                      "Szerokość okna poszukiwania spoiny obwodowej [mm]",
-                                      "Próg odnalezienia spoiny obowodowej [%]",
-                                      "Szerokość okna poszukiwania spoiny wzdłużnej [mm]",
-                                      "Próg odnalezienia spoiny wzdłużnej [%]",
-                                      "Próg korozji [%]"], [50,25,40,25,40, 15])
+            self.setTableItems(["Minimalna odległość między spoinami obwodowymi l [mm]",
+                                      "Szerokość okna poszukiwania spoiny obwodowej W [mm]",
+                                      "Próg odnalezienia spoiny obowodowej d_o [%]",
+                                      "Wysokosć okna poszukiwania spoiny wzdłużnej H [mm]",
+                                      "Próg odnalezienia spoiny wzdłużnej d_w [%]",
+                                      "Próg korozji t_p [%]",
+                                      "Próg sąsiedztwa l_bmax [%]",
+                                      "Współczynnik progujący l_p [%]"], [50,25,50,25,40, 15, 50, 70])
         self.tableWidget.hide() # hide and show in order to fire geomtriesChanged signal to update size of tablewidget
         self.tableWidget.show()
 
@@ -173,10 +175,12 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
             weld_width_h = int(float(params[3]) / self.scanManager.deltaY)
             percentage_h = float(params[4]) / 100.0
             treshold = 1 - float(params[5]) / 100.0
+            lbmax = float(params[6]) / 100.0
+            lp = 1 - float(params[7]) / 100.0
             self.corrosionDetector = CorrosionDetector(self.scanManager.thicknessScan,self.scanManager.nominalThicknessVal,
                                                        self.scanManager.getThicknessData(0,0,0,0,all=True),
                                                        self.scanManager.nominalThickness, treshold,self.scanManager.deltaX,self.scanManager.diameter,
-                                                       spacing, weld_width_v, percentage_v, weld_width_h, percentage_h)
+                                                       spacing, weld_width_v, percentage_v, weld_width_h, percentage_h, lbmax, lp)
             self.connect(self.corrosionDetector, SIGNAL('corrosionDetected(PyQt_PyObject)'), self.addToList)
             self.connect(self.corrosionDetector, SIGNAL('reportProgress(PyQt_PyObject)'), self.setProgress)
             self.connect(self.corrosionDetector, SIGNAL('finished()'), self.detectionFinished)
@@ -207,7 +211,7 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
             x, y, d = self.scanManager.getXYD(list[3], list[2], no_ratio=True)
             item.setText(0, _translate("Dialog", name.__str__(), None))
             item.setText(1, _translate("Dialog", "X: " + x.__str__() + " m, " + "Y: " + y[0].__str__() + " h " + y[
-                1].__str__() + " min," + "perc: " + list[4].__str__(), None))
+                1].__str__() + " min", None))
             item.setData(1, QtCore.Qt.UserRole, [ReportTools.SW.value, x, y])
 
     def detectionFinished(self):
