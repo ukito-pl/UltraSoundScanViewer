@@ -235,8 +235,8 @@ class CorrosionDetector(QThread):
         corrosion_points = []
         false_corrosion_points = []
         corrosions = []
-        for j in range(start,end+1):
-            for i in range(data.shape[0]):
+        for j in range(start,end+1,2):
+            for i in range(0,data.shape[0],2):
                 if not [i,j] in corrosion_points and not [i,j] in false_corrosion_points:
                     if data[i, j] <= treshold_val and data[i, j] > 0.0:
                         area, is_corrosion = self.checkCorrosion(data,start,end,i,j,treshold_val,av_thicnkess_mm)

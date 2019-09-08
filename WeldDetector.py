@@ -27,6 +27,7 @@ class WeldDetector(QThread):
         elif self.alg == 1:
             vwelds = self.findWeldsVertical(map, self.spacing, self.weldWidthV, self.percentageV)
             hwelds = self.findWeldsHorizontal(map, vwelds, self.weldWidthH, self.percentageH)
+        self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), 1)
 
     def findWeldsVertical(self, map, spacing, width, percentage_ref, emit=True):
         #print width,spacing,percentage_ref
