@@ -50,7 +50,6 @@ class ScanViewer(QtGui.QGraphicsView):
             w = (rect.width() / self.view_scale).__int__()
             h = (rect.height() / (self.view_scale*self.aspect_ratio)).__int__()
             self.emit(SIGNAL('areaSelected(PyQt_PyObject)'),[x,y,w,h])
-
         elif (QMouseEvent.button() == QtCore.Qt.RightButton or QMouseEvent.button() == QtCore.Qt.MidButton):
             qm = QtGui.QMouseEvent(QMouseEvent.type(), QMouseEvent.pos(),QMouseEvent.globalPos(), QtCore.Qt.LeftButton,
                                    QtCore.Qt.NoButton, QMouseEvent.modifiers())
@@ -61,6 +60,13 @@ class ScanViewer(QtGui.QGraphicsView):
         else:
             super(self.__class__, self).mouseReleaseEvent(QMouseEvent)
             self.emit(SIGNAL('checkIfScanLimitsReached()'))
+
+        if (self.dragMode() == QtGui.QGraphicsView.NoDrag and self.scene() != 0):
+            if QMouseEvent.button() == QtCore.Qt.LeftButton:
+                pos = self.mapToScene(QMouseEvent.pos())
+                x = (pos.x() / self.view_scale).__int__()
+                y = (pos.y() / (self.view_scale * self.aspect_ratio)).__int__()
+                self.emit(SIGNAL('mouseClicked(PyQt_PyObject)'), [x,y])
 
     def mouseMoveEvent(self, QMouseEvent):
         super(self.__class__, self).mouseMoveEvent(QMouseEvent)

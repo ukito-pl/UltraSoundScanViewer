@@ -450,10 +450,10 @@ class ScanManager(QObject):
         if self.graphicsView3D.items.__len__() > 0:
             for i in range(0, self.graphicsView3D.items.__len__()):
                 self.graphicsView3D.items.__delitem__(0)
-        g = gl.GLGridItem()
-        g.scale(2, 2, 1)
-        g.setDepthValue(10)
-        self.graphicsView3D.addItem(g)
+        # g = gl.GLGridItem()
+        # g.scale(2, 2, 1)
+        # g.setDepthValue(10)
+        # self.graphicsView3D.addItem(g)
 
         for item in self.scan3dItems:
             self.graphicsView3D.addItem(item)
@@ -510,11 +510,31 @@ class ScanManager(QObject):
             self.changeScanRangeAndLoad(self.milimeters_start - milimeters_range/2, self.milimeters_end - milimeters_range/2 )
 
     def get2DImageToSave(self, x,y,w,h):
-        arrayToSave = []
-        if self.viewDataType == "thickness":
-            arrayToSave = self.thicknessScanColoredRearranged[y:y + h, x:x + w, :]
-        elif self.viewDataType == "distance":
-            arrayToSave = self.distanceScanColoredRearranged[y:y + h, x:x + w, :]
+        arrayToSave = np.zeros((h,w,3), dtype=np.uint8)
+        data_shape = self.thicknessScan.shape
+        if 0 <= x < data_shape[1] and 0 <= y < data_shape[0] and 0 <= x + w < data_shape[1] and 0 <= y + h < data_shape[0]:
+            if self.viewDataType == "thickness":
+                arrayToSave = self.thicknessScanColoredRearranged[y:y + h, x:x + w , :]
+            elif self.viewDataType == "distance":
+                arrayToSave = self.distanceScanColoredRearranged[y:y + h , x:x + w , :]
+        elif x < 0:
+            return -1
+        elif y < 0:
+            if self.viewDataType == "thickness":
+                arrayToSave[0:-y ,  0:w ,:] = self.thicknessScanColoredRearranged[data_shape[0] + y: data_shape[0],x:x + w , :]
+                arrayToSave[-y:h ,  0:w , :] = self.thicknessScanColoredRearranged[0:y + h ,  x:x + w , :]
+            elif self.viewDataType == "distance":
+                arrayToSave[0:-y, 0:w, :] = self.distanceScanColoredRearranged[data_shape[0] + y: data_shape[0],x:x + w, :]
+                arrayToSave[-y:h, 0:w, :] = self.distanceScanColoredRearranged[0:y + h, x:x + w, :]
+        elif x + w >= data_shape[1]:
+            return -1
+        elif y + h >= data_shape[0]:
+            if self.viewDataType == "thickness":
+                arrayToSave[0:data_shape[0] - y, 0:w , :] = self.thicknessScanColoredRearranged[y: data_shape[0], x:x + w , :]
+                arrayToSave[data_shape[0] - y: h , 0:w , :] = self.thicknessScanColoredRearranged[0: h - (data_shape[0] - y), x:x + w , :]
+            elif self.viewDataType == "distance":
+                arrayToSave[h - y: h , 0:w, :] = self.distanceScanColoredRearranged[data_shape[0] - y: data_shape[0], x:x + w , :]
+                arrayToSave[0:h - y, 0:w, :] = self.distanceScanColoredRearranged[0:y + h , x:x + w + 1, :]
         image2d = Image.fromarray(arrayToSave)
         image2d = image2d.resize((w, int(h * self.scanViewer.aspect_ratio)))
         legendImg = self.getLegendImage()

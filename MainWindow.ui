@@ -361,6 +361,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionReport"/>
    <addaction name="actionReportAdd"/>
    <addaction name="actionL"/>
+   <addaction name="actionK"/>
    <addaction name="actionSW"/>
    <addaction name="actionSP"/>
   </widget>
@@ -503,6 +504,21 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>C3D</string>
+   </property>
+  </action>
+  <action name="actionK">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource_file.qrc">
+     <normaloff>:/icons/icon_K.png</normaloff>:/icons/icon_K.png</iconset>
+   </property>
+   <property name="text">
+    <string>K</string>
+   </property>
+   <property name="toolTip">
+    <string>K</string>
    </property>
   </action>
  </widget>

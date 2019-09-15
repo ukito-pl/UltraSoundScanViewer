@@ -241,6 +241,12 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(_fromUtf8("icons/icon_screenshot3d.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.screenShoot3D.setIcon(icon10)
         self.screenShoot3D.setObjectName(_fromUtf8("screenShoot3D"))
+        self.actionK = QtGui.QAction(MainWindow)
+        self.actionK.setCheckable(True)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(_fromUtf8("icons/icon_K.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionK.setIcon(icon11)
+        self.actionK.setObjectName(_fromUtf8("actionK"))
         self.toolBar.addAction(self.actionOptions)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMove)
@@ -252,6 +258,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionReport)
         self.toolBar.addAction(self.actionReportAdd)
         self.toolBar.addAction(self.actionL)
+        self.toolBar.addAction(self.actionK)
         self.toolBar.addAction(self.actionSW)
         self.toolBar.addAction(self.actionSP)
 
@@ -286,7 +293,8 @@ class Ui_MainWindow(object):
         self.actionReport.setText(_translate("MainWindow", "R", None))
         self.screenShoot2D.setText(_translate("MainWindow", "C2D", None))
         self.screenShoot3D.setText(_translate("MainWindow", "C3D", None))
+        self.actionK.setText(_translate("MainWindow", "K", None))
+        self.actionK.setToolTip(_translate("MainWindow", "K", None))
 
 from ScanViewer import ScanViewer
 from pyqtgraph.opengl import GLViewWidget
-

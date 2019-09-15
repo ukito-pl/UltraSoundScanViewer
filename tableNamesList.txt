@@ -1,6 +1,6 @@
 Korozja, 0, K: Id, Nazwa, Lokalizacja, Długość korozji Lm, Maks. dop. dł. korozji Lmax, Nomin. grub. ścianki t, Maks. głęb. korozji d, Ciśnienie projektowe P, Bezpieczne ciśnienie P', Opis, Zdjęcia
 Laminacja, 1, L: Id, Nazwa, Lokalizacja, Długość, Wysokość, Opis, Zdjęcia
-Spoina poprzeczna, 2, SP: Id, Nazwa, Lokalizacja, Długość, Wysokość, Opis, Zdjęcia
-Spoina wzdłużna, 3, SW: Id, Nazwa, Lokalizacja, Długość, Wysokość, Opis, Zdjęcia
+Spoina poprzeczna, 2, SP: Id, Nazwa, Lokalizacja, Opis, Zdjęcia
+Spoina wzdłużna, 3, SW: Id, Nazwa, Lokalizacja, Długość, Opis, Zdjęcia
 
 

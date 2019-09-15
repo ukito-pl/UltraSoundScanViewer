@@ -158,7 +158,12 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
             P = "{:.3F}".format(P * self.pressureUnitsDividers[self.pressureUnitMAOP]) + self.pressureUnitsList[self.pressureUnitMAOP]
         if Pprim != "-":
             Pprim = "{:.3F}".format(Pprim) + self.pressureUnitsList[self.pressureUnitMAOP]
-        self.reportData = [[self.x, self.y, self.w, self.h], Lm, Lmax, t, d, P, Pprim, description]
+        max_i,min_i,max_j,min_j = self.checkBoundries(self.corrosions[index])
+        x = self.x + min_j - 5
+        y = self.y + min_i - 5
+        w = (max_j - min_j) + 10
+        h = (max_i - min_i) + 10
+        self.reportData = [[x,y,w,h], Lm, Lmax, t, d, P, Pprim, description]
         self.resultsDialog.show()
 
     def mouseSelect(self, QMouseEvent):
@@ -280,6 +285,22 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
             self.corrosionsParams.append(params)
         self.selectCorrosion(len(self.corrosions) - 1)
         self.pushButton_maop.setEnabled(True)
+
+    def checkBoundries(self, corrosion_points_data):
+        max_i = corrosion_points_data[0][0]
+        min_i = corrosion_points_data[0][0]
+        max_j = corrosion_points_data[0][1]
+        min_j = corrosion_points_data[0][1]
+        for element in corrosion_points_data:
+            if element[0] > max_i:
+                max_i = element[0]
+            elif element[0] < min_i:
+                min_i = element[0]
+            if element[1] > max_j:
+                max_j = element[1]
+            elif element[1] < min_j:
+                min_j = element[1]
+        return [max_i,min_i,max_j,min_j]
 
     def resizeEvent(self, QResizeEvent):
         super(self.__class__,self).resizeEvent(QResizeEvent)

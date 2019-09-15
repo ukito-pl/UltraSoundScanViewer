@@ -64,6 +64,7 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.connect(self.scanViewer, SIGNAL('areaSelected(PyQt_PyObject)'), self.areaSelected)
         self.connect(self.scanViewer, SIGNAL('tempDragModeActivated()'), self.tempDragModeEnable)
         self.connect(self.scanViewer, SIGNAL('tempDragModeDeactivated()'), self.tempDragModeDisable)
+        self.connect(self.scanViewer, SIGNAL('mouseClicked(PyQt_PyObject)'), self.reportElement)
         self.scanManager.connect(self.scanViewer, SIGNAL('changeScale()'), self.scanManager.changeScale)
 
         self.connect(self.scanManager, SIGNAL('scans2dLoaded()'), self.setScans2dLoaded)
@@ -105,6 +106,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.setToolMode(ToolModes.ScreenShot3DMode)
         elif q_action == self.actionL:
             self.setReportTool(ReportTools.L)
+        elif q_action == self.actionK:
+            self.setReportTool(ReportTools.K)
         elif q_action == self.actionSW:
             self.setReportTool(ReportTools.SW)
         elif q_action == self.actionSP:
@@ -144,7 +147,6 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.toolMode = mode
             self.actionReportAdd.setChecked(True)
             self.expandReportTools(True)
-            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif mode == ToolModes.AutoDetectMode:
             self.toolMode = mode
             self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
@@ -167,30 +169,40 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.actionSP.setVisible(expand)
         self.actionSW.setVisible(expand)
         self.actionL.setVisible(expand)
+        self.actionK.setVisible(expand)
 
     def setReportTool(self,tool):
         self.reportTool = tool
         self.actionL.setChecked(False)
         self.actionSP.setChecked(False)
         self.actionSW.setChecked(False)
+        self.actionK.setChecked(False)
         if tool == ReportTools.L:
             self.actionL.setChecked(True)
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         elif tool == ReportTools.SP:
             self.actionSP.setChecked(True)
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.NoDrag)
         elif tool == ReportTools.SW:
             self.actionSW.setChecked(True)
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.NoDrag)
+        elif tool == ReportTools.K:
+            self.actionK.setChecked(True)
+            self.scanViewer.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
 
     def addCorrosionReport(self,data):
         x = data[0][0]
         y = data[0][1]
         w = data[0][2]
         h = data[0][3]
+        data.append("imgPath")
+        image2DToSave = self.scanManager.get2DImageToSave(x, y, w, h)
         [x, y, d] = self.scanManager.getXYD(x + w/ 2, y + h / 2, no_ratio=True)
         data[0] = 'X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__()
         self.reportDialog.show()
         self.reportDialog.activateWindow()
-        print "Wysłano raport", data
-        self.reportDialog.setCurrentElement([ReportTools.K.value,data])
+        #print "Wysłano raport", data
+        self.reportDialog.setCurrentElement([ReportTools.K.value,data],image2DToSave)
 
     def setScans2dLoaded(self):
         self.scans2dLoaded = True
@@ -217,7 +229,6 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.pushButton_3d.setEnabled(not bool)
         self.pushButton_go.setEnabled(not bool)
         self.textEdit_km.setEnabled(not bool)
-        self.textEdit_km_range.setEnabled(not bool)
         self.pushButton_distance.setEnabled(not bool)
         self.comboBox_3.setEnabled(not bool)
         self.actionOptions.setEnabled(not bool)
@@ -281,18 +292,18 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         y = rect[1]
         w = rect[2]
         h = rect[3]
-        thickness_data_array = self.scanManager.getThicknessData(y, y + h, x, x + w)
+        thickness_data_array = self.scanManager.getThicknessData(y, y + h + 1, x, x + w + 1)
         if self.toolMode == ToolModes.RefSelectionMode:
-            self.evaluationDialog.showRefDialog(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :],self.scanViewer.aspect_ratio)
+            self.evaluationDialog.showRefDialog(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h + 1, x:x + w + 1, :],self.scanViewer.aspect_ratio)
         elif self.toolMode == ToolModes.CorrosionMode:
             self.evaluationDialog.show()
             self.setEvalDialogParams()
-            self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h, x:x + w, :], self.scanViewer.aspect_ratio, x, y, w, h)
+            self.evaluationDialog.setData(thickness_data_array, self.scanManager.thicknessScanColoredRearranged[y:y + h + 1, x:x + w + 1, :], self.scanViewer.aspect_ratio, x, y, w, h)
             self.evaluationDialog.activateWindow()
         elif self.toolMode == ToolModes.ReportMode:
             self.reportDialog.show()
             self.reportDialog.activateWindow()
-            image2DToSave = self.scanManager.get2DImageToSave(x, y, w, h)
+            image2DToSave = self.scanManager.get2DImageToSave(x, y, w +1, h + 1)
             [x, y, d] = self.scanManager.getXYD(x + w / 2, y + h /2, no_ratio=True)
             if self.reportTool == ReportTools.L:
                 self.reportDialog.setCurrentElement([ReportTools.L.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik laminacji", "imgPath"]],image2DToSave)
@@ -300,14 +311,43 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
                 self.reportDialog.setCurrentElement([ReportTools.SP.value,['X: ' + "{:.3F}".format(x) +" m" , "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny poprzecznej", "imgPath"]],image2DToSave)
             elif self.reportTool == ReportTools.SW:
                 self.reportDialog.setCurrentElement([ReportTools.SW.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min ', "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "opisik spoiny wzdluznej", "imgPath"]],image2DToSave)
+            elif self.reportTool == ReportTools.K:
+                self.reportDialog.setCurrentElement([ReportTools.K.value,['X: ' + "{:.3F}".format(x) +" m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(y[1]) + ' min '.__str__(), "{:.3F}".format(w* self.scanManager.deltaX) + " mm",  "{:.3F}".format(h* self.scanManager.deltaX) + " mm", "-","-","-","-","-", "imgPath"]],image2DToSave)
+
         elif self.toolMode == ToolModes.AutoDetectMode:
             self.testDialog.show()
             self.testDialog.setData(self.scanManager.thicknessScanRearranged[y:y + h, x:x + w], self.scanViewer.aspect_ratio)
         elif self.toolMode == ToolModes.ScreenShot2DMode:
-            image2DToSave = self.scanManager.get2DImageToSave(x,y,w,h)
+            image2DToSave = self.scanManager.get2DImageToSave(x,y,w + 1,h + 1)
             self.savePictureDialog.saveImg(image2DToSave)
 
-
+    def reportElement(self, pos):
+        print "MouseClicked: ", pos
+        x = pos[0]
+        y = pos[1]
+        w = 100
+        h = self.scanManager.bt1 - self.scanManager.bt0
+        if self.toolMode == ToolModes.ReportMode:
+            self.reportDialog.show()
+            self.reportDialog.activateWindow()
+            if self.reportTool == ReportTools.SP:
+                w = 100
+                h = self.scanManager.bt1 - self.scanManager.bt0
+                image2DToSave = self.scanManager.get2DImageToSave(x - w / 2, 0, w, h)
+                [x, y, d] = self.scanManager.getXYD(x , y , no_ratio=True)
+                self.reportDialog.setCurrentElement([ReportTools.SP.value, ['X: ' + "{:.3F}".format(x) + " m",
+                                                                            "opisik spoiny poprzecznej", "imgPath"]],
+                                                    image2DToSave)
+            elif self.reportTool == ReportTools.SW:
+                w = 300
+                h = 50
+                image2DToSave = self.scanManager.get2DImageToSave(x - 10, y - h/2, w, h)
+                [x, y, d] = self.scanManager.getXYD(x, y, no_ratio=True)
+                self.reportDialog.setCurrentElement([ReportTools.SW.value, [
+                    'X: ' + "{:.3F}".format(x) + " m" + ', Y: ' + "{:2d}".format(y[0]) + ' h ' + "{:2d}".format(
+                        y[1]) + ' min ', "-"
+                    , "opisik spoiny wzdluznej", "imgPath"]],
+                                                    image2DToSave)
 
     def mousePositionChanged(self, QMouseEvent):
         if self.scans2dLoaded:

@@ -188,7 +188,7 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
                 print paths
                 base_dir = self.reportDir.__str__().rsplit("/", 1)[0]
                 for j in range(0,paths.__len__()):
-                    if not os.path.exists(base_dir + "/" + paths[j]) and j < self.PILImageList.__len__():
+                    if j < self.PILImageList.__len__():
                         print base_dir + "/" + paths[j]
                         self.PILImageList[j].save(base_dir + "/" + paths[j])
         self.setTableItems(lineData)
