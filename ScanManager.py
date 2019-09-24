@@ -54,7 +54,7 @@ class ScanManager(QObject):
         self.dataPerFrame = 0
         self.resolutionRatio = 1 #transverse resolution / longitudinal resolution
         self.viewDataType = "thickness"
-        self.scale_spacing = 0.1  # in meters
+        self.scale_spacing = -1  # in meters
         self.goTo = 0.5
 
         self.scanViewer = scan_viewer
@@ -141,6 +141,7 @@ class ScanManager(QObject):
         self.c = c
         self.d = d
         self.deltaX = delta_x
+        self.scale_spacing = 0.05*delta_x
         self.diameter = diameter
         self.deltaY = 3.14 * self.diameter / self.dataPerFrame
         self.resolutionRatio = self.deltaY/self.deltaX
@@ -176,6 +177,7 @@ class ScanManager(QObject):
         self.c = c
         self.d = d
         self.deltaX = delta_x
+        self.scale_spacing = 0.05 * delta_x
         self.diameter = diameter
         self.deltaY = 3.14 * self.diameter / self.dataPerFrame
         self.resolutionRatio = self.deltaY/self.deltaX
@@ -367,9 +369,9 @@ class ScanManager(QObject):
     def changeScale(self):
         spacing_px_org = self.scale_spacing / self.deltaX * 1000
         spacing_px = float(spacing_px_org * self.scanViewer.view_scale)
-        if spacing_px > 130:
+        if spacing_px > 110:
             self.scale_spacing = self.scale_spacing / 2
-        elif spacing_px < 40:
+        elif spacing_px < 60:
             self.scale_spacing = self.scale_spacing * 2
         self.addScaleBar(7)
 
