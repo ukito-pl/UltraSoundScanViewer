@@ -18,6 +18,7 @@ from raport import ReportDialog
 from TestDialog import TestDialog
 from AutoDetectDialog import AutoDetectDialog
 from SavePictureDialog import SavePictureDialog
+from AboutDialog import AboutDialog
 from Miscellaneous import ToolModes,ReportTools
 
 class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
@@ -45,11 +46,13 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         self.testDialog = TestDialog()
         self.autoDetectDialog = AutoDetectDialog(self.optionsDialog)
         self.savePictureDialog = SavePictureDialog()
+        self.aboutDialog = AboutDialog()
 
         self.connect(self.autoDetectDialog,SIGNAL('showElement(PyQt_PyObject)'),self.loadElement)
         self.reportDialog.connect(self.autoDetectDialog,SIGNAL('reportElement(PyQt_PyObject)'),self.reportDialog.setCurrentElement)
 
         self.toolBar.actionTriggered.connect(self.processAction)
+        self.menubar.triggered.connect(self.processAction)
 
         self.connect(self.pushButton_thickness,SIGNAL('clicked()'),self.thicknessButtonClicked)
         self.connect(self.pushButton_distance, SIGNAL('clicked()'), self.distanceButtonClicked)
@@ -112,6 +115,8 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
             self.setReportTool(ReportTools.SW)
         elif q_action == self.actionSP:
             self.setReportTool(ReportTools.SP)
+        elif q_action == self.actionAbout:
+            self.aboutDialog.show()
 
     def tempDragModeEnable(self):
         self.actionMove.setChecked(True)

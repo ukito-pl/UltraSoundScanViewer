@@ -176,7 +176,7 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
             percentage_h = float(params[4]) / 100.0
             treshold = 1 - float(params[5]) / 100.0
             lbmax = float(params[6]) / 100.0
-            lp = 1 - float(params[7]) / 100.0
+            lp = float(params[7]) / 100.0
             self.corrosionDetector = CorrosionDetector(self.scanManager.thicknessScan,self.scanManager.nominalThicknessVal,
                                                        self.scanManager.getThicknessData(0,0,0,0,all=True),
                                                        self.scanManager.nominalThickness, treshold,self.scanManager.deltaX,self.scanManager.diameter,
@@ -217,6 +217,7 @@ class AutoDetectDialog(QtGui.QDialog, AutoDetectWindow.Ui_Dialog):
     def detectionFinished(self):
         self.dataLoaded = False
         self.pushButton_detect.setEnabled(True)
+        print "detection time: ", time.time() - self.start_time
 
     def loadData(self):
         self.start_time = time.time()

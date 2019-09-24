@@ -4,12 +4,13 @@ from Miscellaneous import ReportTools
 from math import pow
 import random
 import time
+import copy
 class WeldDetector(QThread):
 
     def __init__(self, data_raw,data,  alg, spacing, weld_width_v, percentage_v, weld_width_h=-1, percentage_h=-1):
         QThread.__init__(self)
-        self.thicknessDataRaw = data_raw
-        self.thicknessData = data
+        self.thicknessDataRaw = copy.copy(data_raw)
+        self.thicknessData = copy.copy(data)
         self.alg = alg
         self.weldWidthV = weld_width_v
         self.weldWidthH = weld_width_h
@@ -20,13 +21,14 @@ class WeldDetector(QThread):
         self.wait()
 
     def run(self):
-        map = self.evalMap(self.thicknessDataRaw)
+
+        #map = self.evalMap(self.thicknessDataRaw)
         #segments = self.findSegments(map)
         if self.alg == 0:
-            vwelds = self.findWeldsVertical(map, self.spacing, self.weldWidthV, self.percentageV)
+            vwelds = self.findWeldsVertical(self.thicknessDataRaw, self.spacing, self.weldWidthV, self.percentageV)
         elif self.alg == 1:
-            vwelds = self.findWeldsVertical(map, self.spacing, self.weldWidthV, self.percentageV)
-            hwelds = self.findWeldsHorizontal(map, vwelds, self.weldWidthH, self.percentageH)
+            vwelds = self.findWeldsVertical(self.thicknessDataRaw, self.spacing, self.weldWidthV, self.percentageV)
+            hwelds = self.findWeldsHorizontal(self.thicknessDataRaw, vwelds, self.weldWidthH, self.percentageH)
         self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), 1)
 
     def findWeldsVertical(self, map, spacing, width, percentage_ref, emit=True):
@@ -36,16 +38,17 @@ class WeldDetector(QThread):
         max_percentage_j = 0
         weld_detected = False
         j = 0
-        start_time = time.time()
-        print start_time
         while j < map.shape[1]:
             if self.alg ==0:
                 progress_perc = float(j) / (map.shape[1] - 1)
             elif self.alg == 1:
                 progress_perc = 0.5*(float(j) / (map.shape[1] - 1))
             self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), progress_perc)
-            i = int(random.random()*(map.shape[0]-1))
-            if map[i, j] == 255 or weld_detected:
+            i1 = int(random.random()*(map.shape[0]-1))
+            i2 = int(random.random() * (map.shape[0] - 1))
+            i3 = int(random.random() * (map.shape[0] - 1))
+            i4 = int(random.random() * (map.shape[0] - 1))
+            if map[i1, j] == 255 or  map[i2, j] == 255 or  map[i3, j] == 255 or  map[i4, j] == 255 or weld_detected:
                 # print "szuaknie:", j,edge_map.shape[1]
                 area = map[:, j:j+width]
                 count = 0
@@ -80,9 +83,6 @@ class WeldDetector(QThread):
                     welds.append(j)
                     j = j + width + spacing
             j = j + 1
-        end_time = time.time()
-        print end_time
-        print "time elapsed: ", end_time - start_time
         return welds
 
     def findWeldsHorizontal(self,map,vwelds, width, percentage_ref, emit=True):

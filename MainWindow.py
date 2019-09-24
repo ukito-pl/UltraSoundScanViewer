@@ -165,6 +165,8 @@ class Ui_MainWindow(object):
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 803, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menuAbout = QtGui.QMenu(self.menubar)
+        self.menuAbout.setObjectName(_fromUtf8("menuAbout"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -247,6 +249,10 @@ class Ui_MainWindow(object):
         icon11.addPixmap(QtGui.QPixmap(_fromUtf8("icons/icon_K.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionK.setIcon(icon11)
         self.actionK.setObjectName(_fromUtf8("actionK"))
+        self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
+        self.menuAbout.addAction(self.actionAbout)
+        self.menubar.addAction(self.menuAbout.menuAction())
         self.toolBar.addAction(self.actionOptions)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMove)
@@ -281,6 +287,7 @@ class Ui_MainWindow(object):
         self.comboBox_3.setItemText(2, _translate("MainWindow", "km", None))
         self.pushButton_go.setText(_translate("MainWindow", "Idź!", None))
         self.pushButton_3d.setText(_translate("MainWindow", "Generuj widok 3D", None))
+        self.menuAbout.setTitle(_translate("MainWindow", "About", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
         self.actionOptions.setText(_translate("MainWindow", "Opcje", None))
         self.actionMove.setText(_translate("MainWindow", "M", None))
@@ -295,6 +302,8 @@ class Ui_MainWindow(object):
         self.screenShoot3D.setText(_translate("MainWindow", "C3D", None))
         self.actionK.setText(_translate("MainWindow", "K", None))
         self.actionK.setToolTip(_translate("MainWindow", "K", None))
+        self.actionAbout.setText(_translate("MainWindow", "About", None))
 
 from ScanViewer import ScanViewer
 from pyqtgraph.opengl import GLViewWidget
+

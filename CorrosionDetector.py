@@ -80,18 +80,29 @@ class CorrosionDetector(QThread):
                     horizontal_weld = self.findHorizontalWeld(left_weld,right_weld)
                 else:
                     horizontal_weld = None
-                if not((horizontal_weld - self.weldWidthH <= min_i and horizontal_weld + self.weldWidthH >= max_i) or
-                       (min_i <= horizontal_weld - self.weldWidthH <= max_i) or
-                       (min_i <= horizontal_weld + self.weldWidthH <= max_i)) and \
-                        not((left_weld - self.weldWidthV <= min_j and left_weld + self.weldWidthV >= max_j) or
-                       (min_j <= left_weld - self.weldWidthV <= max_j) or
-                       (min_j <= left_weld + self.weldWidthV <= max_j)) and \
-                        not((right_weld - self.weldWidthV <= min_j and right_weld + self.weldWidthV >= max_j) or
-                       (min_j <= right_weld - self.weldWidthV <= max_j) or
-                       (min_j <= right_weld + self.weldWidthV <= max_j)):
-                    name = "Korozja#" + c.__str__()
-                    self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i_s, j_s])
-                    c = c + 1
+                if horizontal_weld is not None:
+                    if not((horizontal_weld - self.weldWidthH <= min_i and horizontal_weld + self.weldWidthH >= max_i) or
+                           (min_i <= horizontal_weld - self.weldWidthH <= max_i) or
+                           (min_i <= horizontal_weld + self.weldWidthH <= max_i)) and \
+                            not((left_weld - self.weldWidthV <= min_j and left_weld + self.weldWidthV >= max_j) or
+                           (min_j <= left_weld - self.weldWidthV <= max_j) or
+                           (min_j <= left_weld + self.weldWidthV <= max_j)) and \
+                            not((right_weld - self.weldWidthV <= min_j and right_weld + self.weldWidthV >= max_j) or
+                           (min_j <= right_weld - self.weldWidthV <= max_j) or
+                           (min_j <= right_weld + self.weldWidthV <= max_j)):
+                        name = "Korozja#" + c.__str__()
+                        self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i_s, j_s])
+                        c = c + 1
+                else:
+                    if not((left_weld - self.weldWidthV <= min_j and left_weld + self.weldWidthV >= max_j) or
+                           (min_j <= left_weld - self.weldWidthV <= max_j) or
+                           (min_j <= left_weld + self.weldWidthV <= max_j)) and \
+                            not((right_weld - self.weldWidthV <= min_j and right_weld + self.weldWidthV >= max_j) or
+                           (min_j <= right_weld - self.weldWidthV <= max_j) or
+                           (min_j <= right_weld + self.weldWidthV <= max_j)):
+                        name = "Korozja#" + c.__str__()
+                        self.emit(SIGNAL('corrosionDetected(PyQt_PyObject)'), [name, ReportTools.K, i_s, j_s])
+                        c = c + 1
 
             j = rw + 1
         self.emit(SIGNAL("reportProgress(PyQt_PyObject)"), 1)
@@ -292,7 +303,9 @@ class CorrosionDetector(QThread):
         #print self.checkBoundries(corrosion)
         if 1.1*d/avg_thicnkess  > 0.15:
             L_eval = self.evaluateL(self.diameter,avg_thicnkess,d)
+            #print "sprawdzanie korozji:", i, j, "dlugosc: ", L_measured, "glebokosc: ", d, "L_eval: ", L_eval
             if L_measured > self.lp*L_eval:
+                #print L_measured,self.lp*L_eval
                 return corrosion, True
             else:
                 return corrosion, False
