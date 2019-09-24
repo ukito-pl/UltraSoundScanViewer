@@ -47,6 +47,9 @@ class ReportDialog(QtGui.QDialog, RaportWindow.Ui_Dialog):
         self.currentImageIndex = -1
         self.currentPILImage = Image.Image()
 
+    def closeEvent(self, QCloseEvent):
+        self.reportLoadDialog.close()
+        super(self.__class__, self).closeEvent(QCloseEvent)
 
     def setMode(self,mode):
         self.mode = mode

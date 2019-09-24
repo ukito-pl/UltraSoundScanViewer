@@ -276,6 +276,12 @@ class MainApp(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
     def closeEvent(self, QCloseEvent):
         self.evaluationDialog.close()
         self.optionsDialog.close()
+        self.aboutDialog.close()
+        self.savePictureDialog.close()
+        self.autoDetectDialog.close()
+        self.generate3dDialog.close()
+        self.reportDialog.close()
+        self.testDialog.close()
         super(self.__class__, self).closeEvent(QCloseEvent)
 
 

@@ -62,6 +62,11 @@ class EvaluationDialog(QtGui.QDialog, SelectionWindow.Ui_Dialog):
         self.w = 0
         self.h = 0
 
+    def closeEvent(self, QCloseEvent):
+        self.referenceDialog.close()
+        self.resultsDialog.close()
+        super(self.__class__, self).closeEvent(QCloseEvent)
+
     def sendReportSignal(self):
         self.emit(SIGNAL('corrosionReportSignal(PyQt_PyObject)'), self.reportData)
 
